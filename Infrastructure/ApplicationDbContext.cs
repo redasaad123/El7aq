@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;
 
-public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+public class ApplicationDbContext : IdentityDbContext<AppUsers>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -24,28 +24,36 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaim", "security");
         builder.Entity<IdentityUserToken<string>>().ToTable("UserToken", "security");
 
-        base.OnModelCreating(builder);
+        // Ensure one-to-one profiles per user
+        builder.Entity<DriverProfile>()
+            .HasIndex(d => d.UserId)
+            .IsUnique();
+        builder.Entity<PassengerProfile>()
+            .HasIndex(p => p.UserId)
+            .IsUnique();
+        builder.Entity<StaffProfile>()
+            .HasIndex(s => s.UserId)
+            .IsUnique();
 
-
-        // DriverProfile ↔ AppUsers
+        // DriverProfile ↔ AppUsers (1:1)
         builder.Entity<DriverProfile>()
             .HasOne(d => d.appUsers)
-            .WithMany()
-            .HasForeignKey(d => d.UserId)
+            .WithOne()
+            .HasForeignKey<DriverProfile>(d => d.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // PassengerProfile ↔ AppUsers
+        // PassengerProfile ↔ AppUsers (1:1)
         builder.Entity<PassengerProfile>()
             .HasOne(p => p.User)
-            .WithMany()
-            .HasForeignKey(p => p.UserId)
+            .WithOne()
+            .HasForeignKey<PassengerProfile>(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // StaffProfile ↔ AppUsers
+        // StaffProfile ↔ AppUsers (1:1)
         builder.Entity<StaffProfile>()
             .HasOne(s => s.User)
-            .WithMany()
-            .HasForeignKey(s => s.UserId)
+            .WithOne()
+            .HasForeignKey<StaffProfile>(s => s.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
         // StaffProfile ↔ Station
@@ -96,6 +104,13 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             .HasForeignKey(t => t.RouteId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Payment ↔ Booking
+        builder.Entity<Payment>()
+            .HasOne<Booking>()
+            .WithMany(b => b.Payments)
+            .HasForeignKey(p => p.BookingId)
+            .OnDelete(DeleteBehavior.Cascade);
+
     }
     public DbSet<DriverProfile> Drivers { get; set; }
     public DbSet<PassengerProfile> Passengers { get; set; }
@@ -104,6 +119,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     public DbSet<Booking> Bookings { get; set; }
     public DbSet<Station> Stations { get; set; }
     public DbSet<Route> Routes { get; set; }
+    public DbSet<Payment> Payments { get; set; }
 
 }
 
