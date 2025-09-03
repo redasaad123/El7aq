@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cores.Interfaces
+namespace Core.Interfaces
 {
     public interface IGenericRepository<T> where T : class
     {

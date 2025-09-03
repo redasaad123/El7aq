@@ -1,5 +1,5 @@
-﻿
-using Cores.Interfaces;
+﻿using Core.Interfaces;
+using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

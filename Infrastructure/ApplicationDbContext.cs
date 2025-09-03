@@ -28,9 +28,5 @@ namespace Infrastructure
             builder.Entity<IdentityUserToken<string>>().ToTable("UserToken", "security");
             
         }
-        
-
-
-
     }
 }
