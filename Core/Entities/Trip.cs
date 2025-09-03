@@ -2,9 +2,9 @@
 {
     public class Trip
     {
-        public int Id { get; set; }
-        public int RouteId { get; set; }
-        public int DriverId { get; set; }
+        public string Id { get; set; }
+        public string RouteId { get; set; }
+        public string DriverId { get; set; }
         public DateTime DepartureTime { get; set; }
         public int AvailableSeats { get; set; }
 

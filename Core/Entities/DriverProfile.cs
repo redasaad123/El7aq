@@ -4,8 +4,8 @@ namespace El7aq.Domain.Entities
 {
     public class DriverProfile
     {
-        public int Id { get; set; }
-        public int UserId { get; set; }
+        public string Id { get; set; }
+        public string UserId { get; set; }
         public string LicenseNumber { get; set; }
         public string CarNumber { get; set; }
 

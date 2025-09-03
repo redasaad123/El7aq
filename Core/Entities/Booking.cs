@@ -4,9 +4,9 @@ namespace El7aq.Domain.Entities
 {
     public class Booking
     {
-        public int Id { get; set; }
-        public int PassengerId { get; set; }
-        public int TripId { get; set; }
+        public string Id { get; set; }
+        public string PassengerId { get; set; }
+        public string TripId { get; set; }
         public DateTime BookingDate { get; set; }
         public BookingStatus Status { get; set; }
 
