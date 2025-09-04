@@ -1,7 +1,7 @@
 ﻿using Core.Entities;
 using Core.Enums;
 using Core.Interfaces;
-
+using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -137,7 +137,7 @@ namespace Infrastructure.Services
             }
 
             // Remove the trip
-            _tripUow.Entity.Delete(trip.Id);
+            _tripUow.Entity.Delete(trip);
             _tripUow.Save();
 
             return true;
@@ -278,7 +278,7 @@ namespace Infrastructure.Services
         {
            
 
-            var booking = await _context.Bookings
+            var booking = await _bookingUow.Entity.GetAllAsyncAsQuery()
                 .FirstOrDefaultAsync(b => b.Id == bookingId && b.PassengerId == passengerId);
 
             if (booking == null || booking.Status == BookingStatus.Cancelled)
