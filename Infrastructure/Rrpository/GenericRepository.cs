@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Rrpository
+namespace Infrastructure.Repository
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
@@ -21,6 +21,31 @@ namespace Infrastructure.Rrpository
             this.context = context;
             _dbSet = context.Set<T>();
 
+        }
+
+        // Synchronous CRUD to align with service usage patterns
+        public T Get(string id)
+        {
+            return _dbSet.Find(id);
+        }
+
+        public void Insert(T entity)
+        {
+            _dbSet.Add(entity);
+        }
+
+        public void Update(T entity)
+        {
+            _dbSet.Update(entity);
+        }
+
+        public void Delete(string id)
+        {
+            var entity = _dbSet.Find(id);
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+            }
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
@@ -47,7 +72,7 @@ namespace Infrastructure.Rrpository
         public async Task<T> UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
-            return entity;
+            return await Task.FromResult(entity);
         }
 
         public T Delete(T entity)
@@ -96,7 +121,7 @@ namespace Infrastructure.Rrpository
         public async Task<object> Mapping(Expression<Func<T, object>> Object)
         {
             var query = _dbSet.Select(Object);
-            return query;
+            return await Task.FromResult((object)query);
         }
 
         public async Task<List<T>> FindAll(Expression<Func<T, bool>> predicate)

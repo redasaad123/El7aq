@@ -15,14 +15,15 @@ namespace Infrastructure.Services
         private readonly IUnitOfWork<Booking> _bookingUow;
         private readonly IUnitOfWork<Trip> _tripUow;
         private readonly IUnitOfWork<PassengerProfile> _passengerUow;
-        private readonly ApplicationDbContext _context;
 
-        public BookingService(IUnitOfWork<Booking> bookingUow, IUnitOfWork<Trip> tripUow, IUnitOfWork<PassengerProfile> passengerUow, ApplicationDbContext context)
+        public BookingService(
+            IUnitOfWork<Booking> bookingUow,
+            IUnitOfWork<Trip> tripUow,
+            IUnitOfWork<PassengerProfile> passengerUow)
         {
             _bookingUow = bookingUow;
             _tripUow = tripUow;
             _passengerUow = passengerUow;
-            _context = context;
         }
 
         #region Booking Operations
@@ -38,7 +39,7 @@ namespace Infrastructure.Services
 
 
             // Check if trip exists and has available seats
-            var trip = await _context.Trips
+            var trip = await _tripUow.Entity.GetAllAsyncAsQuery()
                 .Include(t => t.Bookings)
                 .FirstOrDefaultAsync(t => t.Id == tripId);
 
@@ -50,7 +51,7 @@ namespace Infrastructure.Services
                 throw new InvalidOperationException("No available seats");
 
             // Check if passenger already has a booking for this trip
-            var existingBooking = await _context.Bookings
+            var existingBooking = await _bookingUow.Entity.GetAllAsyncAsQuery()
                 .FirstOrDefaultAsync(b => b.PassengerId == passengerId &&
                                         b.TripId == tripId &&
                                         b.Status != BookingStatus.Cancelled);
@@ -84,7 +85,7 @@ namespace Infrastructure.Services
                 throw new InvalidOperationException("Only pending bookings can be confirmed");
 
             // Check if trip has available seats
-            var trip = await _context.Trips
+            var trip = await _tripUow.Entity.GetAllAsyncAsQuery()
                 .Include(t => t.Bookings)
                 .FirstOrDefaultAsync(t => t.Id == booking.TripId);
 
@@ -127,7 +128,7 @@ namespace Infrastructure.Services
         public async Task<Booking> GetBookingDetailsAsync(string bookingId)
         {
      
-            var booking = await _context.Bookings
+            var booking = await _bookingUow.Entity.GetAllAsyncAsQuery()
                 .Include(b => b.Trip)
                     .ThenInclude(t => t.Route)
                         .ThenInclude(r => r.StartStation)
@@ -157,7 +158,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<Booking>> GetPassengerBookingsAsync(string passengerId)
         {
 
-            var bookings = await _context.Bookings
+            var bookings = await _bookingUow.Entity.GetAllAsyncAsQuery()
                 .Include(b => b.Trip)
                     .ThenInclude(t => t.Route)
                         .ThenInclude(r => r.StartStation)
@@ -179,7 +180,7 @@ namespace Infrastructure.Services
         {
            
 
-            var bookings = await _context.Bookings
+            var bookings = await _bookingUow.Entity.GetAllAsyncAsQuery()
                 .Include(b => b.Trip)
                     .ThenInclude(t => t.Route)
                         .ThenInclude(r => r.StartStation)
@@ -206,7 +207,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<Booking>> GetDriverBookingsAsync(string driverId)
         {
         
-            var bookings = await _context.Bookings
+            var bookings = await _bookingUow.Entity.GetAllAsyncAsQuery()
                 .Include(b => b.Trip)
                     .ThenInclude(t => t.Route)
                         .ThenInclude(r => r.StartStation)

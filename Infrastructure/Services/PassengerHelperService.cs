@@ -10,11 +10,11 @@ namespace Infrastructure.Services
     public class PassengerHelperService : IPassengerHelperService
     {
 
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork<PassengerProfile> _passengerUow;
 
-        public PassengerHelperService(ApplicationDbContext context)
+        public PassengerHelperService(IUnitOfWork<PassengerProfile> passengerUow)
         {
-            _context = context;
+            _passengerUow = passengerUow;
         }
         
         public async Task<string?> GetPassengerIdFromUserIdAsync(string userId)
@@ -23,7 +23,7 @@ namespace Infrastructure.Services
                 return null;
 
             // Find the passenger profile by UserId
-            var passengerProfile = await _context.Passengers
+            var passengerProfile = await _passengerUow.Entity.GetAllAsyncAsQuery()
                 .FirstOrDefaultAsync(p => p.UserId == userId);
 
             if (passengerProfile == null)
@@ -32,17 +32,17 @@ namespace Infrastructure.Services
             return passengerProfile.Id;
         }
 
-        public async Task<string> GetUserIdFromPassengerIdAsync(string passengerId)
+        public async Task<string?> GetUserIdFromPassengerIdAsync(string passengerId)
         {
-            var passengerProfile = await _context.Passengers
+            var passengerProfile = await _passengerUow.Entity.GetAllAsyncAsQuery()
                 .FirstOrDefaultAsync(p => p.Id == passengerId);
 
-            return passengerProfile?.UserId!;
+            return passengerProfile?.UserId;
         }
 
         public async Task<bool> IsValidPassengerAsync(string passengerId)
         {
-            return await _context.Passengers
+            return await _passengerUow.Entity.GetAllAsyncAsQuery()
                 .AnyAsync(p => p.Id == passengerId);
         }
     }

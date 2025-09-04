@@ -10,17 +10,17 @@ namespace Core.Interfaces
     public interface IGenericRepository<T> where T : class
     {
 
-        Task<IEnumerable<T>> GetAllAsync();
-
-        Task<T> GetAsync(string id);
-
-        IQueryable<T> GetAllAsyncAsQuery();
-
-        Task<T> AddAsync(T entity);
-
-        Task<T> UpdateAsync(T entity);
-
+        T Get(string id);
+        void Insert(T entity);
+        void Update(T entity);
+        void Delete(string id);
         T Delete(T entity);
+
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<T> GetAsync(string id);
+        IQueryable<T> GetAllAsyncAsQuery();
+        Task<T> AddAsync(T entity);
+        Task<T> UpdateAsync(T entity);
 
         Task<List<object>> FindAll(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> Object);
         Task<List<object>> FindAll(Expression<Func<T, object>> Object);

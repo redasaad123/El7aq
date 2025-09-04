@@ -17,13 +17,18 @@ namespace Infrastructure.UnitOfWork
         {
             get
             {
-                return entity ?? (entity = new Rrpository.GenericRepository<T>(context));
+                return entity ?? (entity = new Repository.GenericRepository<T>(context));
             }
         }
 
         public void Save()
         {
             context.SaveChanges();
+        }
+
+        public async Task SaveAsync()
+        {
+            await context.SaveChangesAsync();
         }
     }
 }

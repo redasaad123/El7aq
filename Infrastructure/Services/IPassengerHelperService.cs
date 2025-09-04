@@ -11,7 +11,7 @@ namespace Infrastructure.Services
     {
 
         Task<string?> GetPassengerIdFromUserIdAsync(string userId);
-        Task<string> GetUserIdFromPassengerIdAsync(string passengerId);
+        Task<string?> GetUserIdFromPassengerIdAsync(string passengerId);
         Task<bool> IsValidPassengerAsync(string passengerId);
     }
 }
