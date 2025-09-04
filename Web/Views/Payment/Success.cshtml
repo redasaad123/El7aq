@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "نجاح الدفع";
+}
+
+<div class="alert alert-success mt-4">
+    ✅ تم الدفع بنجاح! شكراً لاستخدامك خدمتنا.
+</div>
+
+@if (ViewBag.PaypalResponse != null)
+{
+    <pre>@ViewBag.PaypalResponse</pre> <!-- يظهر Response لو حابب تشوف بيانات PayPal -->
+}

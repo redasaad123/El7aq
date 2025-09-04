@@ -1,8 +1,7 @@
-﻿
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
-namespace Core.Entities
+namespace Infrastructure.Entities
 {
     public class AppUsers : IdentityUser
     {

@@ -1,8 +1,7 @@
-﻿using Core.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace El7aq.Domain.Entities
+namespace Infrastructure.Entities
 {
     public class DriverProfile
     {

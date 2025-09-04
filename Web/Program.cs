@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure;
-using Core.Entities;
+using Infrastructure.Entities;
 
 namespace Web
 {

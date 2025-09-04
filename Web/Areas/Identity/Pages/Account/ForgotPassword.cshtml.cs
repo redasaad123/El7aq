@@ -13,8 +13,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;using Core.Entities;
-using Core.Entities;
+using Microsoft.Extensions.Logging;
+using Infrastructure.Entities;
 
 namespace Web.Areas.Identity.Pages.Account
 {

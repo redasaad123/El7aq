@@ -5,10 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Core.Interfaces;
 using Infrastructure;
-using Infrastructure.Rrpository;
+using Core.Rrpository;
 
-
-namespace Infrastructure.UnitOfWork
+namespace Core.UnitOfWork
 {
     public class UnitOfWork<T> : IUnitOfWork<T> where T : class
     {

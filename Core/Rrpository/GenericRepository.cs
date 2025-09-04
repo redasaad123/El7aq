@@ -1,5 +1,4 @@
-﻿using Core.Interfaces;
-using Infrastructure;
+﻿using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Rrpository
+namespace Core.Rrpository
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T> : Interfaces.IGenericRepository<T> where T : class
     {
         private readonly ApplicationDbContext context;
         private readonly DbSet<T> Dpset;

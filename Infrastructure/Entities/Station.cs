@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace El7aq.Domain.Entities
+namespace Infrastructure.Entities
 {
     public class Station
     {

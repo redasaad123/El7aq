@@ -1,5 +1,5 @@
-﻿ using Core.Entities;
-using El7aq.Domain.Entities;
+﻿
+using Infrastructure.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -9,14 +9,16 @@ namespace Infrastructure;
 public class ApplicationDbContext : IdentityDbContext<AppUsers>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
+        : base(options)
     {
     }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<AppUsers>().ToTable("users", "security");
+        // 🛡️ Identity Tables
+        builder.Entity<AppUsers>().ToTable("Users", "security");
         builder.Entity<IdentityRole>().ToTable("Roles", "security");
         builder.Entity<IdentityUserRole<string>>().ToTable("UserRole", "security");
         builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaim", "security");
@@ -24,13 +26,15 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
         builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaim", "security");
         builder.Entity<IdentityUserToken<string>>().ToTable("UserToken", "security");
 
-        // Ensure one-to-one profiles per user
+        // 🟢 Ensure one-to-one profiles per user
         builder.Entity<DriverProfile>()
             .HasIndex(d => d.UserId)
             .IsUnique();
+
         builder.Entity<PassengerProfile>()
             .HasIndex(p => p.UserId)
             .IsUnique();
+
         builder.Entity<StaffProfile>()
             .HasIndex(s => s.UserId)
             .IsUnique();
@@ -106,12 +110,20 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
 
         // Payment ↔ Booking
         builder.Entity<Payment>()
-            .HasOne<Booking>()
+            .HasOne(p => p.Booking)
             .WithMany(b => b.Payments)
             .HasForeignKey(p => p.BookingId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        // Payment ↔ Passenger
+        builder.Entity<Payment>()
+            .HasOne(p => p.Passenger)
+            .WithMany(pp => pp.Payments)
+            .HasForeignKey(p => p.PassengerId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
+
+    //  DbSets
     public DbSet<DriverProfile> Drivers { get; set; }
     public DbSet<PassengerProfile> Passengers { get; set; }
     public DbSet<StaffProfile> Staffs { get; set; }
@@ -120,8 +132,4 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
     public DbSet<Station> Stations { get; set; }
     public DbSet<Route> Routes { get; set; }
     public DbSet<Payment> Payments { get; set; }
-
 }
-
-
-

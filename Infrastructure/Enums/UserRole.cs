@@ -1,4 +1,4 @@
-﻿namespace El7aq.Domain.Enums
+﻿namespace Infrastructure.Enums
 {
     public enum UserRole
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace El7aq.Domain.Enums
+namespace Infrastructure.Enums
 {
 
     public enum PaymentMethod

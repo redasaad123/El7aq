@@ -1,8 +1,8 @@
-﻿using El7aq.Domain.Enums;
+﻿using Infrastructure.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace El7aq.Domain.Entities
+namespace Infrastructure.Entities
 {
     public class Booking
     {
@@ -16,6 +16,7 @@ namespace El7aq.Domain.Entities
         [Required]
         [ForeignKey(nameof(Trip))]
         public string TripId { get; set; }
+
         public DateTime BookingDate { get; set; }
         public BookingStatus Status { get; set; }
 
@@ -24,6 +25,4 @@ namespace El7aq.Domain.Entities
         public Trip? Trip { get; set; }
         public ICollection<Payment>? Payments { get; set; } = new List<Payment>();
     }
-
-
 }

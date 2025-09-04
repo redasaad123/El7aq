@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;using Core.Entities;
+using Microsoft.Extensions.Logging;
+using Infrastructure.Entities;
 
 namespace Web.Areas.Identity.Pages.Account.Manage
 {
