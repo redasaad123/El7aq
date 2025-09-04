@@ -138,8 +138,6 @@ namespace Web.Areas.Identity.Pages.Account
                 //await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 //await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 
-
-
                 var user = new AppUsers
                 {
                     UserName = new MailAddress(Input.Email).User,
