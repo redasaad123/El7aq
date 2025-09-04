@@ -1,41 +1,84 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using Core.Entities
+@inject SignInManager<AppUsers> SignInManager
+@inject UserManager<AppUsers> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Web</title>
+    <title>@ViewData["Title"] - El7aq</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="~/css/authstyle.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/homepage.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a class="logo" asp-area="" asp-controller="Home" asp-action="Index">
+                <img src="~/images/elhaq.jpg" alt="El7aq Logo" />
+                El7aq
+            </a>
+            
+            <ul class="nav-links">
+                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li><a asp-controller="Home" asp-action="About">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            
+            <!-- Authentication Section -->
+                    <div class="auth-section">
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <div class="user-menu">
+                    <!-- Notifications -->
+                    <div class="notification-icon">
+                        <a href="#" class="notification-btn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </a>
+                    </div>
+                    
+                    <!-- User Profile -->
+                    <div class="user-profile">
+                        <div class="profile-photo">
+                            <img src="https://via.placeholder.com/40x40/27AAE2/FFFFFF?text=U" alt="Profile" class="profile-img">
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name">@User.FindFirst("FirstName")?.Value @User.FindFirst("LastName")?.Value</span>
+                            <span class="user-role">Passenger</span>
+                        </div>
+                        <div class="profile-dropdown">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Logout Button -->
+                    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-outline">Logout</button>
+                    </form>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="auth-buttons">
+                    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline">Sign In</a>
+                    <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary">Sign Up</a>
+                </div>
+            }
+        </div>
         </nav>
     </header>
-    <div class="col-12 main" >
-       
+    
+    <div class="homepage-container">
+        <div class="col-12 main">
             @RenderBody()
-        
+        </div>
     </div>
 
     @* <footer class="border-top footer text-muted"> *@

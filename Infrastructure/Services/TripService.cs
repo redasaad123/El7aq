@@ -1,7 +1,7 @@
 ﻿using Core.Entities;
 using Core.Enums;
 using Core.Interfaces;
-
+using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,28 +16,32 @@ namespace Infrastructure.Services
 
         private readonly IUnitOfWork<Trip> _tripUow;
         private readonly IUnitOfWork<Booking> _bookingUow;
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork<Route> _routeUow;
+        private readonly IUnitOfWork<DriverProfile> _driverUow;
 
 
         // Constructor to inject repositories
-        public TripService(IUnitOfWork<Trip> tripUow,
+        public TripService(
+            IUnitOfWork<Trip> tripUow,
             IUnitOfWork<Booking> bookingUow,
-            ApplicationDbContext context)
+            IUnitOfWork<Route> routeUow,
+            IUnitOfWork<DriverProfile> driverUow)
         {
             _tripUow = tripUow;
             _bookingUow = bookingUow;
-            _context = context;
+            _routeUow = routeUow;
+            _driverUow = driverUow;
         }
 
         #region Driver Operations
         public async Task<Trip> CreateTripAsync(string driverId, string routeId, DateTime departureTime, int availableSeats)
         {
-            var driver = await _context.Drivers.FindAsync(driverId);
+            var driver = _driverUow.Entity.Get(driverId);
             if (driver == null)
                 throw new ArgumentException("Driver not found");
 
 
-            var route = await _context.Routes.FindAsync(routeId);
+            var route = _routeUow.Entity.Get(routeId);
             if (route == null)
                 throw new ArgumentException("Route not found");
 
@@ -66,7 +70,7 @@ namespace Infrastructure.Services
         {
            
 
-            var trips = await _context.Trips
+            var trips = await _tripUow.Entity.GetAllAsyncAsQuery()
                .Include(t => t.Route)
                    .ThenInclude(r => r.StartStation)
                .Include(t => t.Route)
@@ -85,7 +89,7 @@ namespace Infrastructure.Services
         {
            
 
-            var trip = await _context.Trips
+            var trip = await _tripUow.Entity.GetAllAsyncAsQuery()
                 .Include(t => t.Bookings)
                 .FirstOrDefaultAsync(t => t.Id == tripId);
 
@@ -116,7 +120,7 @@ namespace Infrastructure.Services
 
         {
             
-            var trip = await _context.Trips
+            var trip = await _tripUow.Entity.GetAllAsyncAsQuery()
                 .Include(t => t.Bookings)
                 .FirstOrDefaultAsync(t => t.Id == tripId);
 
@@ -133,7 +137,7 @@ namespace Infrastructure.Services
             }
 
             // Remove the trip
-            _tripUow.Entity.Delete(trip.Id);
+            _tripUow.Entity.Delete(trip);
             _tripUow.Save();
 
             return true;
@@ -145,8 +149,6 @@ namespace Infrastructure.Services
 
         #endregion
 
-
-
         #region Passenger Operations
         public async Task<IEnumerable<Trip>> SearchTripsAsync(string originCityId, string destinationCityId, DateTime date)
         {
@@ -155,7 +157,7 @@ namespace Infrastructure.Services
             var endDate = date.Date.AddDays(1);
 
 
-            var trips = await _context.Trips
+            var trips = await _tripUow.Entity.GetAllAsyncAsQuery()
                 .Include(t => t.Route)
                     .ThenInclude(r => r.StartStation)
                 .Include(t => t.Route)
@@ -185,7 +187,7 @@ namespace Infrastructure.Services
         {
          
 
-            var trip = await _context.Trips
+            var trip = await _tripUow.Entity.GetAllAsyncAsQuery()
                 .Include(t => t.Route)
                     .ThenInclude(r => r.StartStation)
                 .Include(t => t.Route)
@@ -204,7 +206,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<Trip>> GetAllAvailableTripsAsync()
         {
-            var trips = await _context.Trips
+            var trips = await _tripUow.Entity.GetAllAsyncAsQuery()
                 .Include(t => t.Route)
                     .ThenInclude(r => r.StartStation)
                 .Include(t => t.Route)
@@ -226,12 +228,10 @@ namespace Infrastructure.Services
 
         #endregion
 
-
-
         #region Booking Operations
         public async Task<bool> HasAvailableSeatsAsync(string tripId, int seatsNeeded = 1)
         {
-            var trip = await _context.Trips
+            var trip = await _tripUow.Entity.GetAllAsyncAsQuery()
                 .Include(t => t.Bookings)
                 .FirstOrDefaultAsync(t => t.Id == tripId);
 
@@ -250,7 +250,7 @@ namespace Infrastructure.Services
             if (!await HasAvailableSeatsAsync(tripId))
                 return false;
 
-            var existingBooking = await _context.Bookings
+            var existingBooking = await _bookingUow.Entity.GetAllAsyncAsQuery()
               .FirstOrDefaultAsync(b => b.PassengerId == passengerId &&
                                       b.TripId == tripId &&
                                       b.Status != BookingStatus.Cancelled);
@@ -278,7 +278,7 @@ namespace Infrastructure.Services
         {
            
 
-            var booking = await _context.Bookings
+            var booking = await _bookingUow.Entity.GetAllAsyncAsQuery()
                 .FirstOrDefaultAsync(b => b.Id == bookingId && b.PassengerId == passengerId);
 
             if (booking == null || booking.Status == BookingStatus.Cancelled)
@@ -296,7 +296,7 @@ namespace Infrastructure.Services
             var startDate = date.Date;
             var endDate = date.Date.AddDays(1);
 
-            var trips = await _context.Trips
+            var trips = await _tripUow.Entity.GetAllAsyncAsQuery()
                 .Include(t => t.Route)
                     .ThenInclude(r => r.StartStation)
                 .Include(t => t.Route)
@@ -315,7 +315,7 @@ namespace Infrastructure.Services
         {
            
 
-            var trips = await _context.Trips
+            var trips = await _tripUow.Entity.GetAllAsyncAsQuery()
                 .Include(t => t.Route)
                     .ThenInclude(r => r.StartStation)
                 .Include(t => t.Route)

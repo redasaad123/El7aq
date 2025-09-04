@@ -1,57 +1,134 @@
-﻿using Infrastructure;
+﻿using Core.Interfaces;
+using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Rrpository
+namespace Infrastructure.Repository
 {
-    public class GenericRepository<T> : Interfaces.IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
+
         private readonly ApplicationDbContext context;
-        private readonly DbSet<T> Dpset;
+        private readonly DbSet<T> _dbSet;
 
         public GenericRepository(ApplicationDbContext context)
         {
             this.context = context;
-            Dpset = context.Set<T>();
+            _dbSet = context.Set<T>();
+
         }
 
-        public void Delete(object id)
+        // Synchronous CRUD to align with service usage patterns
+        public T Get(string id)
         {
-            T entity = Get(id);
-
-            Dpset.Remove(entity);
-           
-        }
-
-        public T Get(object id)
-        {
-            return Dpset.Find(id);
-        }
-
-        public IEnumerable<T> GetAll()
-        {
-            return Dpset.ToList();
-            
-        }
-
-        public object GetElement(object id)
-        {
-            return Dpset.Find(id);
+            return _dbSet.Find(id);
         }
 
         public void Insert(T entity)
         {
-            Dpset.Add(entity);
+            _dbSet.Add(entity);
         }
 
         public void Update(T entity)
         {
-            Dpset.Attach(entity);
-            context.Entry(entity).State = EntityState.Modified;
+            _dbSet.Update(entity);
+        }
+
+        public void Delete(string id)
+        {
+            var entity = _dbSet.Find(id);
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+            }
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await _dbSet.ToListAsync();
+        }
+
+        public IQueryable<T> GetAllAsyncAsQuery()
+        {
+            return _dbSet.AsQueryable();
+        }
+
+        public async Task<T> GetAsync(string id)
+        {
+            return await _dbSet.FindAsync(id);
+
+        }
+        public async Task<T> AddAsync(T entity)
+        {
+            await _dbSet.AddAsync(entity);
+            return entity;
+        }
+
+        public async Task<T> UpdateAsync(T entity)
+        {
+            _dbSet.Update(entity);
+            return await Task.FromResult(entity);
+        }
+
+        public T Delete(T entity)
+        {
+            _dbSet.Remove(entity);
+            return entity;
+        }
+
+        public async Task<List<object>> FindAll(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> Object)
+        {
+            var query = await _dbSet.Where(predicate).Select(Object).ToListAsync();
+            return query;
+        }
+
+        public async Task<object> Find(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> Object)
+        {
+            var query = await _dbSet.Where(predicate).Select(Object).FirstOrDefaultAsync();
+            return query;
+        }
+
+        public async Task<bool> Any(Expression<Func<T, bool>> predicate)
+        {
+            var query = await _dbSet.AnyAsync(predicate);
+            return query;
+        }
+
+
+        public async Task<List<object>> FindAll(Expression<Func<T, object>> Object)
+        {
+            var query = await _dbSet.Select(Object).ToListAsync();
+            return query;
+        }
+        public async Task<List<string>> FindAll(Expression<Func<T, bool>> predicate, Expression<Func<T, string>> Object)
+        {
+            var query = await _dbSet.Where(predicate).Select(Object).ToListAsync();
+            return query;
+        }
+
+        public T Find(Expression<Func<T, bool>> predicate)
+        {
+            var query = _dbSet.Where(predicate).FirstOrDefault();
+
+            return query;
+        }
+
+        public async Task<object> Mapping(Expression<Func<T, object>> Object)
+        {
+            var query = _dbSet.Select(Object);
+            return await Task.FromResult((object)query);
+        }
+
+        public async Task<List<T>> FindAll(Expression<Func<T, bool>> predicate)
+        {
+            var query = await _dbSet.Where(predicate).ToListAsync();
+
+            return query;
         }
     }
 }

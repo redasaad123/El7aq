@@ -158,8 +158,14 @@ namespace Web.Areas.Identity.Pages.Account
 
                     var userId = await _userManager.GetUserIdAsync(user);
 
-                    var claim = new Claim("User", "User");
-                    await _userManager.AddClaimAsync(user, claim);
+                    var userClaim = new Claim("User", "User");
+                    await _userManager.AddClaimAsync(user, userClaim);
+                    
+                    // Add FirstName and LastName as claims
+                    var firstNameClaim = new Claim("FirstName", Input.FirstName);
+                    var lastNameClaim = new Claim("LastName", Input.LastName);
+                    await _userManager.AddClaimAsync(user, firstNameClaim);
+                    await _userManager.AddClaimAsync(user, lastNameClaim);
 
 
                     var passengerProfile = new PassengerProfile

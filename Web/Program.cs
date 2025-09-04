@@ -1,10 +1,5 @@
 using Core;
 using Core.Entities;
-using Core.Interfaces;
-using Infrastructure;
-using Infrastructure.Mapper;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Web
 {
@@ -20,8 +15,19 @@ namespace Web
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<AppUsers>(options => options.SignIn.RequireConfirmedAccount = false)
+            builder.Services
+                .AddDefaultIdentity<AppUsers>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            // Register custom claims principal factory
+            builder.Services.AddScoped<IUserClaimsPrincipalFactory<AppUsers>, ApplicationClaimsPrincipalFactory>();
+
+            // Application services and unit of work registrations
+            builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+            builder.Services.AddScoped<ITripService, TripService>();
+            builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddScoped<IPassengerHelperService, PassengerHelperService>();
+
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(cfg =>
             {
@@ -50,6 +56,8 @@ namespace Web
 
             app.UseRouting();
 
+            // Ensure authentication runs before authorization
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

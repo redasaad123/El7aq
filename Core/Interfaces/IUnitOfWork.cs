@@ -12,5 +12,7 @@ namespace Core.Interfaces
 
         public void Save();
 
+        public Task SaveAsync();
+
     }
 }

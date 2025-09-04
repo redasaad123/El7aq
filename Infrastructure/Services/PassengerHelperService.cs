@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Core.Entities;
+using Core.Interfaces;
+using Infrastructure.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,47 +13,40 @@ namespace Infrastructure.Services
     public class PassengerHelperService : IPassengerHelperService
     {
 
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork<PassengerProfile> _passengerUow;
 
-        public PassengerHelperService(ApplicationDbContext context)
+        public PassengerHelperService(IUnitOfWork<PassengerProfile> passengerUow)
         {
-            _context = context;
+            _passengerUow = passengerUow;
         }
         
-        public async Task<int?> GetPassengerIdFromUserIdAsync(string userId)
+        public async Task<string?> GetPassengerIdFromUserIdAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
                 return null;
 
             // Find the passenger profile by UserId
-            var passengerProfile = await _context.Passengers
+            var passengerProfile = await _passengerUow.Entity.GetAllAsyncAsQuery()
                 .FirstOrDefaultAsync(p => p.UserId == userId);
 
             if (passengerProfile == null)
                 return null;
 
-            // Convert string ID to int
-            if (int.TryParse(passengerProfile.Id, out int passengerId))
-                return passengerId;
-
-            return null;
+            return passengerProfile.Id;
         }
 
-        public async Task<string> GetUserIdFromPassengerIdAsync(int passengerId)
+        public async Task<string?> GetUserIdFromPassengerIdAsync(string passengerId)
         {
-           
-            var passengerIdStr = passengerId.ToString();
-            var passengerProfile = await _context.Passengers
-                .FirstOrDefaultAsync(p => p.Id == passengerIdStr);
+            var passengerProfile = await _passengerUow.Entity.GetAllAsyncAsQuery()
+                .FirstOrDefaultAsync(p => p.Id == passengerId);
 
-            return passengerProfile?.UserId!;
+            return passengerProfile?.UserId;
         }
 
-        public async Task<bool> IsValidPassengerAsync(int passengerId)
+        public async Task<bool> IsValidPassengerAsync(string passengerId)
         {
-            var passengerIdStr = passengerId.ToString();
-            return await _context.Passengers
-                .AnyAsync(p => p.Id == passengerIdStr);
+            return await _passengerUow.Entity.GetAllAsyncAsQuery()
+                .AnyAsync(p => p.Id == passengerId);
         }
     }
 }

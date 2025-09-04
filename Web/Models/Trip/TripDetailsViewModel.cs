@@ -3,7 +3,7 @@
     public class TripDetailsViewModel
     {
 
-        public int TripId { get; set; }
+        public string TripId { get; set; }
         public DateTime DepartureTime { get; set; }
         public StationViewModel OriginStation { get; set; } = new StationViewModel();
         public StationViewModel DestinationStation { get; set; } = new StationViewModel();

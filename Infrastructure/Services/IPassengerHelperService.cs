@@ -10,8 +10,8 @@ namespace Infrastructure.Services
     public interface IPassengerHelperService
     {
 
-        Task<int?> GetPassengerIdFromUserIdAsync(string userId);
-        Task<string> GetUserIdFromPassengerIdAsync(int passengerId);
-        Task<bool> IsValidPassengerAsync(int passengerId);
+        Task<string?> GetPassengerIdFromUserIdAsync(string userId);
+        Task<string?> GetUserIdFromPassengerIdAsync(string passengerId);
+        Task<bool> IsValidPassengerAsync(string passengerId);
     }
 }

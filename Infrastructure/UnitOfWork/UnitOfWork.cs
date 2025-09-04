@@ -1,8 +1,11 @@
 ﻿
 using Core.Interfaces;
 using Infrastructure;
+using Infrastructure.Repository;
+using System;
+using System.Threading.Tasks;
 
-namespace Core.UnitOfWork
+namespace Infrastructure.UnitOfWork
 {
     public class UnitOfWork<T> : IUnitOfWork<T> where T : class
     {
@@ -18,13 +21,18 @@ namespace Core.UnitOfWork
         {
             get
             {
-                return entity ?? (entity = new Rrpository.GenericRepository<T>(context));
+                return entity ?? (entity = new Repository.GenericRepository<T>(context));
             }
         }
 
         public void Save()
         {
             context.SaveChanges();
+        }
+
+        public async Task SaveAsync()
+        {
+            await context.SaveChangesAsync();
         }
     }
 }
