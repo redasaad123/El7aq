@@ -1,8 +1,10 @@
 ﻿
 using Core.Entities;
+using Core.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace Infrastructure;
 
@@ -121,6 +123,44 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
             .WithMany(pp => pp.Payments)
             .HasForeignKey(p => p.PassengerId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        // 1. Stations
+        builder.Entity<Station>().HasData(
+            new Station { Id = "S1", Name = "Ramses", City = "Cairo" },
+            new Station { Id = "S2", Name = "Sidi Gaber", City = "Alexandria" }
+        );
+
+        // 2. Route
+        builder.Entity<Route>().HasData(
+            new Route { Id = "R1", StartStationId = "S1", EndStationId = "S2", Price = 150m }
+        );
+
+      
+        // 4. DriverProfile
+        builder.Entity<DriverProfile>().HasData(
+            new DriverProfile { Id = "D1", UserId = "1d9f8228-d327-4d93-9cfc-02835fd7bbf4", LicenseNumber = "LIC123", CarNumber = "CAR123" }
+        );
+
+        // 5. PassengerProfile
+        builder.Entity<PassengerProfile>().HasData(
+            new PassengerProfile { Id = "P1", UserId = "207a1b24-2482-4c8e-8972-bb587f5d8287" }
+        );
+
+        // 6. Trip
+        builder.Entity<Trip>().HasData(
+            new Trip { Id = "T1", RouteId = "R1", DriverId = "D1", DepartureTime = DateTime.UtcNow.AddHours(2), AvailableSeats = 5 }
+        );
+
+        // 7. Booking
+        builder.Entity<Booking>().HasData(
+            new Booking { Id = "B1", PassengerId = "P1", TripId = "T1", BookingDate = DateTime.UtcNow, Status = BookingStatus.Pending }
+
+        );
+        builder.Entity<Booking>().HasData(
+            new Booking { Id = "B2", PassengerId = "P1", TripId = "T1", BookingDate = DateTime.UtcNow, Status = BookingStatus.Pending }
+
+        );
+
     }
 
     //  DbSets

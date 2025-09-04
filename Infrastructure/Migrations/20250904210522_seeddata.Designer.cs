@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250904210522_seeddata")]
+    partial class seeddata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,15 +131,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B1",
-                            BookingDate = new DateTime(2025, 9, 4, 21, 14, 45, 407, DateTimeKind.Utc).AddTicks(4648),
-                            PassengerId = "P1",
-                            Status = 0,
-                            TripId = "T1"
-                        },
-                        new
-                        {
-                            Id = "B2",
-                            BookingDate = new DateTime(2025, 9, 4, 21, 14, 45, 407, DateTimeKind.Utc).AddTicks(4665),
+                            BookingDate = new DateTime(2025, 9, 4, 21, 5, 21, 432, DateTimeKind.Utc).AddTicks(8534),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -326,7 +321,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = "T1",
                             AvailableSeats = 5,
-                            DepartureTime = new DateTime(2025, 9, 4, 23, 14, 45, 407, DateTimeKind.Utc).AddTicks(4609),
+                            DepartureTime = new DateTime(2025, 9, 4, 23, 5, 21, 432, DateTimeKind.Utc).AddTicks(8499),
                             DriverId = "D1",
                             RouteId = "R1"
                         });

@@ -1,12 +1,14 @@
 ﻿@{
-    ViewData["Title"] = "نجاح الدفع";
+    ViewData["Title"] = "Payment Success";
 }
 
-<div class="alert alert-success mt-4">
-    ✅ تم الدفع بنجاح! شكراً لاستخدامك خدمتنا.
-</div>
+<h2>Payment Success</h2>
 
-@if (ViewBag.PaypalResponse != null)
-{
-    <pre>@ViewBag.PaypalResponse</pre> <!-- يظهر Response لو حابب تشوف بيانات PayPal -->
-}
+<p>تمت عملية الدفع بنجاح!</p>
+
+<h4>PayPal Response:</h4>
+<pre>
+@Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.PaypalResponse, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }))
+</pre>
+
+<a href="@Url.Action("Index", "Payment")" class="btn btn-success">رجوع للمدفوعات</a>

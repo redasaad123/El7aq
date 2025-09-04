@@ -17,10 +17,12 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;using Core.Entities;
+using Microsoft.Extensions.Logging;
+using Core.Entities;
 using Core.Entities;
 using System.Net.Mail;
 using System.Security.Claims;
+using Infrastructure;
 
 namespace Web.Areas.Identity.Pages.Account
 {
@@ -32,13 +34,15 @@ namespace Web.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<AppUsers> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly ApplicationDbContext _db;
 
         public RegisterModel(
             UserManager<AppUsers> userManager,
             IUserStore<AppUsers> userStore,
             SignInManager<AppUsers> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext db)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -46,6 +50,7 @@ namespace Web.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _db = db;
         }
 
         /// <summary>
@@ -157,7 +162,14 @@ namespace Web.Areas.Identity.Pages.Account
                     await _userManager.AddClaimAsync(user, claim);
 
 
+                    var passengerProfile = new PassengerProfile
+                    {
+                        Id = user.Id,   
+                        UserId = user.Id                  
+                    };
 
+                    _db.Passengers.Add(passengerProfile);
+                    await _db.SaveChangesAsync();
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     //var callbackUrl = Url.Page(

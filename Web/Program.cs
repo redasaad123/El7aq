@@ -1,6 +1,10 @@
-using Microsoft.EntityFrameworkCore;
-using Infrastructure;
+using Core;
 using Core.Entities;
+using Core.Interfaces;
+using Infrastructure;
+using Infrastructure.Mapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Web
 {
@@ -19,7 +23,14 @@ namespace Web
             builder.Services.AddDefaultIdentity<AppUsers>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+            builder.Services.AddAutoMapper(cfg =>
+            {
+                cfg.AddProfile<MapperConfig>();
+            });
 
+            builder.Services.AddScoped<IEmailSend, EmailSend>();
+            builder.Services.AddHttpClient();
+            builder.Services.AddScoped<IPayPalService, PayPalService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

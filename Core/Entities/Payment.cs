@@ -1,38 +1,34 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Core.Entities;
+using Core.Enums;
+using System.ComponentModel.DataAnnotations;
 
-namespace Core.Entities
+public class Payment
 {
-    public class Payment
-    {
-        
-        public int Id { get; set; }
+    [Key]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
 
-        [Required]
-        [ForeignKey(nameof(Booking))]
-        public string BookingId { get; set; }  
+    [Required]
+    public string BookingId { get; set; }  // FK → Booking
 
-        [Required]
-        [ForeignKey(nameof(Passenger))]
-        public string PassengerId { get; set; }
+    [Required]
+    public string PassengerId { get; set; } // FK → Passenger
 
-        [Required]
-        [Range(0.01, double.MaxValue)]
-        public decimal Amount { get; set; }
+    [Required]
+    [Range(0.01, double.MaxValue)]
+    public decimal Amount { get; set; }
 
-        [Required]
-        public string Currency { get; set; }
+    [Required]
+    public string Currency { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public Enums.PaymentStatus Status { get; set; }
-        public Enums.PaymentMethod Method { get; set; }
+    public PaymentStatus Status { get; set; }
+    public PaymentMethod Method { get; set; }
 
-        [Required]
-        public string TransactionReference { get; set; }
+    [Required]
+    public string TransactionReference { get; set; }
 
-        // Navigation
-        public PassengerProfile Passenger { get; set; }
-        public Booking Booking { get; set; } 
-    }
+    // Navigation
+    public PassengerProfile Passenger { get; set; }
+    public Booking Booking { get; set; }
 }
