@@ -4,6 +4,8 @@ using Core.Entities;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Core.Interfaces;
+using Web.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace Web
 {
@@ -22,6 +24,9 @@ namespace Web
             builder.Services
                 .AddDefaultIdentity<AppUsers>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            // Register custom claims principal factory
+            builder.Services.AddScoped<IUserClaimsPrincipalFactory<AppUsers>, ApplicationClaimsPrincipalFactory>();
 
             // Application services and unit of work registrations
             builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
