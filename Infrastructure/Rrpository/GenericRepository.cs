@@ -11,46 +11,49 @@ namespace Core.Rrpository
     public class GenericRepository<T> : Interfaces.IGenericRepository<T> where T : class
     {
         private readonly ApplicationDbContext context;
-        private readonly DbSet<T> Dpset;
+        private readonly DbSet<T> dbSet;
 
         public GenericRepository(ApplicationDbContext context)
         {
             this.context = context;
-            Dpset = context.Set<T>();
+            dbSet = context.Set<T>();
         }
 
         public void Delete(object id)
         {
-            T entity = Get(id);
-
-            Dpset.Remove(entity);
-           
+            var entity = Get(id);
+            if (entity == null)
+                return;
+            dbSet.Remove(entity);
         }
 
         public T Get(object id)
         {
-            return Dpset.Find(id);
+            return dbSet.Find(id);
         }
 
         public IEnumerable<T> GetAll()
         {
-            return Dpset.ToList();
+            return dbSet.AsNoTracking().ToList();
             
         }
 
         public object GetElement(object id)
         {
-            return Dpset.Find(id);
+            return dbSet.Find(id);
         }
 
         public void Insert(T entity)
         {
-            Dpset.Add(entity);
+            dbSet.Add(entity);
         }
 
         public void Update(T entity)
         {
-            Dpset.Attach(entity);
+            if (context.Entry(entity).State == EntityState.Detached)
+            {
+                dbSet.Attach(entity);
+            }
             context.Entry(entity).State = EntityState.Modified;
         }
     }

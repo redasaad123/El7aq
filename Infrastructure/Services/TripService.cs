@@ -145,8 +145,6 @@ namespace Infrastructure.Services
 
         #endregion
 
-
-
         #region Passenger Operations
         public async Task<IEnumerable<Trip>> SearchTripsAsync(string originCityId, string destinationCityId, DateTime date)
         {
@@ -225,8 +223,6 @@ namespace Infrastructure.Services
         }
 
         #endregion
-
-
 
         #region Booking Operations
         public async Task<bool> HasAvailableSeatsAsync(string tripId, int seatsNeeded = 1)

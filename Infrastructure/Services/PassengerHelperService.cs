@@ -17,7 +17,7 @@ namespace Infrastructure.Services
             _context = context;
         }
         
-        public async Task<int?> GetPassengerIdFromUserIdAsync(string userId)
+        public async Task<string?> GetPassengerIdFromUserIdAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
                 return null;
@@ -29,28 +29,21 @@ namespace Infrastructure.Services
             if (passengerProfile == null)
                 return null;
 
-            // Convert string ID to int
-            if (int.TryParse(passengerProfile.Id, out int passengerId))
-                return passengerId;
-
-            return null;
+            return passengerProfile.Id;
         }
 
-        public async Task<string> GetUserIdFromPassengerIdAsync(int passengerId)
+        public async Task<string> GetUserIdFromPassengerIdAsync(string passengerId)
         {
-           
-            var passengerIdStr = passengerId.ToString();
             var passengerProfile = await _context.Passengers
-                .FirstOrDefaultAsync(p => p.Id == passengerIdStr);
+                .FirstOrDefaultAsync(p => p.Id == passengerId);
 
             return passengerProfile?.UserId!;
         }
 
-        public async Task<bool> IsValidPassengerAsync(int passengerId)
+        public async Task<bool> IsValidPassengerAsync(string passengerId)
         {
-            var passengerIdStr = passengerId.ToString();
             return await _context.Passengers
-                .AnyAsync(p => p.Id == passengerIdStr);
+                .AnyAsync(p => p.Id == passengerId);
         }
     }
 }

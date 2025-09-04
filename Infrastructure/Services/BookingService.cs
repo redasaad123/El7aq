@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
-    public class BookingService
+    public class BookingService : IBookingService
     {
         private readonly IUnitOfWork<Booking> _bookingUow;
         private readonly IUnitOfWork<Trip> _tripUow;

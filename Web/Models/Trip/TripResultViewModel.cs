@@ -2,7 +2,7 @@
 {
     public class TripResultViewModel
     {
-        public int TripId { get; set; }
+        public string TripId { get; set; }
         public DateTime DepartureTime { get; set; }
         public string OriginStation { get; set; } = string.Empty;
         public string DestinationStation { get; set; } = string.Empty;

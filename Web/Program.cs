@@ -16,8 +16,16 @@ namespace Web
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<AppUsers>(options => options.SignIn.RequireConfirmedAccount = false)
+            builder.Services
+                .AddDefaultIdentity<AppUsers>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            // Application services and unit of work registrations
+            builder.Services.AddScoped(typeof(Core.Interfaces.IUnitOfWork<>), typeof(Core.UnitOfWork.UnitOfWork<>));
+            builder.Services.AddScoped<Infrastructure.Services.ITripService, Infrastructure.Services.TripService>();
+            builder.Services.AddScoped<Infrastructure.Services.IBookingService, Infrastructure.Services.BookingService>();
+            builder.Services.AddScoped<Infrastructure.Services.IPassengerHelperService, Infrastructure.Services.PassengerHelperService>();
+
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
@@ -39,6 +47,8 @@ namespace Web
 
             app.UseRouting();
 
+            // Ensure authentication runs before authorization
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

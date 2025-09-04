@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Infrastructure.Services;
 using System.Security.Claims;
-
 using Web.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Web.Models.Booking;
 using Web.Models.Trip;
 using Core.Enums;
@@ -32,7 +30,7 @@ namespace Web.Controllers
         }
 
         // Helper method to get current passenger ID
-        private async Task<int?> GetCurrentPassengerIdAsync()
+        private async Task<string?> GetCurrentPassengerIdAsync()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
@@ -67,7 +65,7 @@ namespace Web.Controllers
                     model.Date);
                 model.SearchResults = trips.Select(trip => new TripResultViewModel
                 {
-                    TripId = int.Parse(trip.Id),
+                    TripId = trip.Id,
                     DepartureTime = trip.DepartureTime,
                     OriginStation = trip.Route?.StartStation?.Name!,
                     DestinationStation = trip.Route?.EndStation?.Name!,
@@ -106,7 +104,7 @@ namespace Web.Controllers
             var bookedSeats = trip.Bookings?.Count(b => b.Status != BookingStatus.Cancelled) ?? 0;
             var model = new TripDetailsViewModel
             {
-                TripId = int.Parse(trip.Id),
+                TripId = trip.Id,
                 DepartureTime = trip.DepartureTime,
                 OriginStation = new StationViewModel
                 {
@@ -148,7 +146,7 @@ namespace Web.Controllers
             try
             {
                 var passengerId = await GetCurrentPassengerIdAsync();
-                if (!passengerId.HasValue)
+                if (passengerId == null)
                 {
                     TempData["ErrorMessage"] = "Must LogIn Frist";
                     return RedirectToAction("Login", "Account");
@@ -179,7 +177,7 @@ namespace Web.Controllers
             try
             {
                 var passengerId = await GetCurrentPassengerIdAsync();
-                if (!passengerId.HasValue)
+                if (passengerId == null)
                 {
                     TempData["ErrorMessage"] = "Must LogIn Frist";
                     return RedirectToAction("Login", "Account");
@@ -233,7 +231,7 @@ namespace Web.Controllers
             try
             {
                 var passengerId = await GetCurrentPassengerIdAsync();
-                if (!passengerId.HasValue)
+                if (passengerId == null)
                 {
                     TempData["ErrorMessage"] = "Must LogIn Frist";
                     return RedirectToAction("Login", "Account");
@@ -296,7 +294,7 @@ namespace Web.Controllers
 
                 // Verify that this booking belongs to the current passenger
                 var passengerId = await GetCurrentPassengerIdAsync();
-                if (!passengerId.HasValue || booking.PassengerId != passengerId.Value.ToString())
+                if (passengerId == null || booking.PassengerId != passengerId)
                 {
                     TempData["ErrorMessage"] = "You are Forbiden";
                     return RedirectToAction("MyBookings");
@@ -304,14 +302,14 @@ namespace Web.Controllers
 
                 var model = new BookingDetailsViewModel
                 {
-                    BookingId = int.Parse(booking.Id),
-                    TripId = int.Parse(booking.TripId),
+                    BookingId =booking.Id,
+                    TripId = booking.TripId,
                     BookingDate = booking.BookingDate,
                     Status = booking.Status,
                     StatusText = GetBookingStatusText(booking.Status),
                     Trip = new TripDetailsViewModel
                     {
-                        TripId = int.Parse(booking.Trip.Id),
+                        TripId = booking.Trip.Id,
                         DepartureTime = booking.Trip?.DepartureTime ?? DateTime.MinValue,
                         OriginStation = new StationViewModel
                         {
@@ -365,7 +363,7 @@ namespace Web.Controllers
             try
             {
                 var passengerId = await GetCurrentPassengerIdAsync();
-                if (!passengerId.HasValue)
+                if (passengerId == null)
                 {
                     TempData["ErrorMessage"] = "Must LogIn Frist";
                     return RedirectToAction("Login", "Account");

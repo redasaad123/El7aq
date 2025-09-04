@@ -5,8 +5,8 @@ namespace Web.Models.Booking
 {
     public class BookingDetailsViewModel
     {
-        public int BookingId { get; set; }
-        public int TripId { get; set; }
+        public string BookingId { get; set; }
+        public string TripId { get; set; }
         public DateTime BookingDate { get; set; }
         public BookingStatus Status { get; set; }
         public string StatusText { get; set; }
