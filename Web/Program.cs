@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Infrastructure;
 using Core.Entities;
+using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
+using Core.Interfaces;
 
 namespace Web
 {
@@ -21,10 +24,10 @@ namespace Web
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             // Application services and unit of work registrations
-            builder.Services.AddScoped(typeof(Core.Interfaces.IUnitOfWork<>), typeof(Core.UnitOfWork.UnitOfWork<>));
-            builder.Services.AddScoped<Infrastructure.Services.ITripService, Infrastructure.Services.TripService>();
-            builder.Services.AddScoped<Infrastructure.Services.IBookingService, Infrastructure.Services.BookingService>();
-            builder.Services.AddScoped<Infrastructure.Services.IPassengerHelperService, Infrastructure.Services.PassengerHelperService>();
+            builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+            builder.Services.AddScoped<ITripService, TripService>();
+            builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddScoped<IPassengerHelperService, PassengerHelperService>();
 
             builder.Services.AddControllersWithViews();
 

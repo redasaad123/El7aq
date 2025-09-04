@@ -1,8 +1,7 @@
 ﻿
 using Core.Interfaces;
-using Infrastructure;
 
-namespace Core.UnitOfWork
+namespace Infrastructure.UnitOfWork
 {
     public class UnitOfWork<T> : IUnitOfWork<T> where T : class
     {

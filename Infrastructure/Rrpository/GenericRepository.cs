@@ -1,60 +1,109 @@
-﻿using Infrastructure;
+﻿using Core.Interfaces;
+
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Rrpository
+namespace Infrastructure.Rrpository
 {
-    public class GenericRepository<T> : Interfaces.IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
+
         private readonly ApplicationDbContext context;
-        private readonly DbSet<T> dbSet;
+        private readonly DbSet<T> _dbSet;
 
         public GenericRepository(ApplicationDbContext context)
         {
             this.context = context;
-            dbSet = context.Set<T>();
+            _dbSet = context.Set<T>();
+
         }
 
-        public void Delete(object id)
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
-            var entity = Get(id);
-            if (entity == null)
-                return;
-            dbSet.Remove(entity);
+            return await _dbSet.ToListAsync();
         }
 
-        public T Get(object id)
+        public IQueryable<T> GetAllAsyncAsQuery()
         {
-            return dbSet.Find(id);
+            return _dbSet.AsQueryable();
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<T> GetAsync(string id)
         {
-            return dbSet.AsNoTracking().ToList();
-            
+            return await _dbSet.FindAsync(id);
+
+        }
+        public async Task<T> AddAsync(T entity)
+        {
+            await _dbSet.AddAsync(entity);
+            return entity;
         }
 
-        public object GetElement(object id)
+        public async Task<T> UpdateAsync(T entity)
         {
-            return dbSet.Find(id);
+            _dbSet.Update(entity);
+            return entity;
         }
 
-        public void Insert(T entity)
+        public T Delete(T entity)
         {
-            dbSet.Add(entity);
+            _dbSet.Remove(entity);
+            return entity;
         }
 
-        public void Update(T entity)
+        public async Task<List<object>> FindAll(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> Object)
         {
-            if (context.Entry(entity).State == EntityState.Detached)
-            {
-                dbSet.Attach(entity);
-            }
-            context.Entry(entity).State = EntityState.Modified;
+            var query = await _dbSet.Where(predicate).Select(Object).ToListAsync();
+            return query;
+        }
+
+        public async Task<object> Find(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> Object)
+        {
+            var query = await _dbSet.Where(predicate).Select(Object).FirstOrDefaultAsync();
+            return query;
+        }
+
+        public async Task<bool> Any(Expression<Func<T, bool>> predicate)
+        {
+            var query = await _dbSet.AnyAsync(predicate);
+            return query;
+        }
+
+
+        public async Task<List<object>> FindAll(Expression<Func<T, object>> Object)
+        {
+            var query = await _dbSet.Select(Object).ToListAsync();
+            return query;
+        }
+        public async Task<List<string>> FindAll(Expression<Func<T, bool>> predicate, Expression<Func<T, string>> Object)
+        {
+            var query = await _dbSet.Where(predicate).Select(Object).ToListAsync();
+            return query;
+        }
+
+        public T Find(Expression<Func<T, bool>> predicate)
+        {
+            var query = _dbSet.Where(predicate).FirstOrDefault();
+
+            return query;
+        }
+
+        public async Task<object> Mapping(Expression<Func<T, object>> Object)
+        {
+            var query = _dbSet.Select(Object);
+            return query;
+        }
+
+        public async Task<List<T>> FindAll(Expression<Func<T, bool>> predicate)
+        {
+            var query = await _dbSet.Where(predicate).ToListAsync();
+
+            return query;
         }
     }
 }
