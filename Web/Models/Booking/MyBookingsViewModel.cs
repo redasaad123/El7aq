@@ -1,4 +1,5 @@
-﻿using El7aq.Domain.Enums;
+﻿
+using Core.Enums;
 
 namespace Web.Models.Booking
 {

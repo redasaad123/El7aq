@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Infrastructure;
-using Infrastructure.Entities;
+using Core.Entities;
 
 namespace Web
 {

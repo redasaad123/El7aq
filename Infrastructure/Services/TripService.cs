@@ -1,6 +1,7 @@
-﻿using Core.Interfaces;
-using El7aq.Domain.Entities;
-using El7aq.Domain.Enums;
+﻿using Core.Entities;
+using Core.Enums;
+using Core.Interfaces;
+
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

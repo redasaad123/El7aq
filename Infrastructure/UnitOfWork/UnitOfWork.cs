@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using Core.Interfaces;
 using Infrastructure;
-using Core.Rrpository;
 
 namespace Core.UnitOfWork
 {
@@ -23,7 +18,7 @@ namespace Core.UnitOfWork
         {
             get
             {
-                return entity ?? (entity = new GenericRepository<T>(context));
+                return entity ?? (entity = new Rrpository.GenericRepository<T>(context));
             }
         }
 

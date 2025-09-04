@@ -2,12 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Infrastructure.Services;
 using System.Security.Claims;
-using El7aq.Domain.Entities;
-using El7aq.Domain.Enums;
+
 using Web.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Web.Models.Booking;
 using Web.Models.Trip;
+using Core.Enums;
+using Core.Entities;
 
 namespace Web.Controllers
 {
@@ -218,6 +219,8 @@ namespace Web.Controllers
                 return View(new MyBookingsViewModel());
             }
         }
+
+      
         #endregion
 
 

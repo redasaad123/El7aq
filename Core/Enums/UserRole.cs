@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Enums
+﻿namespace Core.Enums
 {
     public enum UserRole
     {

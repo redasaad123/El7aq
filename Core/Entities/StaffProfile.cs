@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Infrastructure.Entities
+namespace Core.Entities
 {
-    public class PassengerProfile
+    public class StaffProfile
     {
         [Key]
         public string Id { get; set; }
@@ -12,10 +12,13 @@ namespace Infrastructure.Entities
         [ForeignKey(nameof(User))]
         public string UserId { get; set; }
 
+        [Required]
+        [ForeignKey(nameof(Station))]
+        public string StationId { get; set; }
+
         // Navigation
         public AppUsers? User { get; set; }
-        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
+        public Station? Station { get; set; }
     }
 
 

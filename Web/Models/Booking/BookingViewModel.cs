@@ -1,4 +1,4 @@
-﻿using El7aq.Domain.Enums;
+﻿using Core.Enums;
 using Web.Models.Trip;
 
 namespace Web.Models.Booking

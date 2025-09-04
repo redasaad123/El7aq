@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Infrastructure.Entities
+namespace Core.Entities
 {
     public class Trip
     {

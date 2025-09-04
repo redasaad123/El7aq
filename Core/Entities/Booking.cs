@@ -1,8 +1,8 @@
-﻿using Infrastructure.Enums;
+﻿using Core.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Infrastructure.Entities
+namespace Core.Entities
 {
     public class Booking
     {
