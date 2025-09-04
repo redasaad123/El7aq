@@ -1,0 +1,149 @@
+﻿body {
+    height: inherit;
+    background-color: #f7f9fc;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #0b3c55;
+}
+
+.main {
+    height: 85%;
+
+}
+
+
+
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    height:100%;
+    align-items:center;
+
+    padding: 20px 0px ;
+}
+.form-container-div {
+    background: #fff;
+    padding: 2rem 3rem 2.5rem 3rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(17, 51, 83, 0.1);
+    text-align: center;
+}
+h2 {
+    margin: 0 0 2.5rem 0;
+    font-weight: 800;
+    font-size: 2rem;
+    letter-spacing: 0.03em;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 1rem;
+    border-bottom: 2.5px solid #0D4259;
+    
+}
+
+/* Forms styling */
+form {
+/*    display: flex;
+    flex-direction: column;*/
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    padding: 0.55rem 0.8rem;
+    border: 1.5px solid #ddd;
+    width:100%;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: border-color 0.50s ease;
+    margin-bottom:10px;
+}
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+        border-color: #218CBA;
+        outline: none;
+        box-shadow: 0 0 6px rgba(37, 126, 191, 0.4);
+    }
+
+/* Anchor styles under inputs */
+.forgot-password,
+.toggle-form {
+    font-size: 0.8rem;
+    color: #218CBA;
+    cursor: pointer;
+    text-decoration: none;
+    user-select: none;
+    margin-top: -0.5rem;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    text-align: right !important;
+    display:flex;
+    justify-content:start;
+}
+
+.toggle-form {
+    font-size: 0.75rem;
+    color: #3a6ea5;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+    .toggle-form a,
+    .forgot-password a, .sub-text a {
+        color: #2c7dbf;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+        .toggle-form a:hover,
+        .forgot-password a:hover {
+            color: #145a8a;
+            text-decoration: underline;
+        }
+
+/* Button styling */
+button {
+    background: #27AAE2;
+    border: none;
+    border-radius: 10px;
+    padding: 0.6rem 0;
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: white;
+    cursor: pointer;
+    width: 85%;
+    box-shadow: 0 4px 8px #27AAE2;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+    button:hover,
+    button:focus {
+        background: #218CBA;
+        box-shadow: 0 8px 15px #218CBA;
+        outline: none;
+    }
+
+/* Sub text below buttons */
+.sub-text {
+    font-size: 0.75rem;
+    color: #748ca1;
+    margin-top: 0.5rem;
+}
+
+    .sub-text a {
+        color: #218CBA;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+/* Responsive smaller screen tweaks */
+/*@media (max-width: 700px) {
+    body {
+        flex-direction: column;
+        gap: 2rem;
+        padding: 2rem 1rem 3rem 1rem;
+    }
+}*/
