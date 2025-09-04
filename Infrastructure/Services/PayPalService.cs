@@ -1,237 +1,240 @@
-﻿//using AutoMapper;
-//using Core.Interfaces;
-//using Infrastructure;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Identity;
-//using Microsoft.EntityFrameworkCore;
-//using Microsoft.Extensions.Configuration;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Net.Http.Headers;
-//using System.Security.Claims;
-//using System.Text;
-//using System.Text.Json;
-//using System.Threading.Tasks;
+﻿using AutoMapper;
+using Core.Entities;
+using Core.Enums;
+using Core.Interfaces;
+using Infrastructure;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Linq;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 
-//namespace Core
-//{
-//    public class PayPalService : IPayPalService
-//    {
-//        private readonly ApplicationDbContext _db;
-//        private readonly IMapper _mapper;
-//        private readonly UserManager<Infrastructure.Entities.AppUsers> _userManager;
-//        private readonly IConfiguration _configuration;
-//        private readonly IEmailSend _emailSend;
-//        private readonly string? client_Id;
-//        private readonly string? clientSecret;
-//        private readonly HttpClient _httpClient;
-//        private readonly IHttpContextAccessor contextAccessor;
+namespace Core
+{
+    public class PayPalService : IPayPalService
+    {
+        private readonly ApplicationDbContext _db;
+        private readonly IMapper _mapper;
+        private readonly UserManager<AppUsers> _userManager;
+        private readonly IConfiguration _configuration;
+        private readonly IEmailSend _emailSend;
+        private readonly HttpClient _httpClient;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly string _clientId;
+        private readonly string _clientSecret;
+        private readonly string _currency;
 
-//        public PayPalService(
-//            ApplicationDbContext db,
-//            IMapper mapper,
-//            UserManager<AppUsers> userManager,
-//            IConfiguration configuration,
-//            IEmailSend emailSend,
-//            HttpClient httpClient,
-//            IHttpContextAccessor httpContextAccessor)
-//        {
-//            _db = db;
-//            _mapper = mapper;
-//            _userManager = userManager;
-//            _configuration = configuration;
-//            _emailSend = emailSend;
-//            client_Id = _configuration.GetValue<string>("PayPal:ClientId");
-//            clientSecret = _configuration.GetValue<string>("PayPal:ClientSecret");
-//            _httpClient = httpClient;
-//            contextAccessor = httpContextAccessor;
-//        }
+        public PayPalService(
+            ApplicationDbContext db,
+            IMapper mapper,
+            UserManager<AppUsers> userManager,
+            IConfiguration configuration,
+            IEmailSend emailSend,
+            HttpClient httpClient,
+            IHttpContextAccessor contextAccessor)
+        {
+            _db = db;
+            _mapper = mapper;
+            _userManager = userManager;
+            _configuration = configuration;
+            _emailSend = emailSend;
+            _httpClient = httpClient;
+            _contextAccessor = contextAccessor;
 
-//        public async Task<string> CapturePaymentAsync(string orderId)
-//        {
-//            var orderStatus = await GetOrderStatusAsync(orderId);
-//            if (orderStatus != "APPROVED")
-//            {
-//                throw new Exception($"لا يمكن تنفيذ الطلب. الحالة الحالية: {orderStatus}");
-//            }
+            _clientId = _configuration.GetValue<string>("PayPal:ClientId") ?? throw new ArgumentNullException("PayPal ClientId missing");
+            _clientSecret = _configuration.GetValue<string>("PayPal:ClientSecret") ?? throw new ArgumentNullException("PayPal ClientSecret missing");
+            _currency = _configuration.GetValue<string>("PayPal:Currency") ?? "USD";
+        }
 
-//            var accessToken = await GetAccessTokenAsync();
-//            var request = new HttpRequestMessage(
-//                HttpMethod.Post,
-//                $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{orderId}/capture"
-//            );
+        public async Task<string> CapturePaymentAsync(string orderId)
+        {
+            var orderStatus = await GetOrderStatusAsync(orderId);
+            if (orderStatus != "APPROVED")
+                throw new Exception($"Cannot capture order. Current status: {orderStatus}");
 
-//            // تعيين headers
-//            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-//            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-//            request.Content = new StringContent("", Encoding.UTF8, "application/json");
+            var accessToken = await GetAccessTokenAsync();
 
-//            var response = await _httpClient.SendAsync(request);
-//            var resultJson = await response.Content.ReadAsStringAsync();
+            var request = new HttpRequestMessage(
+                HttpMethod.Post,
+                $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{orderId}/capture"
+            );
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Content = new StringContent("", Encoding.UTF8, "application/json");
 
-//            if (!response.IsSuccessStatusCode)
-//            {
-//                throw new Exception($"فشل تنفيذ دفعة PayPal: {resultJson}");
-//            }
+            var response = await _httpClient.SendAsync(request);
+            var resultJson = await response.Content.ReadAsStringAsync();
 
-//            var payment = await _db.Payments.FirstOrDefaultAsync(p => p.TransactionReference == orderId);
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"PayPal capture error: {resultJson}");
 
-//            if (payment != null)
-//            {
-//                payment.Status = Infrastructure.Enums.PaymentStatus.Success;
-//                await _db.SaveChangesAsync();
+            var payment = await _db.Payments.FirstOrDefaultAsync(p => p.TransactionReference == orderId);
+            if (payment != null)
+            {
+                payment.Status = PaymentStatus.Success;
+                await _db.SaveChangesAsync();
 
-//                var user = await _userManager.FindByIdAsync(payment.PassengerId);
-//                if (user != null)
-//                {
-//                    await _emailSend.SendEmail(
-//                        user.Email,
-//                        "تأكيد الدفع",
-//                        $"مرحباً {user.UserName} \n \n تم دفع طلبكم رقم {orderId} بنجاح للحجز رقم {payment.BookingId}");
-//                }
-//            }
-//            return resultJson;
-//        }
+                var user = await _userManager.FindByIdAsync(payment.PassengerId);
+                if (user != null)
+                {
+                    await _emailSend.SendEmail(
+                        user.Email,
+                        "Payment Confirmation",
+                        $"Hello {user.UserName},\n\nYour order #{orderId} has been successfully paid for booking #{payment.BookingId}."
+                    );
+                }
+            }
 
-//        public async Task<string> GetOrderStatusAsync(string orderId)
-//        {
-//            var accessToken = await GetAccessTokenAsync();
-//            var request = new HttpRequestMessage(
-//                HttpMethod.Get,
-//                $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{orderId}"
-//            );
+            return resultJson;
+        }
 
-//            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        public async Task<string> GetOrderStatusAsync(string orderId)
+        {
+            var accessToken = await GetAccessTokenAsync();
 
-//            var response = await _httpClient.SendAsync(request);
-//            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{orderId}"
+            );
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-//            if (response.IsSuccessStatusCode)
-//            {
-//                using var doc = JsonDocument.Parse(jsonResponse);
-//                if (doc.RootElement.TryGetProperty("status", out var status))
-//                {
-//                    return status.GetString() ?? "UNKNOWN";
-//                }
-//            }
-//            return "UNKNOWN";
-//        }
+            var response = await _httpClient.SendAsync(request);
+            var jsonResponse = await response.Content.ReadAsStringAsync();
 
-//        public async Task<PaymentDTO> CreatePayment(decimal amount, string bookingId)
-//        {
-//            var accessToken = await GetAccessTokenAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                using var doc = JsonDocument.Parse(jsonResponse);
+                if (doc.RootElement.TryGetProperty("status", out var status))
+                    return status.GetString() ?? "UNKNOWN";
+            }
+            return "UNKNOWN";
+        }
 
-//            _httpClient.DefaultRequestHeaders.Clear();
-//            _httpClient.DefaultRequestHeaders.Authorization =
-//                new AuthenticationHeaderValue("Bearer", accessToken);
-//            _httpClient.DefaultRequestHeaders.Accept.Add(
-//                new MediaTypeWithQualityHeaderValue("application/json"));
+        public async Task<PaymentDTO> CreatePayment(decimal amount, string bookingId)
+        {
+            var accessToken = await GetAccessTokenAsync();
 
-//            var currentPassengerId = contextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-//            if (string.IsNullOrEmpty(currentPassengerId))
-//                throw new Exception("المستخدم غير مصرح له بالوصول");
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-//            var request = contextAccessor.HttpContext?.Request;
-//            var baseUrl = $"{request?.Scheme}://{request?.Host}";
+            var currentUserId = _contextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(currentUserId))
+                throw new Exception("User not authenticated");
 
-//            var body = new
-//            {
-//                intent = "CAPTURE",
-//                purchase_units = new[]
-//                {
-//                    new
-//                    {
-//                        amount = new
-//                        {
-//                            currency_code = "USD",
-//                            value = amount.ToString("F2")
-//                        },
-//                        reference_id = bookingId.ToString()
-//                    }
-//                },
-//                application_context = new
-//                {
-//                    return_url = $"{baseUrl}/Payment/Success",  // MVC Route
-//                    cancel_url = $"{baseUrl}/Payment/Cancel",   // MVC Route
-//                    user_action = "PAY_NOW"
-//                }
-//            };
+            var passenger = await _db.Passengers.FirstOrDefaultAsync(p => p.UserId == currentUserId);
+            if (passenger == null)
+                throw new Exception("Passenger profile not found for current user");
 
-//            var json = JsonSerializer.Serialize(body);
+            var request = _contextAccessor.HttpContext?.Request;
+            var baseUrl = $"{request?.Scheme}://{request?.Host}";
 
-//            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var body = new
+            {
+                intent = "CAPTURE",
+                purchase_units = new[]
+                {
+                    new
+                    {
+                        amount = new
+                        {
+                            currency_code = _currency,
+                            value = amount.ToString("F2")
+                        },
+                        reference_id = bookingId
+                    }
+                },
+                application_context = new
+                {
+                    return_url = $"{baseUrl}/Payment/Success?bookingId={bookingId}", 
+                    cancel_url = $"{baseUrl}/Payment/Cancel?bookingId={bookingId}",  
+                    user_action = "PAY_NOW"
+                }
+            };
 
-//            var response = await _httpClient.PostAsync("https://api-m.sandbox.paypal.com/v2/checkout/orders", content);
+            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("https://api-m.sandbox.paypal.com/v2/checkout/orders", content);
+            var resultJson = await response.Content.ReadAsStringAsync();
 
-//            var resultJson = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"PayPal error: {response.StatusCode}, {resultJson}");
 
-//            Console.WriteLine("PAYPAL RESPONSE: " + resultJson);
+            using var doc = JsonDocument.Parse(resultJson);
+            var orderId = doc.RootElement.GetProperty("id").GetString();
+            var approveUrl = doc.RootElement
+                .GetProperty("links")
+                .EnumerateArray()
+                .First(x => x.GetProperty("rel").GetString() == "approve")
+                .GetProperty("href")
+                .GetString();
 
-//            if (!response.IsSuccessStatusCode)
-//            {
-//                throw new Exception($"erorr PayPal: {response.StatusCode}, {resultJson}");
-//            }
+            var payment = new Payment
+            {
+                BookingId = bookingId,
+                PassengerId = passenger.Id,   
+                Amount = amount,
+                Currency = _currency,
+                CreatedAt = DateTime.UtcNow,
+                Status = PaymentStatus.Pending,
+                Method = PaymentMethod.Card,
+                TransactionReference = orderId
+            };
 
-//            using var doc = JsonDocument.Parse(resultJson);
+            _db.Payments.Add(payment);
+            await _db.SaveChangesAsync();
 
-//            var orderId = doc.RootElement.GetProperty("id").GetString();
-//            var approveUrl = doc.RootElement
-//                .GetProperty("links")
-//                .EnumerateArray()
-//                .First(x => x.GetProperty("rel").GetString() == "approve")
-//                .GetProperty("href")
-//                .GetString();
+            return new PaymentDTO
+            {
+                Id = payment.Id,
+                BookingId = payment.BookingId,
+                Amount = payment.Amount,
+                Currency = payment.Currency,
+                CreatedAt = payment.CreatedAt,
+                Status = payment.Status.ToString(),
+                PassengerId = payment.PassengerId,
+                IsPaid = payment.Status == PaymentStatus.Success,
+                ApproveUrl = approveUrl
+            };
+        }
 
-//            var payment = new Infrastructure.Entities.Payment
-//            {
-//                BookingId = bookingId,
-//                PassengerId= currentPassengerId,
-//                Amount = amount,
-//                Currency = "USD",
-//                CreatedAt = DateTime.UtcNow,
-//                Status = Infrastructure.Enums.PaymentStatus.Pending,
-//                Method = Infrastructure.Enums.PaymentMethod.Card,
-//                TransactionReference = orderId
-//            };
+        public async Task<string> GetAccessTokenAsync()
+        {
+            _httpClient.DefaultRequestHeaders.Clear();
+            var basicAuth = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_clientId}:{_clientSecret}"));
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", basicAuth);
 
-//            _db.Payments.Add(payment);
-//            await _db.SaveChangesAsync();
+            var content = new StringContent("grant_type=client_credentials", Encoding.UTF8, "application/x-www-form-urlencoded");
+            var response = await _httpClient.PostAsync("https://api-m.sandbox.paypal.com/v1/oauth2/token", content);
 
-//            var paymentDto = new PaymentDTO
-//            {
-//                Id = payment.Id,
-//                BookingId = payment.BookingId,
-//                Amount = payment.Amount,
-//                Currency = payment.Currency,
-//                CreatedAt = payment.CreatedAt,
-//                Status = payment.Status.ToString(),
-//                PassengerId = payment.PassengerId,
-//                IsPaid = payment.Status == PaymentStatus.Pending,
-//                ApproveUrl = approveUrl
-//            };
+            response.EnsureSuccessStatusCode();
+            var json = await response.Content.ReadAsStringAsync();
 
-//            return paymentDto;
-//        }
+            using var doc = JsonDocument.Parse(json);
+            return doc.RootElement.GetProperty("access_token").GetString() ?? throw new Exception("Failed to get access token");
+        }
 
-//        public async Task<string> GetAccessTokenAsync()
-//        {
-//            var convert = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{client_Id}:{clientSecret}"));
-//            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", convert);
+        public async Task<PaymentDTO?> GetPaymentByBookingIdAsync(string bookingId)
+        {
+            var payment = await _db.Payments.FirstOrDefaultAsync(p => p.BookingId == bookingId);
+            if (payment == null) return null;
 
-//            var request_body = new StringContent("grant_type=client_credentials", Encoding.UTF8, "application/x-www-form-urlencoded");
-
-//            var response = await _httpClient.PostAsync("https://api-m.sandbox.paypal.com/v1/oauth2/token", request_body);
-
-//            response.EnsureSuccessStatusCode();
-//            var json = await response.Content.ReadAsStringAsync();
-//            using var Doc = JsonDocument.Parse(json);
-//            return Doc.RootElement.GetProperty("access_token").GetString() ?? "null";
-//        }
-
-//        public Task<PaymentDTO?> GetPaymentByBookingIdAsync(string bookingId)
-//        {
-//            throw new NotImplementedException();
-//        }
-//    }
-//}
+            return new PaymentDTO
+            {
+                Id = payment.Id,
+                BookingId = payment.BookingId,
+                Amount = payment.Amount,
+                Currency = payment.Currency,
+                CreatedAt = payment.CreatedAt,
+                Status = payment.Status.ToString(),
+                PassengerId = payment.PassengerId,
+                IsPaid = payment.Status == PaymentStatus.Success
+            };
+        }
+    }
+}

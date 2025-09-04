@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250904185119_test21")]
+    partial class test21
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,24 +126,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TripId");
 
                     b.ToTable("Bookings");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "B1",
-                            BookingDate = new DateTime(2025, 9, 4, 21, 14, 45, 407, DateTimeKind.Utc).AddTicks(4648),
-                            PassengerId = "P1",
-                            Status = 0,
-                            TripId = "T1"
-                        },
-                        new
-                        {
-                            Id = "B2",
-                            BookingDate = new DateTime(2025, 9, 4, 21, 14, 45, 407, DateTimeKind.Utc).AddTicks(4665),
-                            PassengerId = "P1",
-                            Status = 0,
-                            TripId = "T1"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.DriverProfile", b =>
@@ -168,15 +153,6 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Drivers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "D1",
-                            CarNumber = "CAR123",
-                            LicenseNumber = "LIC123",
-                            UserId = "1d9f8228-d327-4d93-9cfc-02835fd7bbf4"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.PassengerProfile", b =>
@@ -194,13 +170,6 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Passengers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "P1",
-                            UserId = "207a1b24-2482-4c8e-8972-bb587f5d8287"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.Route", b =>
@@ -226,15 +195,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("StartStationId");
 
                     b.ToTable("Routes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "R1",
-                            EndStationId = "S2",
-                            Price = 150m,
-                            StartStationId = "S1"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.StaffProfile", b =>
@@ -278,20 +238,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Stations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "S1",
-                            City = "Cairo",
-                            Name = "Ramses"
-                        },
-                        new
-                        {
-                            Id = "S2",
-                            City = "Alexandria",
-                            Name = "Sidi Gaber"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.Trip", b =>
@@ -320,16 +266,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("RouteId");
 
                     b.ToTable("Trips");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "T1",
-                            AvailableSeats = 5,
-                            DepartureTime = new DateTime(2025, 9, 4, 23, 14, 45, 407, DateTimeKind.Utc).AddTicks(4609),
-                            DriverId = "D1",
-                            RouteId = "R1"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

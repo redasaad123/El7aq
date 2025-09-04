@@ -1,11 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-using Infrastructure;
+using Core;
 using Core.Entities;
-using Infrastructure.Services;
-using Infrastructure.UnitOfWork;
-using Core.Interfaces;
-using Web.Services;
-using Microsoft.AspNetCore.Identity;
 
 namespace Web
 {
@@ -35,7 +29,14 @@ namespace Web
             builder.Services.AddScoped<IPassengerHelperService, PassengerHelperService>();
 
             builder.Services.AddControllersWithViews();
+            builder.Services.AddAutoMapper(cfg =>
+            {
+                cfg.AddProfile<MapperConfig>();
+            });
 
+            builder.Services.AddScoped<IEmailSend, EmailSend>();
+            builder.Services.AddHttpClient();
+            builder.Services.AddScoped<IPayPalService, PayPalService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

@@ -1,0 +1,450 @@
+﻿<!DOCTYPE html>
+<!-- Views/Payment/Index.cshtml -->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment - Booking System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #0070ba;
+            --accent-color: #ffc439;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --dark-color: #2c3e50;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--light-bg) 0%, #e3f2fd 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .payment-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 2rem auto;
+            max-width: 800px;
+            position: relative;
+        }
+
+        .payment-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .payment-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        }
+
+        .payment-header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+        }
+
+        .payment-header .subtitle {
+            margin-top: 0.5rem;
+            opacity: 0.9;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .payment-body {
+            padding: 3rem 2rem;
+        }
+
+        .booking-info {
+            background: var(--light-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .info-value {
+            color: #495057;
+        }
+
+        .payment-methods {
+            margin-bottom: 2rem;
+        }
+
+        .method-card {
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: white;
+        }
+
+        .method-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(44, 90, 160, 0.15);
+        }
+
+        .method-card.selected {
+            border-color: var(--primary-color);
+            background: rgba(44, 90, 160, 0.05);
+        }
+
+        .method-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .method-icon {
+            width: 60px;
+            height: 40px;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--light-bg);
+            border-radius: 8px;
+        }
+
+        .paypal-btn {
+            background: linear-gradient(135deg, #0070ba 0%, #003087 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .paypal-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .paypal-btn:hover::before {
+            left: 100%;
+        }
+
+        .paypal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 112, 186, 0.4);
+        }
+
+        .security-info {
+            background: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .security-info i {
+            color: var(--success-color);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+        }
+
+        .loading-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #856404;
+            border-left: 4px solid var(--warning-color);
+        }
+
+
+            .payment-header {
+                padding: 1.5rem;
+            }
+
+            .payment-body {
+                padding: 2rem 1.5rem;
+            }
+
+            .method-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p>Redirecting to PayPal...</p>
+                <p class="small">Please wait while we process your request</p>
+            </div>
+        </div>
+
+        <!-- Alert Messages -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>
+                @TempData["Success"]
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                @TempData["Error"]
+            </div>
+        }
+
+        @if (TempData["Warning"] != null)
+        {
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                @TempData["Warning"]
+            </div>
+        }
+
+        <!-- Payment Container -->
+        <div class="payment-container">
+            <!-- Header -->
+            <div class="payment-header">
+                <h1><i class="fas fa-credit-card me-2"></i>Secure Payment</h1>
+                <p class="subtitle">Complete your booking payment safely and securely</p>
+            </div>
+
+            <!-- Body -->
+            <div class="payment-body">
+                <!-- Booking Information -->
+                <div class="booking-info">
+                    <h3 class="mb-3"><i class="fas fa-info-circle me-2"></i>Booking Details</h3>
+                    <div class="info-item">
+                        <span class="info-label">Booking ID:</span>
+                        <span class="info-value">@ViewBag.BookingId</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Payment Method:</span>
+                        <span class="info-value">PayPal</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Currency:</span>
+                        <span class="info-value">USD</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Amount to Pay:</span>
+                        <span class="info-value">$<span id="paymentAmount">100.00</span></span>
+                    </div>
+                </div>
+
+                <!-- Payment Form -->
+                <form asp-action="CreatePayment" method="post" id="paymentForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="bookingId" value="@ViewBag.BookingId" />
+                    <input type="hidden" name="amount" value="100.00" id="hiddenAmount" />
+
+                    <!-- Payment Methods -->
+                    <div class="payment-methods">
+                        <h3 class="mb-3"><i class="fas fa-wallet me-2"></i>Payment Method</h3>
+
+                        <div class="method-card selected" data-method="paypal">
+                            <div class="method-header">
+                                <div class="method-icon">
+                                    <i class="fab fa-paypal" style="font-size: 1.5rem; color: #0070ba;"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">PayPal</h5>
+                                    <p class="mb-0 text-muted small">Pay with your PayPal account or credit card</p>
+                                </div>
+                            </div>
+                            <div class="method-features">
+                                <small class="text-muted">
+                                    <i class="fas fa-shield-alt me-1"></i>Buyer Protection
+                                    <i class="fas fa-bolt ms-3 me-1"></i>Instant Payment
+                                    <i class="fas fa-mobile-alt ms-3 me-1"></i>Mobile Friendly
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Amount Input (if dynamic) -->
+                    <div class="mb-4">
+                        <label for="amount" class="form-label fw-bold">Payment Amount</label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text">$</span>
+                            <input type="number"
+                                   class="form-control"
+                                   id="amount"
+                                   name="amount"
+                                   value="100.00"
+                                   min="1"
+                                   step="0.01"
+                                   required
+                                   style="font-size: 1.25rem; font-weight: 600;">
+                        </div>
+                        <div class="form-text">Enter the amount you want to pay for this booking</div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="paypal-btn" id="payBtn">
+                        <i class="fab fa-paypal me-2"></i>
+                        Pay with PayPal
+                    </button>
+                </form>
+
+                <!-- Security Information -->
+                <div class="security-info">
+                    <i class="fas fa-lock"></i>
+                    <p class="mb-1"><strong>Your payment is secure</strong></p>
+                    <small>We use industry-standard encryption to protect your financial information. Your payment details are processed securely by PayPal.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('paymentForm');
+            const amountInput = document.getElementById('amount');
+            const hiddenAmount = document.getElementById('hiddenAmount');
+            const paymentAmountSpan = document.getElementById('paymentAmount');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            // Update amount display and hidden field when amount changes
+            amountInput.addEventListener('input', function() {
+                const amount = parseFloat(this.value) || 0;
+                paymentAmountSpan.textContent = amount.toFixed(2);
+                hiddenAmount.value = amount.toFixed(2);
+            });
+
+            // Show loading overlay when form is submitted
+            form.addEventListener('submit', function(e) {
+                const amount = parseFloat(amountInput.value);
+
+                if (amount <= 0) {
+                    e.preventDefault();
+                    alert('Please enter a valid amount greater than 0');
+                    return;
+                }
+
+                // Show loading overlay
+                loadingOverlay.style.display = 'block';
+
+                // Disable the submit button to prevent double submission
+                const submitBtn = document.getElementById('payBtn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+            });
+
+            // Method card selection (for future expansion)
+            const methodCards = document.querySelectorAll('.method-card');
+            methodCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    methodCards.forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
