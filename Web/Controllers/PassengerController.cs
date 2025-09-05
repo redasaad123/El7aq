@@ -40,6 +40,14 @@ namespace Web.Controllers
         }
 
 
+        #region Booking Page
+        [HttpGet]
+        public IActionResult Booking()
+        {
+            return View();
+        }
+        #endregion
+
         #region Search for trips
         [HttpGet]
         public IActionResult SearchTrips()
