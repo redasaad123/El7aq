@@ -127,7 +127,8 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
         // 1. Stations
         builder.Entity<Station>().HasData(
             new Station { Id = "S1", Name = "Ramses", City = "Cairo" },
-            new Station { Id = "S2", Name = "Sidi Gaber", City = "Alexandria" }
+            new Station { Id = "S2", Name = "Sidi Gaber", City = "Alexandria" },
+            new Station { Id = "S3", Name = "Downtown Hub", City = "Alexandria" }
         );
 
         // 2. Route
@@ -148,12 +149,14 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
 
         // 6. Trip
         builder.Entity<Trip>().HasData(
-            new Trip { Id = "T1", RouteId = "R1", DriverId = "D1", DepartureTime = DateTime.UtcNow.AddHours(2), AvailableSeats = 5 }
-        );
+            new Trip { Id = "T1", RouteId = "R1", DriverId = "D1",  AvailableSeats = 5 },
+            new Trip {Id = "T2", RouteId = "R1",DriverId = "D1",AvailableSeats = 8 },
+            new Trip { Id = "T3",RouteId = "R1",DriverId = "D1" } );
 
         // 7. Booking
         builder.Entity<Booking>().HasData(
-            new Booking { Id = "B1", PassengerId = "P1", TripId = "T1", BookingDate = DateTime.UtcNow, Status = BookingStatus.Pending }
+            new Booking { Id = "B1", PassengerId = "P1", TripId = "T1", BookingDate = DateTime.UtcNow, Status = BookingStatus.Pending },
+            new Booking { Id = "B3", PassengerId = "P1", TripId = "T1", BookingDate = DateTime.UtcNow, Status = BookingStatus.Pending }
 
         );
         builder.Entity<Booking>().HasData(
@@ -161,6 +164,41 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
 
         );
 
+        // 8. Notifications 
+        builder.Entity<Notification>().HasData(
+            new Notification
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc",
+                Message = "Welcome to El7aq! Your account was created successfully.",
+                IsRead = true,
+                CreatedAt = DateTime.UtcNow
+            },
+            new Notification
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc",
+                Message = "Your first booking is pending confirmation.",
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow.AddMinutes(-15)
+            },
+            new Notification
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc",
+                Message = "ay 7aga 1111.",
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow.AddMinutes(+20)
+            },
+            new Notification
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc",
+                Message = "ay 7aga 22222.",
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow.AddMinutes(-5)
+            }
+        );
     }
 
     //  DbSets
@@ -172,4 +210,5 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
     public DbSet<Station> Stations { get; set; }
     public DbSet<Route> Routes { get; set; }
     public DbSet<Payment> Payments { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 }

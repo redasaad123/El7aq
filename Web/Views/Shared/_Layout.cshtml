@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Core.Entities
+@using Infrastructure.Services
 @inject SignInManager<AppUsers> SignInManager
 @inject UserManager<AppUsers> UserManager
 
@@ -36,14 +37,29 @@
                 @if (SignInManager.IsSignedIn(User))
                 {
                     <div class="user-menu">
+                        
+                        <!-- Notifications -->
+                        @{
+                            var notificationService = Context.RequestServices.GetService<INotificationService>();
+                            var userManager = Context.RequestServices.GetService<UserManager<Core.Entities.AppUsers>>();
+                            var user = await userManager.GetUserAsync(User);
+                            var unreadCount = user != null ? await notificationService.GetUnreadCountAsync(user.Id) : 0;
+                        }
+
                         <!-- Notifications -->
                         <div class="notification-icon">
-                            <a href="#" class="notification-btn">
-                                <i class="fas fa-bell"></i>
-                                <span class="notification-badge">3</span>
+                            <a asp-controller="Notification" asp-action="Index" class="notification-btn position-relative">
+                                <i class="fas fa-bell fa-lg"></i>
+                                @if (unreadCount > 0)
+                                {
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        @unreadCount
+                                    </span>
+                                }
                             </a>
                         </div>
-                        <a asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+
+                        <a asp-controller="Passenger" asp-action="Profile" title="My Profile">
                             <!-- User Profile -->
                             <div class="user-profile">
                                 <div class="profile-photo">
@@ -75,6 +91,7 @@
             </div>
         </nav>
     </header>
+
 
     <div class="homepage-container">
         <div class="col-12 main">

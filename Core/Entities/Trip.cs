@@ -16,7 +16,7 @@ namespace Core.Entities
         [ForeignKey(nameof(Driver))]
         public string DriverId { get; set; }
 
-        public DateTime DepartureTime { get; set; }
+       
         public int AvailableSeats { get; set; }
 
         

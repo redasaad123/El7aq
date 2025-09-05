@@ -17,7 +17,7 @@ namespace Infrastructure.Services
         Task<bool> CancelTripAsync(string tripId);
 
         // Passenger Operations
-        Task<IEnumerable<Trip>> SearchTripsAsync(string originCityId, string destinationCityId, DateTime date);
+        Task<IEnumerable<Trip>> SearchTripsAsync(string originCityId, string destinationCityId);
 
         Task<Trip> GetTripDetailsAsync(string tripId);
         Task<IEnumerable<Trip>> GetAllAvailableTripsAsync();

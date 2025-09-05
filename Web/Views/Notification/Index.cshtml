@@ -1,0 +1,176 @@
+﻿@* @model IEnumerable<Core.Entities.Notification>
+@{
+    ViewData["Title"] = "My Notifications";
+}
+
+<div class="notifications-page container" style="margin-top: 120px; max-width: 900px;">
+
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h2 style="color:#1a2b49; font-weight:700;">🔔 My Notifications</h2>
+        <p style="color:#6c757d;">Stay up to date with your latest updates</p>
+    </div>
+
+    <!-- Notification List -->
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center p-4 shadow-sm rounded">
+            <i class="fas fa-inbox fa-2x mb-2" style="color:#27AAE2;"></i>
+            <div>No notifications yet 🎉</div>
+        </div>
+    }
+    else
+    {
+        <div class="list-group shadow rounded overflow-hidden">
+            @foreach (var notif in Model.OrderByDescending(n => n.CreatedAt))
+            {
+                <div class="list-group-item d-flex justify-content-between align-items-center
+                                    @(notif.IsRead ? "bg-white" : "bg-light border-start border-4 border-primary")"
+                     style="padding:1.25rem 1.5rem;">
+
+                    <div>
+                        <p class="mb-1" style="font-weight:500; color:#1a2b49;">
+                            @notif.Message
+                        </p>
+                        <small class="text-muted">
+                            <i class="fas fa-clock"></i>
+                            @notif.CreatedAt.ToLocalTime().ToString("f")
+                        </small>
+                    </div>
+
+                    @if (!notif.IsRead)
+                    {
+                        <form asp-controller="Notification" asp-action="MarkAsRead" method="post">
+                            <input type="hidden" name="id" value="@notif.Id" />
+                            <button type="submit" class="btn btn-sm btn-primary"
+                                    style="background:#27AAE2; border:none; font-weight:500;">
+                                Mark as Read
+                            </button>
+                        </form>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .notifications-page h2 {
+        font-size: 2.2rem;
+    }
+
+    .list-group-item {
+        transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+        .list-group-item:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+</style> *@
+
+@model IEnumerable<Core.Entities.Notification>
+@{
+    ViewData["Title"] = "My Notifications";
+}
+
+<div class="notifications-container">
+    <h2 class="page-title">🔔 My Notifications</h2>
+
+    @if (!Model.Any())
+    {
+        <p class="empty-msg">You don’t have any notifications yet.</p>
+    }
+    else
+    {
+        @foreach (var notification in Model)
+        {
+            <div class="notification-item @(notification.IsRead ? "read" : "unread")">
+                <div class="notification-message">
+                    @notification.Message
+                </div>
+                <div class="notification-meta">
+                    <span class="date">@notification.CreatedAt.ToString("MMM dd, yyyy - hh:mm tt")</span>
+                    @if (!notification.IsRead)
+                    {
+                        <form asp-controller="Notification" asp-action="MarkAsRead" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@notification.Id" />
+                            <button type="submit" class="btn-mark-read">Mark as read</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<style>
+    .notifications-container {
+        max-width: 800px;
+        margin: 120px auto;
+        padding: 2rem;
+    }
+
+    .page-title {
+        color: #0d6efd;
+        margin-bottom: 2rem;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .empty-msg {
+        text-align: center;
+        color: #777;
+        font-style: italic;
+        font-size: 1.1rem;
+    }
+
+    .notification-item {
+        padding: 1rem 1.5rem;
+        margin-bottom: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+
+        /* غير مقروء */
+        .notification-item.unread {
+            background-color: #f0f7ff; /* أزرق فاتح زي Gmail */
+            border-left: 5px solid #0d6efd;
+            font-weight: 600;
+        }
+
+        /* مقروء */
+        .notification-item.read {
+            background-color: #ffffff;
+            border-left: 5px solid transparent;
+            color: #555;
+        }
+
+    .notification-message {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .notification-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+        color: #888;
+    }
+
+    .btn-mark-read {
+        background-color: #0d6efd;
+        color: white;
+        border: none;
+        padding: 0.35rem 0.9rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        transition: background 0.2s ease;
+    }
+
+        .btn-mark-read:hover {
+            background-color: #0b5ed7;
+        }
+</style>

@@ -41,25 +41,25 @@
                 <h3>Quick Trip Search</h3>
                 <form asp-controller="Passenger" asp-action="SearchTrips" method="post">
                     <div class="form-group">
-                        <label for="OriginCityId">From</label>
-                        <select class="form-control" id="OriginCityId" name="OriginCityId">
+                        <label for="OriginStationId">From</label>
+                        <select class="form-control" id="OriginStationId" name="OriginStationId">
                             <option value="">Select departure station</option>
-                            <option value="1">Central Station</option>
-                            <option value="2">Airport Terminal</option>
-                            <option value="3">Downtown Hub</option>
+                            <option value="S1">Ramses - Cairo</option>
+                            <option value="S2">Sidi Gaber - Alexandria</option>
+                            <option value="S3">Downtown Hub - Alexandria</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="DestinationCityId">To</label>
-                        <select class="form-control" id="DestinationCityId" name="DestinationCityId">
+                        <label for="DestinationStationId">To</label>
+                        <select class="form-control" id="DestinationStationId" name="DestinationStationId">
                             <option value="">Select destination</option>
-                            <option value="4">Business District</option>
-                            <option value="5">University Campus</option>
-                            <option value="6">Shopping Center</option>
+                            <option value="S1">Ramses - Cairo</option>
+                            <option value="S2">Sidi Gaber - Alexandria</option>
+                            <option value="S3">Downtown Hub - Alexandria</option>
                         </select>
                     </div>
-                    
+
                     <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Search Trips</button>
                 </form>
             </div>

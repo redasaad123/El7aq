@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250905150411_addSeedDataToNotification")]
+    partial class addSeedDataToNotification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,15 +131,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B1",
-                            BookingDate = new DateTime(2025, 9, 5, 21, 9, 50, 87, DateTimeKind.Utc).AddTicks(7010),
-                            PassengerId = "P1",
-                            Status = 0,
-                            TripId = "T1"
-                        },
-                        new
-                        {
-                            Id = "B3",
-                            BookingDate = new DateTime(2025, 9, 5, 21, 9, 50, 87, DateTimeKind.Utc).AddTicks(7013),
+                            BookingDate = new DateTime(2025, 9, 5, 15, 4, 9, 944, DateTimeKind.Utc).AddTicks(1343),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -144,7 +139,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B2",
-                            BookingDate = new DateTime(2025, 9, 5, 21, 9, 50, 87, DateTimeKind.Utc).AddTicks(7024),
+                            BookingDate = new DateTime(2025, 9, 5, 15, 4, 9, 944, DateTimeKind.Utc).AddTicks(1364),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -220,32 +215,32 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9619f20d-6be9-4346-99f6-a0989af73e45",
-                            CreatedAt = new DateTime(2025, 9, 5, 21, 9, 50, 87, DateTimeKind.Utc).AddTicks(7087),
+                            Id = "794497ac-4cc3-455f-b5f2-91e2d26cedc5",
+                            CreatedAt = new DateTime(2025, 9, 5, 15, 4, 9, 944, DateTimeKind.Utc).AddTicks(1456),
                             IsRead = true,
                             Message = "Welcome to El7aq! Your account was created successfully.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-                            Id = "bac07b9e-4cfd-4d7d-8f65-62465be06a84",
-                            CreatedAt = new DateTime(2025, 9, 5, 20, 54, 50, 87, DateTimeKind.Utc).AddTicks(7093),
+                            Id = "406cab31-aa40-4ea8-8759-2191de695a09",
+                            CreatedAt = new DateTime(2025, 9, 5, 14, 49, 9, 944, DateTimeKind.Utc).AddTicks(1460),
                             IsRead = false,
                             Message = "Your first booking is pending confirmation.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-                            Id = "4e5aa000-99cd-43db-9cb5-3d078583a281",
-                            CreatedAt = new DateTime(2025, 9, 5, 21, 29, 50, 87, DateTimeKind.Utc).AddTicks(7102),
+                            Id = "002c1411-e7b5-4839-b9d6-a6e2e18e4721",
+                            CreatedAt = new DateTime(2025, 9, 5, 15, 24, 9, 944, DateTimeKind.Utc).AddTicks(1466),
                             IsRead = false,
                             Message = "ay 7aga 1111.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-                            Id = "a16e5619-72e7-4629-8081-37abc4347cf5",
-                            CreatedAt = new DateTime(2025, 9, 5, 21, 4, 50, 87, DateTimeKind.Utc).AddTicks(7109),
+                            Id = "254eb770-a1e0-4935-8c61-b14a858c4313",
+                            CreatedAt = new DateTime(2025, 9, 5, 14, 59, 9, 944, DateTimeKind.Utc).AddTicks(1481),
                             IsRead = false,
                             Message = "ay 7aga 22222.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
@@ -364,12 +359,6 @@ namespace Infrastructure.Migrations
                             Id = "S2",
                             City = "Alexandria",
                             Name = "Sidi Gaber"
-                        },
-                        new
-                        {
-                            Id = "S3",
-                            City = "Alexandria",
-                            Name = "Downtown Hub"
                         });
                 });
 
@@ -380,6 +369,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<int>("AvailableSeats")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("DepartureTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DriverId")
                         .IsRequired()
@@ -402,20 +394,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = "T1",
                             AvailableSeats = 5,
-                            DriverId = "D1",
-                            RouteId = "R1"
-                        },
-                        new
-                        {
-                            Id = "T2",
-                            AvailableSeats = 8,
-                            DriverId = "D1",
-                            RouteId = "R1"
-                        },
-                        new
-                        {
-                            Id = "T3",
-                            AvailableSeats = 0,
+                            DepartureTime = new DateTime(2025, 9, 5, 17, 4, 9, 944, DateTimeKind.Utc).AddTicks(1310),
                             DriverId = "D1",
                             RouteId = "R1"
                         });

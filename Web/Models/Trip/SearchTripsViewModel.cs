@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Build.Framework;
 using System.ComponentModel.DataAnnotations;
 using RequiredAttribute = Microsoft.Build.Framework.RequiredAttribute;
 
@@ -8,20 +9,19 @@ namespace Web.Models.Trip
     {
         [Required]
         [Display(Name = "From")]
-        public string OriginCityId { get; set; } = string.Empty;
+        public string OriginStationId { get; set; } = string.Empty;
 
         [Required]
         [Display(Name = "To")]
-        public string DestinationCityId { get; set; } = string.Empty;
+        public string DestinationStationId { get; set; } = string.Empty;
 
-        [Required]
-        [DataType(DataType.Date)]
-        [Display(Name = "Date")]
-        public DateTime Date { get; set; } = DateTime.Today;
+     
+    
 
 
         // Search Results
         public List<TripResultViewModel> SearchResults { get; set; } = new List<TripResultViewModel>();
-        public bool HasSearched => SearchResults.Any();
+        public List<SelectListItem> Stations { get; set; } = new List<SelectListItem>();
+        //public bool HasSearched => SearchResults.Any();
     }
 }

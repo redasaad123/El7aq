@@ -1,0 +1,92 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Core.Entities
+@inject UserManager<AppUsers> UserManager
+@inject SignInManager<AppUsers> SignInManager
+
+@{
+    ViewData["Title"] = "My Profile - El7aq";
+    var user = await UserManager.GetUserAsync(User);
+}
+
+<div class="profile-container" style="margin-top: 120px; padding: 4rem 5%; max-width: 1200px; margin-left: auto; margin-right: auto;">
+
+    <!-- Profile Header -->
+    <div class="text-center mb-5">
+        <div class="profile-avatar" style="width:140px; height:140px; border-radius:50%; background:linear-gradient(135deg, #27AAE2, #218CBA); display:flex; align-items:center; justify-content:center; color:white; font-size:3rem; margin:0 auto 1.5rem; box-shadow:0 10px 25px rgba(0,0,0,0.15);">
+            @(user?.FirstName?.FirstOrDefault().ToString().ToUpper() ?? "U")
+        </div>
+        <h2 style="color: var(--blackish-blue); margin-bottom:0.5rem;">
+            @user?.FirstName @user?.LastName
+        </h2>
+        <p style="color: var(--text-light);">@user?.Email</p>
+    </div>
+
+    <div class="row">
+        <!-- Account Settings -->
+        <div class="col-md-6 mb-4">
+            <div class="profile-card" style="background:white; padding:2rem; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.08); height:100%;">
+                <h4 style="color: var(--primary-blue); margin-bottom:1.5rem;">⚙️ Account Settings</h4>
+                <ul class="list-unstyled" style="margin:0; padding:0;">
+                    <li class="profile-option">
+                        <a asp-controller="Notification" asp-action="Index">🔔 Notifications</a>
+                    </li>
+                    <li class="profile-option"><a href="#">💳 Payment Methods</a></li>
+                    <li class="profile-option d-flex justify-content-between align-items-center">
+                        <span>🌙 Dark Mode</span>
+                        <input type="checkbox" class="form-check-input" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- More Options -->
+        <div class="col-md-6 mb-4">
+            <div class="profile-card" style="background:white; padding:2rem; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.08); height:100%;">
+                <h4 style="color: var(--primary-blue); margin-bottom:1.5rem;">📂 More Options</h4>
+                <ul class="list-unstyled" style="margin:0; padding:0;">
+                    <li class="profile-option"><a href="#">🚗 To-be-driver Request</a></li>
+                    <li class="profile-option"><a asp-controller="Home" asp-action="About">ℹ️ About Us</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+    .profile-option {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+        .profile-option:last-child {
+            border-bottom: none;
+        }
+
+        .profile-option a {
+            text-decoration: none;
+            color: var(--blackish-blue);
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+            .profile-option a:hover {
+                color: var(--primary-blue);
+            }
+
+    @@media (max-width: 768px) {
+        .profile-container {
+            padding: 2rem 3%;
+            margin-top: 100px;
+        }
+    }
+
+</style>

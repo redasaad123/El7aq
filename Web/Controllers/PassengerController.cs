@@ -5,8 +5,13 @@ using System.Security.Claims;
 using Web.Models;
 using Web.Models.Booking;
 using Web.Models.Trip;
+using Web.Models.Account;
 using Core.Enums;
 using Core.Entities;
+using Core.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Web.Controllers
 {
@@ -18,15 +23,18 @@ namespace Web.Controllers
         private readonly IBookingService _bookingService;
         private readonly ITripService _tripService;
         private readonly IPassengerHelperService _passengerHelperService;
+        private readonly IUnitOfWork<Station> _stationUow;
 
         public PassengerController(
             IBookingService bookingService,
             ITripService tripService,
-            IPassengerHelperService passengerHelperService)
+            IPassengerHelperService passengerHelperService,
+             IUnitOfWork<Station> stationUow)
         {
             _bookingService = bookingService;
             _tripService = tripService;
             _passengerHelperService = passengerHelperService;
+            _stationUow = stationUow;
         }
 
         // Helper method to get current passenger ID
@@ -42,31 +50,54 @@ namespace Web.Controllers
 
         #region Search for trips
         [HttpGet]
-        public IActionResult SearchTrips()
+        public async Task<IActionResult> SearchTrips()
         {
             var model = new SearchTripsViewModel();
+
+            var stations = await _stationUow.Entity.GetAllAsyncAsQuery().ToListAsync();
+            model.Stations = stations.Select(s => new SelectListItem
+            {
+                Value = s.Id,
+                Text = $"{s.Name} - {s.City}"
+            }).ToList();
+
             return View(model);
         }
 
         [HttpPost]
 
         public async Task<IActionResult> SearchTrips(SearchTripsViewModel model)
-        { 
+        {
+            Console.WriteLine($"Model values - From: '{model.OriginStationId}', To: '{model.DestinationStationId}'");
+
             if (!ModelState.IsValid)
             {
+                var stations = await _stationUow.Entity.GetAllAsyncAsQuery().ToListAsync();
+                model.Stations = stations.Select(s => new SelectListItem
+                {
+                    Value = s.Id,
+                    Text = $"{s.Name} - {s.City}"
+                }).ToList();
+
                 return View(model);
+
             }
 
             try
             {
+                Console.WriteLine("Calling SearchTripsAsync...");
+
                 var trips = await _tripService.SearchTripsAsync(
-                    model.OriginCityId,
-                    model.DestinationCityId,
-                    model.Date);
+                    model.OriginStationId,
+                    model.DestinationStationId
+                   );
+
+                Console.WriteLine($"Found {trips.Count()} trips");
+
                 model.SearchResults = trips.Select(trip => new TripResultViewModel
                 {
                     TripId = trip.Id,
-                    DepartureTime = trip.DepartureTime,
+                   
                     OriginStation = trip.Route?.StartStation?.Name!,
                     DestinationStation = trip.Route?.EndStation?.Name!,
                     Price = trip.Route?.Price ?? 0,
@@ -79,6 +110,7 @@ namespace Web.Controllers
             }
 
             catch (Exception ex) {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
 
                 ModelState.AddModelError("", "Something going wrong");
                 return View(model);
@@ -105,7 +137,7 @@ namespace Web.Controllers
             var model = new TripDetailsViewModel
             {
                 TripId = trip.Id,
-                DepartureTime = trip.DepartureTime,
+               
                 OriginStation = new StationViewModel
                 {
                     Id = trip.Route?.StartStation?.Id ?? "0",
@@ -197,7 +229,7 @@ namespace Web.Controllers
 
                         Trip = new TripSummaryViewModel
                         {
-                            DepartureTime = booking.Trip?.DepartureTime ?? DateTime.MinValue,
+                         
                             OriginStation = booking.Trip?.Route?.StartStation?.Name,
                             DestinationStation = booking.Trip?.Route?.EndStation?.Name,
                             Price = booking.Trip?.Route?.Price ?? 0,
@@ -250,7 +282,7 @@ namespace Web.Controllers
                         StatusText = GetBookingStatusText(booking.Status),
                         Trip = new TripSummaryViewModel
                         {
-                            DepartureTime = booking.Trip?.DepartureTime ?? DateTime.MinValue,
+                           
                             OriginStation = booking.Trip?.Route?.StartStation?.Name!,
                             DestinationStation = booking.Trip?.Route?.EndStation?.Name!,
                             Price = booking.Trip?.Route?.Price ?? 0,
@@ -260,7 +292,7 @@ namespace Web.Controllers
                         },
                      //   PaymentStatus = GetPaymentStatus(booking.Payments),
                         CanCancel = CanCancelBooking(booking),
-                        TimeUntilDeparture = booking.Trip?.DepartureTime - DateTime.UtcNow
+                       
                     }).OrderBy(b => b.Trip.DepartureTime).ToList()
                 };
 
@@ -310,7 +342,7 @@ namespace Web.Controllers
                     Trip = new TripDetailsViewModel
                     {
                         TripId = booking.Trip.Id,
-                        DepartureTime = booking.Trip?.DepartureTime ?? DateTime.MinValue,
+                      
                         OriginStation = new StationViewModel
                         {
                             Name = booking.Trip?.Route?.StartStation?.Name,
@@ -420,21 +452,9 @@ namespace Web.Controllers
         #endregion
 
 
-
-
-
-
-
-
-
-
-
-
-
         private bool CanCancelBooking(Booking booking)
         {
-            return booking.Trip?.DepartureTime > DateTime.UtcNow.AddHours(2) &&
-                   booking.Status != BookingStatus.Cancelled;
+            return  booking.Status != BookingStatus.Cancelled;
         }
 
 
@@ -448,7 +468,6 @@ namespace Web.Controllers
                 _ => "UnKnowen "
             };
         }
-
 
 
         #region Payment Status and Method (Commented Out)
@@ -483,5 +502,20 @@ namespace Web.Controllers
         //}
 
         #endregion
+
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult Profile()
+        {
+            var model = new UserProfileViewModel
+            {
+                Name = User.Identity?.Name ?? "UserName",
+                Email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "UserName@gmail.com",
+                DarkMode = false // default, or load from database
+            };
+
+            return View(model);
+        }
     }
 }
