@@ -42,7 +42,7 @@ namespace Web
                 cfg.AddProfile<MapperConfig>();
             });
 
-            builder.Services.AddScoped<IEmailSend, EmailSend>();
+            builder.Services.AddScoped<IEmailSend, EmailSend >();
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IPayPalService, PayPalService>();
             var app = builder.Build();

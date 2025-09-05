@@ -6,7 +6,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Interfaces
+namespace Infrastructure.Services
 {
     public interface IEmailSend
     {
