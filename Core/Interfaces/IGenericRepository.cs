@@ -11,6 +11,7 @@ namespace Core.Interfaces
     {
 
         T Get(string id);
+    
         void Insert(T entity);
         void Update(T entity);
         void Delete(string id);

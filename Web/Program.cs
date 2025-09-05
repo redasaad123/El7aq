@@ -1,5 +1,13 @@
 using Core;
 using Core.Entities;
+using Core.Interfaces;
+using Infrastructure;
+using Infrastructure.Mapper;
+using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Web.Services;
 
 namespace Web
 {

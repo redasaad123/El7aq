@@ -9,8 +9,6 @@ namespace Infrastructure.Services
 {
      public interface IBookingService
     {
-
-
         // Booking Operations
         Task<Booking> CreateBookingAsync(string passengerId, string tripId);
         Task<bool> ConfirmBookingAsync(string bookingId);
