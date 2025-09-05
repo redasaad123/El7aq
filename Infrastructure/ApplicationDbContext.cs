@@ -127,7 +127,8 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
         // 1. Stations
         builder.Entity<Station>().HasData(
             new Station { Id = "S1", Name = "Ramses", City = "Cairo" },
-            new Station { Id = "S2", Name = "Sidi Gaber", City = "Alexandria" }
+            new Station { Id = "S2", Name = "Sidi Gaber", City = "Alexandria" },
+            new Station { Id = "S3", Name = "Downtown Hub", City = "Alexandria" }
         );
 
         // 2. Route
@@ -148,12 +149,14 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
 
         // 6. Trip
         builder.Entity<Trip>().HasData(
-            new Trip { Id = "T1", RouteId = "R1", DriverId = "D1", DepartureTime = DateTime.UtcNow.AddHours(2), AvailableSeats = 5 }
-        );
+            new Trip { Id = "T1", RouteId = "R1", DriverId = "D1",  AvailableSeats = 5 },
+            new Trip {Id = "T2", RouteId = "R1",DriverId = "D1",AvailableSeats = 8 },
+            new Trip { Id = "T3",RouteId = "R1",DriverId = "D1" } );
 
         // 7. Booking
         builder.Entity<Booking>().HasData(
-            new Booking { Id = "B1", PassengerId = "P1", TripId = "T1", BookingDate = DateTime.UtcNow, Status = BookingStatus.Pending }
+            new Booking { Id = "B1", PassengerId = "P1", TripId = "T1", BookingDate = DateTime.UtcNow, Status = BookingStatus.Pending },
+            new Booking { Id = "B3", PassengerId = "P1", TripId = "T1", BookingDate = DateTime.UtcNow, Status = BookingStatus.Pending }
 
         );
         builder.Entity<Booking>().HasData(

@@ -56,7 +56,7 @@ namespace Infrastructure.Services
                 Id = Guid.NewGuid().ToString(),
                 DriverId = driverId,
                 RouteId = routeId,
-                DepartureTime = departureTime,
+              
                 AvailableSeats = availableSeats
             };
 
@@ -77,7 +77,7 @@ namespace Infrastructure.Services
                    .ThenInclude(r => r.EndStation)
                .Include(t => t.Bookings.Where(b => b.Status != BookingStatus.Cancelled))
                .Where(t => t.DriverId == driverId)
-               .OrderByDescending(t => t.DepartureTime)
+               
                .ToListAsync();
 
             return trips;
@@ -106,7 +106,7 @@ namespace Infrastructure.Services
                 return false;
 
 
-            trip.DepartureTime = newDepartureTime;
+          
             trip.AvailableSeats = newAvailableSeats;
 
             _tripUow.Entity.Update(trip);
@@ -150,11 +150,15 @@ namespace Infrastructure.Services
         #endregion
 
         #region Passenger Operations
-        public async Task<IEnumerable<Trip>> SearchTripsAsync(string originCityId, string destinationCityId, DateTime date)
+        public async Task<IEnumerable<Trip>> SearchTripsAsync(string originCityId, string destinationCityId)
         {
-     
-            var startDate = date.Date;
-            var endDate = date.Date.AddDays(1);
+
+
+            var routes = await _routeUow.Entity.GetAllAsyncAsQuery()
+                 .Where(r => r.StartStationId == originCityId && r.EndStationId == destinationCityId)
+                 .ToListAsync();
+
+            Console.WriteLine($"Found {routes.Count} matching routes");
 
 
             var trips = await _tripUow.Entity.GetAllAsyncAsQuery()
@@ -166,12 +170,15 @@ namespace Infrastructure.Services
                     .ThenInclude(d => d.appUsers)
                 .Include(t => t.Bookings.Where(b => b.Status != BookingStatus.Cancelled))
                 .Where(t => t.Route.StartStationId == originCityId &&
-                           t.Route.EndStationId == destinationCityId &&
-                           t.DepartureTime >= startDate &&
-                           t.DepartureTime < endDate &&
-                           t.DepartureTime > DateTime.UtcNow)
-                .OrderBy(t => t.DepartureTime)
+                           t.Route.EndStationId == destinationCityId )
+                
                 .ToListAsync();
+
+            foreach (var trip in trips)
+            {
+                var bookedSeats = trip.Bookings?.Count(b => b.Status != BookingStatus.Cancelled) ?? 0;
+                Console.WriteLine($"Trip {trip.Id}: Available={trip.AvailableSeats}, Booked={bookedSeats}");
+            }
 
 
             // Filter trips with available seats
@@ -214,8 +221,8 @@ namespace Infrastructure.Services
                 .Include(t => t.Driver)
                     .ThenInclude(d => d.appUsers)
                 .Include(t => t.Bookings.Where(b => b.Status != BookingStatus.Cancelled))
-                .Where(t => t.DepartureTime > DateTime.UtcNow)
-                .OrderBy(t => t.DepartureTime)
+                
+               
                 .ToListAsync();
 
             // Filter trips with available seats
@@ -304,8 +311,8 @@ namespace Infrastructure.Services
                 .Include(t => t.Driver)
                     .ThenInclude(d => d.appUsers)
                 .Include(t => t.Bookings.Where(b => b.Status != BookingStatus.Cancelled))
-                .Where(t => t.DepartureTime >= startDate && t.DepartureTime < endDate)
-                .OrderBy(t => t.DepartureTime)
+               
+               
                 .ToListAsync();
 
             return trips;
@@ -324,7 +331,7 @@ namespace Infrastructure.Services
                     .ThenInclude(d => d.appUsers)
                 .Include(t => t.Bookings.Where(b => b.Status != BookingStatus.Cancelled))
                 .Where(t => t.Route.StartStationId == stationId || t.Route.EndStationId == stationId)
-                .OrderBy(t => t.DepartureTime)
+
                 .ToListAsync();
 
             return trips;

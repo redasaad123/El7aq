@@ -192,9 +192,9 @@ namespace Infrastructure.Services
                     .ThenInclude(t => t.Driver)
                         .ThenInclude(d => d.appUsers)
                 .Where(b => b.PassengerId == passengerId &&
-                           (b.Status == BookingStatus.Pending || b.Status == BookingStatus.Confirmed) &&
-                           b.Trip.DepartureTime > DateTime.UtcNow)
-                .OrderBy(b => b.Trip.DepartureTime)
+                           (b.Status == BookingStatus.Pending || b.Status == BookingStatus.Confirmed) 
+                           )
+                
                 .ToListAsync();
 
             return bookings;
@@ -219,7 +219,7 @@ namespace Infrastructure.Services
                     .ThenInclude(p => p.User)
                 .Include(b => b.Payments)
                 .Where(b => b.Trip.DriverId == driverId)
-                .OrderByDescending(b => b.Trip.DepartureTime)
+                
                 .ToListAsync();
 
             return bookings;
