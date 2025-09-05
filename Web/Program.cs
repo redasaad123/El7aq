@@ -35,6 +35,7 @@ namespace Web
             builder.Services.AddScoped<ITripService, TripService>();
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IPassengerHelperService, PassengerHelperService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(cfg =>

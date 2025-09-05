@@ -13,6 +13,5 @@ namespace Core.Entities
         [MaxLength(100)]
         public string LastName { get; set; }
 
-        
-    }
+    } 
 }

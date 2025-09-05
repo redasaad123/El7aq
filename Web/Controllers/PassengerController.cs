@@ -5,8 +5,10 @@ using System.Security.Claims;
 using Web.Models;
 using Web.Models.Booking;
 using Web.Models.Trip;
+using Web.Models.Account;
 using Core.Enums;
 using Core.Entities;
+
 
 namespace Web.Controllers
 {
@@ -420,17 +422,6 @@ namespace Web.Controllers
         #endregion
 
 
-
-
-
-
-
-
-
-
-
-
-
         private bool CanCancelBooking(Booking booking)
         {
             return booking.Trip?.DepartureTime > DateTime.UtcNow.AddHours(2) &&
@@ -448,7 +439,6 @@ namespace Web.Controllers
                 _ => "UnKnowen "
             };
         }
-
 
 
         #region Payment Status and Method (Commented Out)
@@ -483,5 +473,20 @@ namespace Web.Controllers
         //}
 
         #endregion
+
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult Profile()
+        {
+            var model = new UserProfileViewModel
+            {
+                Name = User.Identity?.Name ?? "UserName",
+                Email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "UserName@gmail.com",
+                DarkMode = false // default, or load from database
+            };
+
+            return View(model);
+        }
     }
 }

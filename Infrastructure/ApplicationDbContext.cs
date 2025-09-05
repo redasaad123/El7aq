@@ -161,6 +161,41 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
 
         );
 
+        // 8. Notifications 
+        builder.Entity<Notification>().HasData(
+            new Notification
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc",
+                Message = "Welcome to El7aq! Your account was created successfully.",
+                IsRead = true,
+                CreatedAt = DateTime.UtcNow
+            },
+            new Notification
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc",
+                Message = "Your first booking is pending confirmation.",
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow.AddMinutes(-15)
+            },
+            new Notification
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc",
+                Message = "ay 7aga 1111.",
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow.AddMinutes(+20)
+            },
+            new Notification
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc",
+                Message = "ay 7aga 22222.",
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow.AddMinutes(-5)
+            }
+        );
     }
 
     //  DbSets
@@ -172,4 +207,5 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
     public DbSet<Station> Stations { get; set; }
     public DbSet<Route> Routes { get; set; }
     public DbSet<Payment> Payments { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 }
