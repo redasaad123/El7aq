@@ -115,14 +115,17 @@
                             </div>
                         </div>
 
+                           
                         <div class="booking-actions">
-                            <a asp-controller="Payment" asp-action="Index" asp-route-bookingId="@trip.TripId"
-                               class="btn btn-success">
-                                <i class="fas fa-ticket-alt"></i>
-                                Book Now
-                            </a>
-
+                            <form asp-controller="Passenger" asp-action="BookSeat" method="post">
+                                <input type="hidden" name="tripId" value="@trip.TripId" />
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-ticket-alt"></i>
+                                    Book Now
+                                </button>
+                            </form>
                         </div>
+
                     </div>
                 }
             </div>

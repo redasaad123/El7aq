@@ -26,7 +26,7 @@ namespace Web
             builder.Services
                 .AddDefaultIdentity<AppUsers>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-
+            builder.Services.AddLogging();
             // Register custom claims principal factory
             builder.Services.AddScoped<IUserClaimsPrincipalFactory<AppUsers>, ApplicationClaimsPrincipalFactory>();
 

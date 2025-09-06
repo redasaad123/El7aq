@@ -24,17 +24,19 @@ namespace Web.Controllers
         private readonly ITripService _tripService;
         private readonly IPassengerHelperService _passengerHelperService;
         private readonly IUnitOfWork<Station> _stationUow;
+        private readonly ILogger<PassengerController> _logger;
 
         public PassengerController(
             IBookingService bookingService,
             ITripService tripService,
             IPassengerHelperService passengerHelperService,
-             IUnitOfWork<Station> stationUow)
+             IUnitOfWork<Station> stationUow, ILogger<PassengerController> _logger)
         {
             _bookingService = bookingService;
             _tripService = tripService;
             _passengerHelperService = passengerHelperService;
             _stationUow = stationUow;
+            this._logger = _logger;
         }
 
         // Helper method to get current passenger ID
@@ -185,13 +187,15 @@ namespace Web.Controllers
                 }
 
                 var booking = await _bookingService.CreateBookingAsync(passengerId.ToString()!, tripId);
-
+                _logger.LogInformation("Booking created successfully. BookingId: {BookingId}", booking.Id);
                 TempData["SuccessMessage"] = "The seat has been successfully booked.";
-                return RedirectToAction("BookingDetails", new { id = booking.Id });
+                /// Redirect to payment page
+                return RedirectToAction("Index","Payment", new { bookingId = booking.Id });
 
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while booking seat for TripId: {TripId}", tripId);
                 TempData["ErrorMessage"] = "An error occurred while booking the seat";
                 return RedirectToAction("TripDetails", new { id = tripId });
             }

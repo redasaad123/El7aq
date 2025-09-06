@@ -31,9 +31,6 @@ namespace Infrastructure.Services
 
         public async Task<Booking> CreateBookingAsync(string passengerId, string tripId)
         {
-
-           
-
             var passenger = _passengerUow.Entity.Get(passengerId);
             if (passenger == null)
                 throw new ArgumentException("Passenger not found");
