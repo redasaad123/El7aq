@@ -13,7 +13,11 @@ namespace Web.Controllers
         private readonly IPayPalService _payPalService;
         private readonly ILogger<PaymentController> _logger;
 
-        public PaymentController(IPayPalService payPalService, ILogger<PaymentController> logger)
+        public PaymentController(
+            IPayPalService payPalService, 
+            ILogger<PaymentController> logger,
+            IBookingService bookingService,
+            IPassengerHelperService passengerHelperService)
         {
             _payPalService = payPalService;
             _logger = logger;
@@ -103,7 +107,7 @@ namespace Web.Controllers
                     // Redirect to booking details or confirmation page
                     if (!string.IsNullOrEmpty(bookingId))
                     {
-                        return RedirectToAction("BookingDetails", "Booking", new { id = bookingId });
+                        return RedirectToAction("BookingDetails", "Passenger", new { id = bookingId });
                     }
 
                     return RedirectToAction("PaymentConfirmation", new { orderId = token });

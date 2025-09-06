@@ -46,9 +46,91 @@ namespace Web.Controllers
             if (string.IsNullOrEmpty(userId))
                 return null;
 
-            return await _passengerHelperService.GetPassengerIdFromUserIdAsync(userId);
+            var passengerId = await _passengerHelperService.GetPassengerIdFromUserIdAsync(userId);
+            
+            // If no passenger profile exists, create one automatically
+            if (passengerId == null)
+            {
+                var passengerProfile = new PassengerProfile
+                {
+                    Id = userId,
+                    UserId = userId
+                };
+
+                var passengerUow = HttpContext.RequestServices.GetRequiredService<IUnitOfWork<PassengerProfile>>();
+                passengerUow.Entity.Insert(passengerProfile);
+                passengerUow.Save();
+                
+                return userId;
+            }
+
+            return passengerId;
         }
 
+        #region Booking Page
+        [HttpGet]
+        public async Task<IActionResult> Booking()
+        {
+            try
+            {
+
+                
+                // Fetch all trips that start from stations where City = 'المنصورة'
+                var mansouraTrips = await _stationUow.Entity
+                    .GetAllAsyncAsQuery()
+                    .Where(s => s.City == "المنصورة")
+                    .SelectMany(s => s.RoutesFrom)
+                    .SelectMany(r => r.Trips)
+                    .Where(t => t.AvailableSeats > 0)
+                    .Include(t => t.Route)
+                        .ThenInclude(r => r.StartStation)
+                    .Include(t => t.Route)
+                        .ThenInclude(r => r.EndStation)
+                    .Include(t => t.Driver)
+                        .ThenInclude(d => d.appUsers)
+                    .Include(t => t.Bookings)
+                    .ToListAsync();
+
+                // Create a list of trip data for the view
+                var stationData = new List<object>();
+                
+                foreach (var trip in mansouraTrips)
+                {
+                    var bookedSeats = trip.Bookings?.Count(b => b.Status != BookingStatus.Cancelled) ?? 0;
+                    var availableSeats = trip.AvailableSeats - bookedSeats;
+                    
+                    if (availableSeats > 0)
+                    {
+                        stationData.Add(new
+                        {
+                            StationId = trip.Route?.StartStation?.Id,
+                            StationName = trip.Route?.StartStation?.Name,
+                            City = trip.Route?.StartStation?.City,
+                            TripId = trip.Id,
+                            BusNumber = $"Bus #{trip.Id.Substring(0, Math.Min(3, trip.Id.Length))}",
+                            AvailableSeats = availableSeats,
+                            Price = trip.Route?.Price ?? 0,
+                            Route = $"{trip.Route?.EndStation?.Name} → {trip.Route?.StartStation?.Name}",
+                            DriverName = $"{trip.Driver?.appUsers?.FirstName} {trip.Driver?.appUsers?.LastName}",
+                            CarNumber = trip.Driver?.CarNumber ?? "N/A",
+                            // Default coordinates for Mansoura area
+                            Latitude = 31.0409,
+                            Longitude = 31.3785
+                        });
+                    }
+                }
+
+                ViewBag.StationData = stationData;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading booking page data");
+                ViewBag.StationData = new List<object>();
+                return View();
+            }
+        }
+        #endregion
 
         #region Search for trips
         [HttpGet]
@@ -158,17 +240,19 @@ namespace Web.Controllers
         #region Trip Details
 
         [HttpGet]
-        public async Task<IActionResult> TripDetails(int id)
+        public async Task<IActionResult> TripDetails(string id)
         { 
         
-            var trip = await _tripService.GetTripDetailsAsync(id.ToString());
+            var trip = await _tripService.GetTripDetailsAsync(id);
             if (trip == null)
             {
                 TempData["ErrorMessage"] = "Trip Not Found";
-                return RedirectToAction("SearchTrips");
+                return RedirectToAction("Booking");
             }
 
             var bookedSeats = trip.Bookings?.Count(b => b.Status != BookingStatus.Cancelled) ?? 0;
+            var passengerId = await GetCurrentPassengerIdAsync();
+            
             var model = new TripDetailsViewModel
             {
                 TripId = trip.Id,
@@ -189,6 +273,7 @@ namespace Web.Controllers
                 TotalSeats = trip.AvailableSeats,
                 BookedSeats = bookedSeats,
                 AvailableSeats = trip.AvailableSeats - bookedSeats,
+                IsUserLoggedIn = passengerId != null,
                 Driver = new DriverViewModel
                 {
                     Id = trip.Driver?.Id ?? "0",
@@ -215,8 +300,8 @@ namespace Web.Controllers
                 var passengerId = await GetCurrentPassengerIdAsync();
                 if (passengerId == null)
                 {
-                    TempData["ErrorMessage"] = "Must LogIn Frist";
-                    return RedirectToAction("Login", "Account");
+                    TempData["ErrorMessage"] = "Must LogIn First";
+                    return RedirectToPage("/Account/Login", new { returnUrl = Url.Action("TripDetails", new { id = tripId }) });
                 }
 
                 var booking = await _bookingService.CreateBookingAsync(passengerId.ToString()!, tripId);
@@ -249,7 +334,7 @@ namespace Web.Controllers
                 if (passengerId == null)
                 {
                     TempData["ErrorMessage"] = "Must LogIn Frist";
-                    return RedirectToAction("Login", "Account");
+                    return RedirectToPage("/Account/Login");
                 }
 
                 var bookings = await _bookingService.GetPassengerBookingsAsync(passengerId.ToString()!);
@@ -303,7 +388,7 @@ namespace Web.Controllers
                 if (passengerId == null)
                 {
                     TempData["ErrorMessage"] = "Must LogIn Frist";
-                    return RedirectToAction("Login", "Account");
+                    return RedirectToPage("/Account/Login");
                 }
 
                 var bookings = await _bookingService.GetPassengerActiveBookingsAsync(passengerId.ToString()!);
@@ -435,7 +520,7 @@ namespace Web.Controllers
                 if (passengerId == null)
                 {
                     TempData["ErrorMessage"] = "Must LogIn Frist";
-                    return RedirectToAction("Login", "Account");
+                    return RedirectToPage("/Account/Login");
                 }
 
                 var success = await _bookingService.CancelBookingAsync(id, passengerId.ToString()!);

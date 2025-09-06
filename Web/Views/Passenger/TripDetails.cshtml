@@ -143,7 +143,7 @@
                     </div>
                 </div>
 
-                @if (Model.AvailableSeats > 0)
+                @if (Model.IsUserLoggedIn)
                 {
                     <form asp-controller="Passenger" asp-action="BookSeat" method="post" class="booking-form">
                         <input type="hidden" name="tripId" value="@Model.TripId" />
@@ -155,10 +155,10 @@
                 }
                 else
                 {
-                    <button class="book-btn disabled" disabled>
-                        <i class="fas fa-times-circle"></i>
-                        Fully Booked
-                    </button>
+                    <a asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Action("TripDetails", new { id = Model.TripId })" class="book-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login to Book This Trip
+                    </a>
                 }
 
                 <div class="booking-note">

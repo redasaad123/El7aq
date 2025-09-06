@@ -12,6 +12,7 @@
         public int BookedSeats { get; set; }
         public int AvailableSeats { get; set; }
         public DriverViewModel Driver { get; set; }
+        public bool IsUserLoggedIn { get; set; }
 
         public bool HasAvailableSeats => AvailableSeats > 0;
         public string FormattedDepartureTime => DepartureTime.ToString("dd/MM/yyyy HH:mm");
