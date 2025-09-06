@@ -16,6 +16,18 @@
     --shadow: rgba(39, 170, 226, 0.1);
 }
 
+/* Dark mode variables */
+[data-theme="dark"] {
+    --primary-blue: #4FC3F7;
+    --dark-blue: #29B6F6;
+    --blackish-blue: #E3F2FD;
+    --background: #121212;
+    --white-bluish: #1E1E1E;
+    --text-dark: #FFFFFF;
+    --text-light: #B0B0B0;
+    --shadow: rgba(79, 195, 247, 0.1);
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
@@ -34,6 +46,36 @@ body {
     top: 0;
     z-index: 1000;
     transition: all 0.3s ease;
+}
+
+/* Dark mode header */
+[data-theme="dark"] .header {
+    background: rgba(30, 30, 30, 0.95);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .nav-links a {
+    color: var(--text-dark);
+}
+
+[data-theme="dark"] .nav-links a:hover {
+    color: var(--primary-blue);
+}
+
+[data-theme="dark"] .logo {
+    color: var(--text-dark);
+}
+
+/* Dark mode toggle button */
+[data-theme="dark"] #headerDarkModeToggle {
+    background: rgba(79, 195, 247, 0.1) !important;
+    border-color: var(--primary-blue) !important;
+    color: var(--primary-blue) !important;
+}
+
+[data-theme="dark"] #headerDarkModeToggle:hover {
+    background: rgba(79, 195, 247, 0.2) !important;
+    transform: translateY(-2px);
 }
 
 .nav {
@@ -162,6 +204,12 @@ body {
     margin-right: 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
+}
+
+/* Dark mode user profile */
+[data-theme="dark"] .user-profile {
+    background: #2D2D2D;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .user-profile:hover {
@@ -354,6 +402,84 @@ body {
     overflow: hidden;
 }
 
+/* Dark mode cards */
+[data-theme="dark"] .booking-card,
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .profile-card,
+[data-theme="dark"] .contact-card,
+[data-theme="dark"] .contact-info {
+    background: #2D2D2D !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Dark mode contact section */
+[data-theme="dark"] #contact {
+    background: var(--background) !important;
+}
+
+[data-theme="dark"] #contact h2,
+[data-theme="dark"] #contact h4 {
+    color: var(--text-dark) !important;
+}
+
+[data-theme="dark"] #contact p {
+    color: var(--text-light) !important;
+}
+
+[data-theme="dark"] #contact a {
+    color: var(--primary-blue) !important;
+}
+
+/* Dark mode hero section */
+[data-theme="dark"] .hero-content h1 {
+    color: var(--text-dark) !important;
+}
+
+[data-theme="dark"] .hero-content p {
+    color: var(--text-light) !important;
+}
+
+[data-theme="dark"] .stat-number {
+    color: var(--primary-blue) !important;
+}
+
+[data-theme="dark"] .stat-label {
+    color: var(--text-light) !important;
+}
+
+/* Dark mode features section */
+[data-theme="dark"] .section-header h2 {
+    color: var(--text-dark) !important;
+}
+
+[data-theme="dark"] .section-header p {
+    color: var(--text-light) !important;
+}
+
+[data-theme="dark"] .feature-card h3 {
+    color: var(--text-dark) !important;
+}
+
+[data-theme="dark"] .feature-card p {
+    color: var(--text-light) !important;
+}
+
+/* Dark mode dashboard preview */
+[data-theme="dark"] .dashboard-preview {
+    background: #2D2D2D !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .action-card {
+    background: linear-gradient(135deg, #1E1E1E, #2D2D2D) !important;
+    border-color: rgba(79, 195, 247, 0.1) !important;
+}
+
+[data-theme="dark"] .dashboard-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
 .booking-card::before {
     content: '';
     position: absolute;
@@ -390,6 +516,18 @@ body {
     font-size: 1rem;
     transition: all 0.3s ease;
     background: white;
+}
+
+/* Dark mode form controls */
+[data-theme="dark"] .form-control {
+    background: #2D2D2D;
+    border-color: #404040;
+    color: var(--text-dark);
+}
+
+[data-theme="dark"] .form-control:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.1);
 }
 
 .form-control:focus {

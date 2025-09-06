@@ -46,6 +46,13 @@
                             var unreadCount = user != null ? await notificationService.GetUnreadCountAsync(user.Id) : 0;
                         }
 
+                        <!-- Dark Mode Toggle -->
+                        <div class="dark-mode-toggle">
+                            <button id="headerDarkModeToggle" class="btn btn-outline" style="padding: 0.5rem; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-moon" id="darkModeIcon"></i>
+                            </button>
+                        </div>
+
                         <!-- Notifications -->
                         <div class="notification-icon">
                             <a asp-controller="Notification" asp-action="Index" class="notification-btn position-relative">
@@ -107,6 +114,46 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <!-- Dark Mode Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const body = document.body;
+            const headerToggle = document.getElementById('headerDarkModeToggle');
+            const darkModeIcon = document.getElementById('darkModeIcon');
+            
+            // Load saved theme preference on page load
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.setAttribute('data-theme', 'dark');
+                if (darkModeIcon) {
+                    darkModeIcon.className = 'fas fa-sun';
+                }
+            }
+            
+            // Header dark mode toggle
+            if (headerToggle) {
+                headerToggle.addEventListener('click', function() {
+                    const isDark = body.getAttribute('data-theme') === 'dark';
+                    
+                    if (isDark) {
+                        body.removeAttribute('data-theme');
+                        localStorage.setItem('theme', 'light');
+                        if (darkModeIcon) {
+                            darkModeIcon.className = 'fas fa-moon';
+                        }
+                    } else {
+                        body.setAttribute('data-theme', 'dark');
+                        localStorage.setItem('theme', 'dark');
+                        if (darkModeIcon) {
+                            darkModeIcon.className = 'fas fa-sun';
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

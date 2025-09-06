@@ -635,7 +635,7 @@ namespace Web.Controllers
             {
                 Name = User.Identity?.Name ?? "UserName",
                 Email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "UserName@gmail.com",
-                DarkMode = false // default, or load from database
+                DarkMode = false // This will be handled by JavaScript/localStorage for now
             };
 
             return View(model);
