@@ -124,19 +124,6 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
             .HasForeignKey(p => p.PassengerId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // 1. Stations
-        //builder.Entity<Station>().HasData(
-        //    new Station { Id = "S1", Name = "Ramses", City = "Cairo" },
-        //    new Station { Id = "S2", Name = "Sidi Gaber", City = "Alexandria" },
-        //    new Station { Id = "S3", Name = "Downtown Hub", City = "Alexandria" }
-        //);
-
-        // 2. Route
-        //builder.Entity<Route>().HasData(
-        //    new Route { Id = "R1", StartStationId = "S1", EndStationId = "S2", Price = 150m },
-        //    new Route { Id = "R2", StartStationId = "S2", EndStationId = "S3", Price = 100m }
-
-        //);
 
       
         // 4. DriverProfile
@@ -149,11 +136,6 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
             new PassengerProfile { Id = "P1", UserId = "207a1b24-2482-4c8e-8972-bb587f5d8287" }
         );
 
-        // 6. Trip
-        //builder.Entity<Trip>().HasData(
-        //    new Trip { Id = "T1", RouteId = "R1", DriverId = "D1",  AvailableSeats = 5 },
-        //    new Trip {Id = "T2", RouteId = "R2",DriverId = "D1",AvailableSeats = 8 },
-        //    new Trip { Id = "T3",RouteId = "R1",DriverId = "D1" } );
 
         // 7. Booking
         builder.Entity<Booking>().HasData(
