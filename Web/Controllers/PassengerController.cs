@@ -52,7 +52,7 @@ namespace Web.Controllers
 
         #region Search for trips
         [HttpGet]
-        public async Task<IActionResult> SearchTrips()
+        public async Task<IActionResult> SearchTrips(string? OriginStationId = null, string? DestinationStationId = null)
         {
             var model = new SearchTripsViewModel();
 
@@ -62,6 +62,39 @@ namespace Web.Controllers
                 Value = s.Id,
                 Text = $"{s.Name} - {s.City}"
             }).ToList();
+
+
+            if (!string.IsNullOrEmpty(OriginStationId) && !string.IsNullOrEmpty(DestinationStationId))
+            {
+                model.OriginStationId = OriginStationId;
+                model.DestinationStationId = DestinationStationId;
+
+               
+                try
+                {
+                    var trips = await _tripService.SearchTripsAsync(
+                        OriginStationId,
+                        DestinationStationId
+                    );
+
+                    model.SearchResults = trips.Select(trip => new TripResultViewModel
+                    {
+                        TripId = trip.Id,
+                        OriginStation = trip.Route?.StartStation?.Name!,
+                        DestinationStation = trip.Route?.EndStation?.Name!,
+                        Price = trip.Route?.Price ?? 0,
+                        AvailableSeats = trip.AvailableSeats - (trip.Bookings?.Count(b => b.Status != BookingStatus.Cancelled) ?? 0),
+                        DriverName = $"{trip.Driver?.appUsers?.FirstName} {trip.Driver?.appUsers?.LastName}",
+                        CarNumber = trip.Driver?.CarNumber!
+                    }).ToList();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error searching trips from home page");
+                    ModelState.AddModelError("", "Something Going Wrong");
+                }
+            }
+
 
             return View(model);
         }
