@@ -139,6 +139,38 @@
         font-size: 0.9rem;
     }
     
+    /* Dark mode styles for About page */
+    [data-theme="dark"] .about-card {
+        background: #2D2D2D !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    [data-theme="dark"] .about-card h3,
+    [data-theme="dark"] .about-card h4 {
+        color: var(--text-dark) !important;
+    }
+
+    [data-theme="dark"] .about-card p {
+        color: var(--text-light) !important;
+    }
+
+    [data-theme="dark"] .stat-number {
+        color: var(--primary-blue) !important;
+    }
+
+    [data-theme="dark"] .stat-label {
+        color: var(--text-light) !important;
+    }
+
+    [data-theme="dark"] h1,
+    [data-theme="dark"] h3 {
+        color: var(--text-dark) !important;
+    }
+
+    [data-theme="dark"] p.lead {
+        color: var(--text-light) !important;
+    }
+
     @@media (max-width: 768px) {
         .about-container {
             margin-top: 100px;

@@ -166,6 +166,88 @@ button {
         text-decoration: none;
     }
 
+/* Dark mode styles for authentication pages */
+[data-theme="dark"] body {
+    background: linear-gradient(135deg, #121212 0%, #1E1E1E 100%) !important;
+    color: #E0E0E0 !important;
+}
+
+[data-theme="dark"] .form-container {
+    background: linear-gradient(135deg, #121212 0%, #1E1E1E 100%) !important;
+}
+
+[data-theme="dark"] .form-container-div {
+    background: #2D2D2D !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] h2 {
+    color: #E0E0E0 !important;
+    border-bottom-color: #4FC3F7 !important;
+}
+
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] input[type="tel"] {
+    background: #3D3D3D !important;
+    border-color: #4D4D4D !important;
+    color: #E0E0E0 !important;
+}
+
+[data-theme="dark"] input[type="text"]:focus,
+[data-theme="dark"] input[type="email"]:focus,
+[data-theme="dark"] input[type="password"]:focus,
+[data-theme="dark"] input[type="tel"]:focus {
+    border-color: #4FC3F7 !important;
+    box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.1) !important;
+}
+
+[data-theme="dark"] input[type="text"]::placeholder,
+[data-theme="dark"] input[type="email"]::placeholder,
+[data-theme="dark"] input[type="password"]::placeholder,
+[data-theme="dark"] input[type="tel"]::placeholder {
+    color: #B0B0B0 !important;
+}
+
+[data-theme="dark"] .forgot-password,
+[data-theme="dark"] .toggle-form {
+    color: #4FC3F7 !important;
+}
+
+[data-theme="dark"] .toggle-form a,
+[data-theme="dark"] .forgot-password a,
+[data-theme="dark"] .sub-text a {
+    color: #4FC3F7 !important;
+}
+
+[data-theme="dark"] .toggle-form a:hover,
+[data-theme="dark"] .forgot-password a:hover {
+    color: #29B6F6 !important;
+}
+
+[data-theme="dark"] button {
+    background: linear-gradient(135deg, #4FC3F7, #29B6F6) !important;
+    box-shadow: 0 4px 15px rgba(79, 195, 247, 0.3) !important;
+}
+
+[data-theme="dark"] button:hover,
+[data-theme="dark"] button:focus {
+    box-shadow: 0 6px 20px rgba(79, 195, 247, 0.4) !important;
+}
+
+[data-theme="dark"] .sub-text {
+    color: #B0B0B0 !important;
+}
+
+[data-theme="dark"] .sub-text a {
+    color: #4FC3F7 !important;
+}
+
+[data-theme="dark"] .text-danger {
+    color: #ff6b6b !important;
+}
+
 /* Responsive smaller screen tweaks */
 @media (max-width: 768px) {
     .form-container {

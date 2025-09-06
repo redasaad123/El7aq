@@ -717,3 +717,31 @@
         --background: #f8f9fa;
         --white-bluish: #f0f8ff;
     }
+
+    /* Dark mode styles for TripDetails page */
+    [data-theme="dark"] .info-card {
+        background: #2D2D2D !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    [data-theme="dark"] .info-card h3,
+    [data-theme="dark"] .info-card h4 {
+        color: var(--text-dark) !important;
+    }
+
+    [data-theme="dark"] .info-card p {
+        color: var(--text-light) !important;
+    }
+
+    [data-theme="dark"] .trip-details-container {
+        background: var(--background) !important;
+    }
+
+    [data-theme="dark"] .trip-header h1 {
+        color: var(--text-dark) !important;
+    }
+
+    [data-theme="dark"] .trip-header p {
+        color: var(--text-light) !important;
+    }
+</style>

@@ -141,6 +141,12 @@ body {
 .auth-section {
     display: flex;
     align-items: center;
+    gap: 1rem;
+}
+
+.dark-mode-toggle {
+    display: flex;
+    align-items: center;
 }
 
 .auth-buttons {

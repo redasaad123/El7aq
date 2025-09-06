@@ -505,6 +505,118 @@
         font-size: 1rem;
         color: var(--text-light);
     }
+    /* Dark mode styles for Booking page */
+    [data-theme="dark"] .booking-container {
+        background: var(--background) !important;
+    }
+
+    [data-theme="dark"] .stations-section {
+        background: #2D2D2D !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    [data-theme="dark"] .stations-section h3 {
+        color: var(--text-dark) !important;
+    }
+
+    [data-theme="dark"] .table-row {
+        background: #3D3D3D !important;
+        border-color: rgba(79, 195, 247, 0.1) !important;
+    }
+
+    [data-theme="dark"] .table-row:hover {
+        background: #4D4D4D !important;
+        box-shadow: 0 8px 25px rgba(79, 195, 247, 0.2) !important;
+    }
+
+    [data-theme="dark"] .station-info,
+    [data-theme="dark"] .bus-info,
+    [data-theme="dark"] .time-info,
+    [data-theme="dark"] .route-info {
+        color: var(--text-dark) !important;
+    }
+
+    [data-theme="dark"] .price-info {
+        color: var(--primary-blue) !important;
+    }
+
+    [data-theme="dark"] .book-btn {
+        background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue)) !important;
+    }
+
+    [data-theme="dark"] .book-btn:hover {
+        background: linear-gradient(135deg, var(--dark-blue), var(--primary-blue)) !important;
+    }
+
+    /* Dark mode styles for header section */
+    [data-theme="dark"] .booking-header {
+        background: #2D2D2D !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    [data-theme="dark"] .weather-info {
+        color: var(--text-dark) !important;
+    }
+
+    [data-theme="dark"] .weather-info .temperature {
+        color: var(--text-dark) !important;
+    }
+
+    [data-theme="dark"] .weather-info .feels-like {
+        color: var(--text-light) !important;
+    }
+
+    [data-theme="dark"] .weather-details small {
+        color: var(--text-light) !important;
+    }
+
+    [data-theme="dark"] .search-wrapper input {
+        background: #3D3D3D !important;
+        color: var(--text-dark) !important;
+        border-color: rgba(79, 195, 247, 0.3) !important;
+    }
+
+    [data-theme="dark"] .search-wrapper input::placeholder {
+        color: var(--text-light) !important;
+    }
+
+    [data-theme="dark"] .search-wrapper input:focus {
+        border-color: var(--primary-blue) !important;
+        box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.1) !important;
+    }
+
+    [data-theme="dark"] .search-icon {
+        color: var(--text-light) !important;
+    }
+
+    /* Dark mode styles for map section */
+    [data-theme="dark"] .map-container {
+        background: #2D2D2D !important;
+        border-color: rgba(79, 195, 247, 0.1) !important;
+    }
+
+    [data-theme="dark"] .map-placeholder {
+        color: var(--text-light) !important;
+    }
+
+    [data-theme="dark"] .map-placeholder span {
+        color: var(--text-dark) !important;
+    }
+
+    [data-theme="dark"] .map-placeholder small {
+        color: var(--text-light) !important;
+    }
+
+    /* Dark mode styles for table header */
+    [data-theme="dark"] .table-header {
+        background: #3D3D3D !important;
+        color: var(--text-dark) !important;
+    }
+
+    /* Dark mode styles for section title */
+    [data-theme="dark"] .section-title {
+        color: var(--text-dark) !important;
+    }
 </style>
 
 @section Scripts {

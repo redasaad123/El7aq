@@ -1,0 +1,201 @@
+@model Web.Models.Account.EditProfileViewModel
+
+@{
+    ViewData["Title"] = "Edit Profile - El7aq";
+}
+
+<div class="edit-profile-container" style="margin-top: 120px; padding: 4rem 5%; max-width: 800px; margin-left: auto; margin-right: auto;">
+    
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h2 style="color: var(--blackish-blue); margin-bottom: 1rem;">✏️ Edit Profile</h2>
+        <p style="color: var(--text-light);">Update your personal information</p>
+    </div>
+
+    <!-- Success/Error Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Edit Profile Form -->
+    <div class="edit-profile-card" style="background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
+        
+        <form asp-action="EditProfile" method="post" class="needs-validation" novalidate>
+            @Html.AntiForgeryToken()
+            
+            <div class="row">
+                <!-- First Name -->
+                <div class="col-md-6 mb-4">
+                    <label asp-for="FirstName" class="form-label" style="color: var(--blackish-blue); font-weight: 600; margin-bottom: 0.5rem;">
+                        <i class="fas fa-user me-2"></i>@Html.DisplayNameFor(m => m.FirstName)
+                    </label>
+                    <input asp-for="FirstName" class="form-control" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 0.75rem 1rem; transition: all 0.3s ease;" placeholder="Enter your first name" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <!-- Last Name -->
+                <div class="col-md-6 mb-4">
+                    <label asp-for="LastName" class="form-label" style="color: var(--blackish-blue); font-weight: 600; margin-bottom: 0.5rem;">
+                        <i class="fas fa-user me-2"></i>@Html.DisplayNameFor(m => m.LastName)
+                    </label>
+                    <input asp-for="LastName" class="form-control" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 0.75rem 1rem; transition: all 0.3s ease;" placeholder="Enter your last name" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-4">
+                <label asp-for="Email" class="form-label" style="color: var(--blackish-blue); font-weight: 600; margin-bottom: 0.5rem;">
+                    <i class="fas fa-envelope me-2"></i>@Html.DisplayNameFor(m => m.Email)
+                </label>
+                <input asp-for="Email" type="email" class="form-control" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 0.75rem 1rem; transition: all 0.3s ease;" placeholder="Enter your email address" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="mb-4">
+                <label asp-for="PhoneNumber" class="form-label" style="color: var(--blackish-blue); font-weight: 600; margin-bottom: 0.5rem;">
+                    <i class="fas fa-phone me-2"></i>@Html.DisplayNameFor(m => m.PhoneNumber)
+                </label>
+                <input asp-for="PhoneNumber" type="tel" class="form-control" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 0.75rem 1rem; transition: all 0.3s ease;" placeholder="Enter your phone number (optional)" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between align-items-center mt-5">
+                <a asp-action="Profile" class="btn btn-outline-secondary" style="border-radius: 12px; padding: 0.75rem 2rem; font-weight: 600; text-decoration: none; transition: all 0.3s ease;">
+                    <i class="fas fa-arrow-left me-2"></i>Cancel
+                </a>
+                
+                <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #27AAE2, #218CBA); border: none; border-radius: 12px; padding: 0.75rem 2rem; font-weight: 600; transition: all 0.3s ease;">
+                    <i class="fas fa-save me-2"></i>Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .edit-profile-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .edit-profile-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-blue) !important;
+        box-shadow: 0 0 0 0.2rem rgba(39, 170, 226, 0.25) !important;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+    }
+
+    /* Dark mode styles */
+    [data-theme="dark"] .edit-profile-card {
+        background: #2D2D2D !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    [data-theme="dark"] .form-control {
+        background-color: #3D3D3D !important;
+        border-color: #4D4D4D !important;
+        color: white !important;
+    }
+
+    [data-theme="dark"] .form-control:focus {
+        background-color: #3D3D3D !important;
+        border-color: var(--primary-blue) !important;
+        color: white !important;
+    }
+
+    [data-theme="dark"] .form-label {
+        color: #E0E0E0 !important;
+    }
+
+    [data-theme="dark"] h2 {
+        color: #E0E0E0 !important;
+    }
+
+    [data-theme="dark"] p {
+        color: #B0B0B0 !important;
+    }
+
+    @@media (max-width: 768px) {
+        .edit-profile-container {
+            padding: 2rem 3%;
+            margin-top: 100px;
+        }
+        
+        .edit-profile-card {
+            padding: 2rem 1.5rem;
+        }
+        
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    // Form validation
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+
+    // Auto-dismiss alerts after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            setTimeout(function() {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 5000);
+        });
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

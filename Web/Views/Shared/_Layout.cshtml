@@ -34,6 +34,13 @@
 
             <!-- Authentication Section -->
             <div class="auth-section">
+                <!-- Dark Mode Toggle - Available to all users -->
+                <div class="dark-mode-toggle">
+                    <button id="headerDarkModeToggle" class="btn btn-outline" style="padding: 0.5rem; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-moon" id="darkModeIcon"></i>
+                    </button>
+                </div>
+
                 @if (SignInManager.IsSignedIn(User))
                 {
                     <div class="user-menu">
@@ -45,13 +52,6 @@
                             var user = await userManager.GetUserAsync(User);
                             var unreadCount = user != null ? await notificationService.GetUnreadCountAsync(user.Id) : 0;
                         }
-
-                        <!-- Dark Mode Toggle -->
-                        <div class="dark-mode-toggle">
-                            <button id="headerDarkModeToggle" class="btn btn-outline" style="padding: 0.5rem; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-moon" id="darkModeIcon"></i>
-                            </button>
-                        </div>
 
                         <!-- Notifications -->
                         <div class="notification-icon">
@@ -106,6 +106,9 @@
         </div>
     </div>
 
+    <!-- Contact Section - Available on all pages -->
+    @await Html.PartialAsync("_ContactSection")
+
     @* <footer class="border-top footer text-muted"> *@
     @*     <div class="container"> *@
     @*         &copy; 2025 - Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
@@ -151,6 +154,20 @@
                     }
                 });
             }
+
+            // Smooth scroll for contact link on all pages
+            document.querySelectorAll('a[href="#contact"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector('#contact');
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
         });
     </script>
     

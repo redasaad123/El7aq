@@ -527,4 +527,148 @@
 
     /* No Bookings */
     .no-bookings {
-        display
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 300px;
+        text-align: center;
+    }
+
+    .no-bookings-content {
+        background: white;
+        padding: 3rem 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(39, 170, 226, 0.1);
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    .no-bookings-content:hover {
+        transform: translateY(-3px);
+        border-color: var(--primary-blue);
+        box-shadow: 0 8px 30px rgba(39, 170, 226, 0.2);
+    }
+
+    .no-bookings-content i {
+        font-size: 4rem;
+        color: var(--primary-blue);
+        margin-bottom: 1rem;
+    }
+
+    .no-bookings-content h3 {
+        color: var(--blackish-blue);
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .no-bookings-content p {
+        color: var(--text-light);
+        margin-bottom: 2rem;
+    }
+
+    /* Dark mode styles for SearchTrips page */
+    [data-theme="dark"] .stat-card {
+        background: #2D2D2D !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    [data-theme="dark"] .stat-card:hover {
+        border-color: var(--primary-blue) !important;
+        box-shadow: 0 8px 25px rgba(79, 195, 247, 0.2) !important;
+    }
+
+    [data-theme="dark"] .stat-number {
+        color: var(--text-dark) !important;
+    }
+
+    [data-theme="dark"] .stat-label {
+        color: var(--text-light) !important;
+    }
+
+    [data-theme="dark"] .booking-card {
+        background: #2D2D2D !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    [data-theme="dark"] .booking-card:hover {
+        border-color: var(--primary-blue) !important;
+        box-shadow: 0 8px 30px rgba(79, 195, 247, 0.2) !important;
+    }
+
+    [data-theme="dark"] .route-text {
+        color: var(--text-dark) !important;
+    }
+
+    [data-theme="dark"] .booking-id {
+        color: var(--text-light) !important;
+    }
+
+    [data-theme="dark"] .detail-section h4 {
+        color: var(--primary-blue) !important;
+    }
+
+    [data-theme="dark"] .detail-item {
+        background: #3D3D3D !important;
+    }
+
+    [data-theme="dark"] .detail-item strong {
+        color: var(--text-dark) !important;
+    }
+
+    [data-theme="dark"] .detail-item small {
+        color: var(--text-light) !important;
+    }
+
+    [data-theme="dark"] .no-bookings-content {
+        background: #2D2D2D !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    [data-theme="dark"] .no-bookings-content:hover {
+        border-color: var(--primary-blue) !important;
+        box-shadow: 0 8px 30px rgba(79, 195, 247, 0.2) !important;
+    }
+
+    [data-theme="dark"] .no-bookings-content h3 {
+        color: var(--text-dark) !important;
+    }
+
+    [data-theme="dark"] .no-bookings-content p {
+        color: var(--text-light) !important;
+    }
+
+    [data-theme="dark"] .page-header h1 {
+        color: var(--primary-blue) !important;
+    }
+
+    [data-theme="dark"] .page-header p {
+        color: var(--text-light) !important;
+    }
+
+    @@media (max-width: 768px) {
+        .bookings-container {
+            margin-top: 100px;
+            padding: 1rem 0;
+        }
+        
+        .container {
+            padding: 0 1rem;
+        }
+        
+        .page-header h1 {
+            font-size: 2rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .booking-card {
+            padding: 1.5rem;
+        }
+        
+        .detail-grid, .driver-info {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

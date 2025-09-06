@@ -12,6 +12,7 @@ using Core.Entities;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 
 
@@ -27,18 +28,21 @@ namespace Web.Controllers
         private readonly IPassengerHelperService _passengerHelperService;
         private readonly IUnitOfWork<Station> _stationUow;
         private readonly ILogger<PassengerController> _logger;
+        private readonly UserManager<AppUsers> _userManager;
 
         public PassengerController(
             IBookingService bookingService,
             ITripService tripService,
             IPassengerHelperService passengerHelperService,
-             IUnitOfWork<Station> stationUow, ILogger<PassengerController> _logger)
+             IUnitOfWork<Station> stationUow, ILogger<PassengerController> _logger,
+             UserManager<AppUsers> userManager)
         {
             _bookingService = bookingService;
             _tripService = tripService;
             _passengerHelperService = passengerHelperService;
             _stationUow = stationUow;
             this._logger = _logger;
+            _userManager = userManager;
         }
 
         // Helper method to get current passenger ID
@@ -641,6 +645,98 @@ namespace Web.Controllers
 
             return View(model);
         }
+
+        #region Edit Profile
+        [HttpGet]
+        public async Task<IActionResult> EditProfile()
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "User not found";
+                    return RedirectToAction("Profile");
+                }
+
+                var model = new EditProfileViewModel
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email ?? string.Empty,
+                    PhoneNumber = user.PhoneNumber,
+                    UserName = user.UserName ?? string.Empty
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading edit profile page");
+                TempData["ErrorMessage"] = "An error occurred while loading the edit profile page";
+                return RedirectToAction("Profile");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(EditProfileViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "User not found";
+                    return RedirectToAction("Profile");
+                }
+
+                // Check if email is being changed and if it's already taken
+                if (user.Email != model.Email)
+                {
+                    var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                    if (existingUser != null && existingUser.Id != user.Id)
+                    {
+                        ModelState.AddModelError("Email", "This email is already taken");
+                        return View(model);
+                    }
+                }
+
+                // Update user properties
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Email = model.Email;
+                user.UserName = model.Email; // Use email as username
+                user.PhoneNumber = model.PhoneNumber;
+
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = "Profile updated successfully!";
+                    return RedirectToAction("Profile");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                    return View(model);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating user profile");
+                TempData["ErrorMessage"] = "An error occurred while updating your profile";
+                return View(model);
+            }
+        }
+        #endregion
 
         #region History
         [HttpGet]
