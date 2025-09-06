@@ -4,6 +4,7 @@
 
 @{
     ViewData["Title"] = "El7aq - Smart Transportation";
+    var stations = ViewBag.Stations as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> ?? new List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
 }
 
 <div class="floating-elements"></div>
@@ -39,24 +40,26 @@
         <div class="booking-card">
             <div class="booking-form">
                 <h3>Quick Trip Search</h3>
-                <form asp-controller="Passenger" asp-action="SearchTrips" method="post">
+                <form asp-controller="Home" asp-action="SearchTrips" method="post">
                     <div class="form-group">
                         <label for="OriginStationId">From</label>
-                        <select class="form-control" id="OriginStationId" name="OriginStationId">
+                        <select class="form-control" id="OriginStationId" name="OriginStationId" required>
                             <option value="">Select departure station</option>
-                            <option value="S1">Ramses - Cairo</option>
-                            <option value="S2">Sidi Gaber - Alexandria</option>
-                            <option value="S3">Downtown Hub - Alexandria</option>
+                            @foreach (var station in stations)
+                            {
+                                <option value="@station.Value">@station.Text</option>
+                            }
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label for="DestinationStationId">To</label>
-                        <select class="form-control" id="DestinationStationId" name="DestinationStationId">
+                        <select class="form-control" id="DestinationStationId" name="DestinationStationId" required>
                             <option value="">Select destination</option>
-                            <option value="S1">Ramses - Cairo</option>
-                            <option value="S2">Sidi Gaber - Alexandria</option>
-                            <option value="S3">Downtown Hub - Alexandria</option>
+                            @foreach (var station in stations)
+                            {
+                                <option value="@station.Value">@station.Text</option>
+                            }
                         </select>
                     </div>
 
@@ -139,7 +142,7 @@
             <div class="feature-icon">🎫</div>
             <h3>Digital Tickets</h3>
             <p>No more paper tickets. Everything stored securely in your digital wallet.</p>
-</div>
+        </div>
         
         <div class="feature-card">
             <div class="feature-icon">🚗</div>
@@ -255,5 +258,53 @@
             }
         });
 
+        // Prevent selecting same station for origin and destination
+        document.getElementById('OriginStationId').addEventListener('change', function() {
+            const destinationSelect = document.getElementById('DestinationStationId');
+            const selectedOrigin = this.value;
+            
+            // Enable all destination options first
+            for (let option of destinationSelect.options) {
+                option.disabled = false;
+            }
+            
+            // Disable the selected origin in destination dropdown
+            if (selectedOrigin) {
+                for (let option of destinationSelect.options) {
+                    if (option.value === selectedOrigin && option.value !== '') {
+                        option.disabled = true;
+                    }
+                }
+                
+                // Clear destination if it matches origin
+                if (destinationSelect.value === selectedOrigin) {
+                    destinationSelect.value = '';
+                }
+            }
+        });
+
+        document.getElementById('DestinationStationId').addEventListener('change', function() {
+            const originSelect = document.getElementById('OriginStationId');
+            const selectedDestination = this.value;
+            
+            // Enable all origin options first
+            for (let option of originSelect.options) {
+                option.disabled = false;
+            }
+            
+            // Disable the selected destination in origin dropdown
+            if (selectedDestination) {
+                for (let option of originSelect.options) {
+                    if (option.value === selectedDestination && option.value !== '') {
+                        option.disabled = true;
+                    }
+                }
+                
+                // Clear origin if it matches destination
+                if (originSelect.value === selectedDestination) {
+                    originSelect.value = '';
+                }
+            }
+        });
     </script>
 }
