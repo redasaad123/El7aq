@@ -73,7 +73,8 @@ form {
 
 input[type="text"],
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+input[type="tel"] {
     padding: 0.8rem 1rem;
     border: 2px solid #e1e5e9;
     width: 100%;

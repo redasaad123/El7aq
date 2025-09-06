@@ -71,7 +71,7 @@ namespace Web
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Driver}/{action=Account}/{id?}");
             app.MapRazorPages();
 
             app.Run();
