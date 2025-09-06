@@ -1,0 +1,312 @@
+@model Web.Models.History.HistoryViewModel
+@{
+    ViewData["Title"] = "My History - El7aq";
+}
+
+<div class="history-container" style="margin-top: 120px; padding: 2rem 5%; max-width: 1400px; margin-left: auto; margin-right: auto;">
+    
+    <!-- Header -->
+    <div class="text-center mb-4">
+        <h2 style="color: var(--blackish-blue); margin-bottom: 0.5rem;">📊 My History</h2>
+        <p style="color: var(--text-light);">View your booking and trip history</p>
+    </div>
+
+    <!-- Split Layout Container -->
+    <div class="history-split-container">
+        
+        <!-- Left Side - Booking History -->
+        <div class="history-left-panel">
+            <div class="history-panel-header">
+                <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">
+                    <i class="fas fa-ticket-alt"></i> Booking History
+                </h3>
+                <p style="color: var(--text-light); font-size: 0.9rem;">
+                    @Model.Bookings.Count bookings found
+                </p>
+            </div>
+            
+            <div class="history-panel-content">
+                @if (Model.Bookings.Any())
+                {
+                    @foreach (var booking in Model.Bookings)
+                    {
+                        <div class="history-item booking-item">
+                            <div class="history-item-header">
+                                <div class="booking-info">
+                                    <h5 style="margin: 0; color: var(--blackish-blue);">
+                                        @booking.Trip.OriginStation → @booking.Trip.DestinationStation
+                                    </h5>
+                                    <p style="margin: 0.25rem 0; color: var(--text-light); font-size: 0.85rem;">
+                                        Booked on @booking.BookingDate.ToString("MMM dd, yyyy")
+                                    </p>
+                                </div>
+                                <div class="booking-status">
+                                    <span class="status-badge status-@booking.Status.ToString().ToLower()">
+                                        @booking.StatusText
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="history-item-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">Driver:</span>
+                                    <span class="detail-value">@booking.Trip.DriverName</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Car:</span>
+                                    <span class="detail-value">@booking.Trip.CarNumber</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Price:</span>
+                                    <span class="detail-value price">@booking.Trip.Price.ToString("C")</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <i class="fas fa-ticket-alt" style="font-size: 3rem; color: var(--text-light); margin-bottom: 1rem;"></i>
+                        <p style="color: var(--text-light);">No booking history found</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Right Side - Trip History -->
+        <div class="history-right-panel">
+            <div class="history-panel-header">
+                <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">
+                    <i class="fas fa-route"></i> Trip History
+                </h3>
+                <p style="color: var(--text-light); font-size: 0.9rem;">
+                    @Model.Trips.Count trips taken
+                </p>
+            </div>
+            
+            <div class="history-panel-content">
+                @if (Model.Trips.Any())
+                {
+                    @foreach (var trip in Model.Trips)
+                    {
+                        <div class="history-item trip-item">
+                            <div class="history-item-header">
+                                <div class="trip-info">
+                                    <h5 style="margin: 0; color: var(--blackish-blue);">
+                                        @trip.OriginStation → @trip.DestinationStation
+                                    </h5>
+                                    <p style="margin: 0.25rem 0; color: var(--text-light); font-size: 0.85rem;">
+                                        Trip ID: @trip.TripId.Substring(0, Math.Min(8, trip.TripId.Length))...
+                                    </p>
+                                </div>
+                                <div class="trip-stats">
+                                    <span class="stat-badge">
+                                        @trip.PassengerBookingCount seat(s)
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="history-item-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">Driver:</span>
+                                    <span class="detail-value">@trip.DriverName</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Car:</span>
+                                    <span class="detail-value">@trip.CarNumber</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Price:</span>
+                                    <span class="detail-value price">@trip.Price.ToString("C")</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Capacity:</span>
+                                    <span class="detail-value">@trip.BookedSeats/@trip.TotalSeats seats</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <i class="fas fa-route" style="font-size: 3rem; color: var(--text-light); margin-bottom: 1rem;"></i>
+                        <p style="color: var(--text-light);">No trip history found</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .history-split-container {
+        display: flex;
+        gap: 2rem;
+        min-height: 600px;
+    }
+
+    .history-left-panel,
+    .history-right-panel {
+        flex: 1;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .history-panel-header {
+        padding: 1.5rem 1.5rem 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .history-panel-content {
+        padding: 1rem 1.5rem 1.5rem;
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+    .history-item {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--primary-blue);
+        transition: all 0.3s ease;
+    }
+
+    .history-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .history-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .history-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+    }
+
+    .history-item-details {
+        display: grid;
+        gap: 0.5rem;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .detail-label {
+        font-weight: 500;
+        color: var(--text-light);
+        font-size: 0.85rem;
+    }
+
+    .detail-value {
+        color: var(--blackish-blue);
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+
+    .detail-value.price {
+        color: var(--primary-blue);
+        font-weight: 600;
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-confirmed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-cancelled {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .stat-badge {
+        background: var(--primary-blue);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    /* Dark mode styles */
+    [data-theme="dark"] .history-left-panel,
+    [data-theme="dark"] .history-right-panel {
+        background: #2D2D2D;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="dark"] .history-panel-header {
+        border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    [data-theme="dark"] .history-item {
+        background: #3A3A3A;
+        border-left-color: var(--primary-blue);
+    }
+
+    [data-theme="dark"] .detail-label {
+        color: #B0B0B0;
+    }
+
+    [data-theme="dark"] .detail-value {
+        color: var(--text-dark);
+    }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .history-container {
+            padding: 1rem 3%;
+            margin-top: 100px;
+        }
+
+        .history-split-container {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .history-panel-content {
+            max-height: 400px;
+        }
+
+        .history-item-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+    }
+</style>

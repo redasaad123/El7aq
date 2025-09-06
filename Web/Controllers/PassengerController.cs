@@ -6,6 +6,7 @@ using Web.Models;
 using Web.Models.Booking;
 using Web.Models.Trip;
 using Web.Models.Account;
+using Web.Models.History;
 using Core.Enums;
 using Core.Entities;
 using Core.Interfaces;
@@ -640,5 +641,78 @@ namespace Web.Controllers
 
             return View(model);
         }
+
+        #region History
+        [HttpGet]
+        public async Task<IActionResult> History()
+        {
+            try
+            {
+                var passengerId = await GetCurrentPassengerIdAsync();
+                if (passengerId == null)
+                {
+                    TempData["ErrorMessage"] = "Must LogIn First";
+                    return RedirectToPage("/Account/Login");
+                }
+
+                // Get all bookings for the passenger (including completed/cancelled ones)
+                var allBookings = await _bookingService.GetPassengerBookingsAsync(passengerId.ToString()!);
+
+                // Get trips that the passenger has booked (for trip history)
+                var tripIds = allBookings.Select(b => b.TripId).Distinct().ToList();
+                var trips = new List<Trip>();
+                
+                foreach (var tripId in tripIds)
+                {
+                    var trip = await _tripService.GetTripDetailsAsync(tripId);
+                    if (trip != null)
+                    {
+                        trips.Add(trip);
+                    }
+                }
+
+                var model = new HistoryViewModel
+                {
+                    Bookings = allBookings.Select(booking => new BookingHistoryViewModel
+                    {
+                        BookingId = booking.Id,
+                        TripId = booking.TripId,
+                        BookingDate = booking.BookingDate,
+                        Status = booking.Status,
+                        StatusText = GetBookingStatusText(booking.Status),
+                        Trip = new TripSummaryViewModel
+                        {
+                            OriginStation = booking.Trip?.Route?.StartStation?.Name,
+                            DestinationStation = booking.Trip?.Route?.EndStation?.Name,
+                            Price = booking.Trip?.Route?.Price ?? 0,
+                            DriverName = $"{booking.Trip?.Driver?.appUsers?.FirstName} {booking.Trip?.Driver?.appUsers?.LastName}",
+                            CarNumber = booking.Trip?.Driver?.CarNumber
+                        }
+                    }).OrderByDescending(b => b.BookingDate).ToList(),
+
+                    Trips = trips.Select(trip => new TripHistoryViewModel
+                    {
+                        TripId = trip.Id,
+                        OriginStation = trip.Route?.StartStation?.Name,
+                        DestinationStation = trip.Route?.EndStation?.Name,
+                        Price = trip.Route?.Price ?? 0,
+                        DriverName = $"{trip.Driver?.appUsers?.FirstName} {trip.Driver?.appUsers?.LastName}",
+                        CarNumber = trip.Driver?.CarNumber,
+                        TotalSeats = trip.AvailableSeats,
+                        BookedSeats = trip.Bookings?.Count(b => b.Status != BookingStatus.Cancelled) ?? 0,
+                        PassengerBookingCount = trip.Bookings?.Count(b => b.PassengerId == passengerId && b.Status != BookingStatus.Cancelled) ?? 0
+                    }).OrderByDescending(t => t.TripId).ToList()
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading passenger history");
+                TempData["ErrorMessage"] = "Something went wrong while loading your history";
+                return View(new HistoryViewModel());
+            }
+        }
+        #endregion
     }
 }
