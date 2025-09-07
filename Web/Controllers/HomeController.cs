@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Web.Models;
+using System.Security.Claims;
 
 namespace Web.Controllers
 {
@@ -21,6 +22,22 @@ namespace Web.Controllers
 
         public async Task<IActionResult> Index()
         {
+            // Check if user is signed in and redirect based on role
+            if (User.Identity.IsAuthenticated)
+            {
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                
+                if (userRole == "Manager")
+                {
+                    return RedirectToAction("ManagerHome", "Manager");
+                }
+                else if (userRole == "Driver")
+                {
+                    return RedirectToAction("Account", "Driver");
+                }
+                // Removed automatic redirect for passengers - let them stay on home page
+            }
+
             try
             {
                 

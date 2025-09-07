@@ -7,7 +7,7 @@ namespace Core.Entities
     public class Booking
     {
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
         [ForeignKey(nameof(Passenger))]

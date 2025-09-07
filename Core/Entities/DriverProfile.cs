@@ -6,7 +6,7 @@ namespace Core.Entities
     public class DriverProfile
     {
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
         [ForeignKey(nameof(appUsers))]

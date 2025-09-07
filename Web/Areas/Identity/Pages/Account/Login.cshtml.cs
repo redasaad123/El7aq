@@ -13,20 +13,23 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;using Core.Entities;
+using Microsoft.Extensions.Logging;
 using Core.Entities;
 using System.Net.Mail;
+using System.Security.Claims;
 
 namespace Web.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
         private readonly SignInManager<AppUsers> _signInManager;
+        private readonly UserManager<AppUsers> _userManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<AppUsers> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<AppUsers> signInManager, UserManager<AppUsers> userManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -114,8 +117,27 @@ namespace Web.Areas.Identity.Pages.Account
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
 
-                var user = new EmailAddressAttribute().IsValid(Input.Email) ? new MailAddress(Input.Email).User : Input.Email;
-                var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                // Find user by email first, then use their UserName for sign-in
+                var user = await _userManager.FindByEmailAsync(Input.Email);
+                if (user == null)
+                {
+                    _logger.LogWarning($"Login failed: User not found for email {Input.Email}");
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return Page();
+                }
+
+                _logger.LogInformation($"Attempting login for user {user.UserName} (Email: {user.Email})");
+                
+                // Check if password is correct before attempting sign-in
+                var passwordValid = await _userManager.CheckPasswordAsync(user, Input.Password);
+                if (!passwordValid)
+                {
+                    _logger.LogWarning($"Login failed: Invalid password for user {user.UserName}");
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return Page();
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");

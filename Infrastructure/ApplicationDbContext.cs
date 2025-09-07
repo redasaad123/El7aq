@@ -28,6 +28,11 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
         builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaim", "security");
         builder.Entity<IdentityUserToken<string>>().ToTable("UserToken", "security");
 
+        // 🔒 Ensure email uniqueness
+        builder.Entity<AppUsers>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+
         // 🟢 Ensure one-to-one profiles per user
         builder.Entity<DriverProfile>()
             .HasIndex(d => d.UserId)
@@ -40,6 +45,11 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
         builder.Entity<StaffProfile>()
             .HasIndex(s => s.UserId)
             .IsUnique();
+
+        builder.Entity<ManagerProfile>()
+            .HasIndex(m => m.UserId)
+            .IsUnique();
+
 
         // DriverProfile ↔ AppUsers (1:1)
         builder.Entity<DriverProfile>()
@@ -61,6 +71,14 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
             .WithOne()
             .HasForeignKey<StaffProfile>(s => s.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // ManagerProfile ↔ AppUsers (1:1)
+        builder.Entity<ManagerProfile>()
+            .HasOne(m => m.User)
+            .WithOne()
+            .HasForeignKey<ManagerProfile>(m => m.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
 
         // StaffProfile ↔ Station
         builder.Entity<StaffProfile>()
@@ -148,37 +166,6 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
 
         );
 
-        builder.Entity<DriverProfile>().HasData(
-            new DriverProfile
-            {
-                Id = "D4",
-                UserId = "0825e731-d92c-4e82-bd5a-f25d3b4c20b7",
-                LicenseNumber = "LIC321",
-                CarNumber = "CAR321",
-                Lat = 31.0400, 
-                Long = 31.3785
-            },
-            new DriverProfile
-            {
-                Id = "D5",
-                UserId = "045fe3f3-6d2a-411f-8797-148a712adcff",
-                LicenseNumber = "LIC654",
-                CarNumber = "CAR654",
-                Lat = 31.0485,
-                Long = 31.3770
-            },
-            new DriverProfile
-            {
-                Id = "D6",
-                UserId = "6e8f8228-d327-4d93-9cfc-02835fd7bbf9",
-                LicenseNumber = "LIC987",
-                CarNumber = "CAR987",
-                Lat = 31.0330, 
-                Long = 31.3840
-            }
-);
-
-
         // 8. Notifications 
         builder.Entity<Notification>().HasData(
             new Notification
@@ -220,6 +207,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
     public DbSet<DriverProfile> Drivers { get; set; }
     public DbSet<PassengerProfile> Passengers { get; set; }
     public DbSet<StaffProfile> Staffs { get; set; }
+    public DbSet<ManagerProfile> Managers { get; set; }
     public DbSet<Trip> Trips { get; set; }
     public DbSet<Booking> Bookings { get; set; }
     public DbSet<Station> Stations { get; set; }

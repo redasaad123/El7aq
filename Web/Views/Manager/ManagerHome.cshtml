@@ -1,0 +1,194 @@
+@{
+    ViewData["Title"] = "Manager Dashboard";
+}
+
+<div class="container-fluid" style="margin-top: 120px; padding: 2rem 5%; max-width: 1200px; margin-left: auto; margin-right: auto;">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box text-center mb-5">
+                <h2 class="page-title" style="color: var(--blackish-blue); margin-bottom: 0.5rem;">
+                    Welcome, @ViewBag.ManagerName
+                </h2>
+                <p class="text-muted">Manage your transportation system efficiently</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Reports Section -->
+        <div class="col-12 mb-4">
+            <div class="card" style="background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: none;">
+                <div class="card-header" style="background: linear-gradient(135deg, #27AAE2, #218CBA); color: white; border-radius: 20px 20px 0 0; padding: 1.5rem;">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>System Reports
+                    </h4>
+                </div>
+                <div class="card-body" style="padding: 2rem;">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="report-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 15px; text-align: center; transition: all 0.3s ease; cursor: pointer; height: 100%;">
+                                <div class="report-icon mb-3">
+                                    <i class="fas fa-users fa-3x"></i>
+                                </div>
+                                <h5 class="report-title">Passengers Report</h5>
+                                <p class="report-description">View detailed report of all passengers in the system</p>
+                                <a asp-action="PassengerReports" class="btn btn-light btn-sm mt-3" style="border-radius: 25px; padding: 0.5rem 1.5rem; text-decoration: none;">
+                                    <i class="fas fa-eye me-2"></i>View Report
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="report-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 2rem; border-radius: 15px; text-align: center; transition: all 0.3s ease; cursor: pointer; height: 100%;">
+                                <div class="report-icon mb-3">
+                                    <i class="fas fa-car fa-3x"></i>
+                                </div>
+                                <h5 class="report-title">Drivers Report</h5>
+                                <p class="report-description">View detailed report of all drivers in the system</p>
+                                <button class="btn btn-light btn-sm mt-3" style="border-radius: 25px; padding: 0.5rem 1.5rem;">
+                                    <i class="fas fa-eye me-2"></i>View Report
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="report-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 2rem; border-radius: 15px; text-align: center; transition: all 0.3s ease; cursor: pointer; height: 100%;">
+                                <div class="report-icon mb-3">
+                                    <i class="fas fa-user-tie fa-3x"></i>
+                                </div>
+                                <h5 class="report-title">Staff Report</h5>
+                                <p class="report-description">View detailed report of all staff members in the system</p>
+                                <button class="btn btn-light btn-sm mt-3" style="border-radius: 25px; padding: 0.5rem 1.5rem;">
+                                    <i class="fas fa-eye me-2"></i>View Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Management Actions Section -->
+        <div class="col-12 mb-4">
+            <div class="card" style="background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: none;">
+                <div class="card-header" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; border-radius: 20px 20px 0 0; padding: 1.5rem;">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-cogs me-2"></i>Management Actions
+                    </h4>
+                </div>
+                <div class="card-body" style="padding: 2rem;">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success" role="alert" style="border-radius: 10px;">
+                            @TempData["Success"]
+                        </div>
+                    }
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="action-card" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); padding: 2rem; border-radius: 15px; text-align: center; transition: all 0.3s ease; cursor: pointer; height: 100%;">
+                                <div class="action-icon mb-3">
+                                    <i class="fas fa-user-plus fa-3x" style="color: #667eea;"></i>
+                                </div>
+                                <h5 class="action-title" style="color: var(--blackish-blue);">Add New Staff</h5>
+                                <p class="action-description" style="color: var(--text-light);">Add new staff members to the system</p>
+                                <button class="btn btn-primary btn-sm mt-3" style="border-radius: 25px; padding: 0.5rem 1.5rem; background: linear-gradient(135deg, #667eea, #764ba2); border: none;">
+                                    <i class="fas fa-plus me-2"></i>Add Staff
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="action-card" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 2rem; border-radius: 15px; text-align: center; transition: all 0.3s ease; cursor: pointer; height: 100%;">
+                                <div class="action-icon mb-3">
+                                    <i class="fas fa-user-cog fa-3x" style="color: #f093fb;"></i>
+                                </div>
+                                <h5 class="action-title" style="color: var(--blackish-blue);">Manage Staff</h5>
+                                <p class="action-description" style="color: var(--text-light);">Edit and manage existing staff members</p>
+                                <button class="btn btn-primary btn-sm mt-3" style="border-radius: 25px; padding: 0.5rem 1.5rem; background: linear-gradient(135deg, #f093fb, #f5576c); border: none;">
+                                    <i class="fas fa-edit me-2"></i>Manage Staff
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="action-card" style="background: linear-gradient(135deg, #c2ffd8 0%, #465efb 100%); padding: 2rem; border-radius: 15px; text-align: center; transition: all 0.3s ease; cursor: pointer; height: 100%;">
+                                <div class="action-icon mb-3">
+                                    <i class="fas fa-id-card fa-3x" style="color: #2b66ff;"></i>
+                                </div>
+                                <h5 class="action-title" style="color: var(--blackish-blue);">Create Driver Account</h5>
+                                <p class="action-description" style="color: var(--text-light);">Register a new driver and assign driver role</p>
+                                <a asp-area="Identity" asp-page="/Account/RegisterDriver" class="btn btn-primary btn-sm mt-3" style="border-radius: 25px; padding: 0.5rem 1.5rem; background: linear-gradient(135deg, #2b66ff, #7aa2ff); border: none; text-decoration: none;">
+                                    <i class="fas fa-plus me-2"></i>Create Driver
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="col-12">
+            <div class="card" style="background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: none;">
+                <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0; padding: 1.5rem;">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-user-circle me-2"></i>Profile Management
+                    </h4>
+                </div>
+                <div class="card-body" style="padding: 2rem;">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="profile-info">
+                                <h5 style="color: var(--blackish-blue); margin-bottom: 0.5rem;">@ViewBag.ManagerName</h5>
+                                <p style="color: var(--text-light); margin-bottom: 0;">Manager Account</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a asp-action="Profile" class="btn btn-primary" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);">
+                                <i class="fas fa-user me-2"></i>My Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .report-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* Dark mode styles */
+    [data-theme="dark"] .card {
+        background: #2D2D2D !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    [data-theme="dark"] .profile-info h5 {
+        color: var(--text-dark) !important;
+    }
+
+    [data-theme="dark"] .profile-info p {
+        color: var(--text-light) !important;
+    }
+
+    @@media (max-width: 768px) {
+        .container-fluid {
+            padding: 1rem 3%;
+            margin-top: 100px;
+        }
+        
+        .report-card, .action-card {
+            margin-bottom: 1rem;
+        }
+    }
+</style>

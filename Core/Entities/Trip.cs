@@ -6,7 +6,7 @@ namespace Core.Entities
     public class Trip
     {
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
         [ForeignKey(nameof(Route))]
@@ -16,10 +16,11 @@ namespace Core.Entities
         [ForeignKey(nameof(Driver))]
         public string DriverId { get; set; }
 
-       
-        public int AvailableSeats { get; set; }
+        [Required]
+        public DateTime DepartureTime { get; set; }
 
-        
+        [Required]
+        public int AvailableSeats { get; set; }
 
         // Navigation
         public Route? Route { get; set; }

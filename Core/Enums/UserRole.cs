@@ -4,7 +4,8 @@
     {
         Passenger,
         Driver,
-        Staff
+        Staff,
+        Manager
     }
 
 

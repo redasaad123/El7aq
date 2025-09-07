@@ -1,15 +1,18 @@
 ﻿using Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Web.Models;
+
 namespace Web.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Staff")]
     public class UsersController : Controller
     {
         private readonly UserManager<AppUsers> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+
         public UsersController(UserManager<AppUsers> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;

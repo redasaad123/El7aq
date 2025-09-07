@@ -128,11 +128,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B1",
-<<<<<<< Updated upstream
-                            BookingDate = new DateTime(2025, 9, 5, 21, 9, 50, 87, DateTimeKind.Utc).AddTicks(7010),
-=======
-                            BookingDate = new DateTime(2025, 9, 7, 9, 43, 53, 984, DateTimeKind.Utc).AddTicks(3830),
->>>>>>> Stashed changes
+                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1682),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -140,11 +136,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B3",
-<<<<<<< Updated upstream
-                            BookingDate = new DateTime(2025, 9, 5, 21, 9, 50, 87, DateTimeKind.Utc).AddTicks(7013),
-=======
-                            BookingDate = new DateTime(2025, 9, 7, 9, 43, 53, 984, DateTimeKind.Utc).AddTicks(3835),
->>>>>>> Stashed changes
+                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1689),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -152,11 +144,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B2",
-<<<<<<< Updated upstream
-                            BookingDate = new DateTime(2025, 9, 5, 21, 9, 50, 87, DateTimeKind.Utc).AddTicks(7024),
-=======
-                            BookingDate = new DateTime(2025, 9, 7, 9, 43, 53, 984, DateTimeKind.Utc).AddTicks(3856),
->>>>>>> Stashed changes
+                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1706),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -267,52 +255,32 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-<<<<<<< Updated upstream
-                            Id = "9619f20d-6be9-4346-99f6-a0989af73e45",
-                            CreatedAt = new DateTime(2025, 9, 5, 21, 9, 50, 87, DateTimeKind.Utc).AddTicks(7087),
-=======
-                            Id = "9acac23e-d282-4477-95e9-7892b27224cc",
-                            CreatedAt = new DateTime(2025, 9, 7, 9, 43, 53, 984, DateTimeKind.Utc).AddTicks(3947),
->>>>>>> Stashed changes
+                            Id = "6ec17115-61cd-4ce1-bb49-8a486ef15cef",
+                            CreatedAt = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1772),
                             IsRead = true,
                             Message = "Welcome to El7aq! Your account was created successfully.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-<<<<<<< Updated upstream
-                            Id = "bac07b9e-4cfd-4d7d-8f65-62465be06a84",
-                            CreatedAt = new DateTime(2025, 9, 5, 20, 54, 50, 87, DateTimeKind.Utc).AddTicks(7093),
-=======
-                            Id = "af8b5efd-5b06-455f-a324-fc4c5e216f4b",
-                            CreatedAt = new DateTime(2025, 9, 7, 9, 28, 53, 984, DateTimeKind.Utc).AddTicks(3951),
->>>>>>> Stashed changes
+                            Id = "9c25c18c-c6d2-44aa-9a08-a044c8ab4223",
+                            CreatedAt = new DateTime(2025, 9, 6, 21, 54, 18, 389, DateTimeKind.Utc).AddTicks(1775),
                             IsRead = false,
                             Message = "Your first booking is pending confirmation.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-<<<<<<< Updated upstream
-                            Id = "4e5aa000-99cd-43db-9cb5-3d078583a281",
-                            CreatedAt = new DateTime(2025, 9, 5, 21, 29, 50, 87, DateTimeKind.Utc).AddTicks(7102),
-=======
-                            Id = "8b7931a6-d7e9-427b-9cf2-b45d43ca6f16",
-                            CreatedAt = new DateTime(2025, 9, 7, 10, 3, 53, 984, DateTimeKind.Utc).AddTicks(3957),
->>>>>>> Stashed changes
+                            Id = "482edf44-3288-4850-ba72-9b55b14e21f6",
+                            CreatedAt = new DateTime(2025, 9, 6, 22, 29, 18, 389, DateTimeKind.Utc).AddTicks(1781),
                             IsRead = false,
                             Message = "ay 7aga 1111.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-<<<<<<< Updated upstream
-                            Id = "a16e5619-72e7-4629-8081-37abc4347cf5",
-                            CreatedAt = new DateTime(2025, 9, 5, 21, 4, 50, 87, DateTimeKind.Utc).AddTicks(7109),
-=======
-                            Id = "6e0263df-9dfc-49ac-b0fd-d0360ea52d02",
-                            CreatedAt = new DateTime(2025, 9, 7, 9, 38, 53, 984, DateTimeKind.Utc).AddTicks(3960),
->>>>>>> Stashed changes
+                            Id = "71616057-539c-4687-b308-979d0261056d",
+                            CreatedAt = new DateTime(2025, 9, 6, 22, 4, 18, 389, DateTimeKind.Utc).AddTicks(1783),
                             IsRead = false,
                             Message = "ay 7aga 22222.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"

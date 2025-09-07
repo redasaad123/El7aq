@@ -136,6 +136,18 @@ namespace Web.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            
+            _logger.LogInformation($"Registration attempt for email: {Input?.Email}");
+            _logger.LogInformation($"ModelState.IsValid: {ModelState.IsValid}");
+            
+            if (!ModelState.IsValid)
+            {
+                foreach (var error in ModelState)
+                {
+                    _logger.LogWarning($"ModelState error in {error.Key}: {string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))}");
+                }
+            }
+            
             if (ModelState.IsValid)
             {
                 //var user = CreateUser();
@@ -145,34 +157,37 @@ namespace Web.Areas.Identity.Pages.Account
                 
                 var user = new AppUsers
                 {
-                    UserName = new MailAddress(Input.Email).User,
+                    UserName = Input.Email,
                     Email = Input.Email,
                     FirstName = Input.FirstName,
                     LastName = Input.LastName
                 };
                 var result = await _userManager.CreateAsync(user, Input.Password);
+                
+                _logger.LogInformation($"User creation result: Succeeded={result.Succeeded}");
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        _logger.LogError($"User creation error: {error.Description}");
+                    }
+                }
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                    
+                    // Add user to Passenger role
+                    await _userManager.AddToRoleAsync(user, "Passenger");
+                    
+                    // Add role claim
+                    //var roleClaim = new Claim(ClaimTypes.Role, "Passenger");
+                    //await _userManager.AddClaimAsync(user, roleClaim);
 
-                    var userId = await _userManager.GetUserIdAsync(user);
-
-                    //var userClaim = new Claim("User", "User");
-                    //await _userManager.AddClaimAsync(user, userClaim);
-
-                    // Add FirstName and LastName as claims
-                    //var firstNameClaim = new Claim("FirstName", Input.FirstName);
-                    //var lastNameClaim = new Claim("LastName", Input.LastName);
-                    //await _userManager.AddClaimAsync(user, firstNameClaim);
-                    //await _userManager.AddClaimAsync(user, lastNameClaim);
-
-                    var roleClaim = new Claim(ClaimTypes.Role, "Passenger");
-                    await _userManager.AddClaimAsync(user, roleClaim);
-
+                    // Create passenger profile with proper ID generation
                     var passengerProfile = new PassengerProfile
                     {
-                        Id = user.Id,   
+                        Id = Guid.NewGuid().ToString(),
                         UserId = user.Id                  
                     };
 

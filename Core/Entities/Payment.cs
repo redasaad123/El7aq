@@ -2,7 +2,9 @@
 using Core.Enums;
 using System.ComponentModel.DataAnnotations;
 
-public class Payment
+namespace Core.Entities
+{
+    public class Payment
 {
     [Key]
     public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -31,4 +33,5 @@ public class Payment
     // Navigation
     public PassengerProfile Passenger { get; set; }
     public Booking Booking { get; set; }
+}
 }

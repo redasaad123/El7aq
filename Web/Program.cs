@@ -6,6 +6,7 @@ using Infrastructure.Mapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Web.Services;
 
@@ -28,7 +29,7 @@ namespace Web
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddLogging();
             // Register custom claims principal factory
-            builder.Services.AddScoped<IUserClaimsPrincipalFactory<AppUsers>, ApplicationClaimsPrincipalFactory>();
+            builder.Services.AddScoped<IUserClaimsPrincipalFactory<AppUsers>, Infrastructure.Services.ApplicationClaimsPrincipalFactory>();
 
             // Application services and unit of work registrations
             builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
@@ -36,12 +37,9 @@ namespace Web
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IPassengerHelperService, PassengerHelperService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
-<<<<<<< Updated upstream
-=======
-            builder.Services.AddScoped<IGeolocationService, OpenStreetMapAdapter>();
-            builder.Services.AddTransient<IEmailSender, EmailSend2>();
->>>>>>> Stashed changes
 
+            builder.Services.AddTransient<IEmailSender, EmailSend2>();
+            builder.Services.AddTransient<IGeolocationService,OpenStreetMapAdapter>();
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(cfg =>
             {
