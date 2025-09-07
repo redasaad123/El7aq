@@ -54,6 +54,8 @@ namespace Infrastructure.Services
                                         b.TripId == tripId &&
                                         b.Status != BookingStatus.Cancelled);
 
+            if (existingBooking != null)
+                throw new InvalidOperationException("Passenger already has a booking for this trip");
 
             var booking = new Booking
             {

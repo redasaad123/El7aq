@@ -5,20 +5,21 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Core.Entities;
 using Infrastructure;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace Web.Areas.Identity.Pages.Account
 {
-    public class RegisterManagerModel : PageModel
+    public class RegisterStaffModel : PageModel
     {
         private readonly SignInManager<AppUsers> _signInManager;
         private readonly UserManager<AppUsers> _userManager;
-        private readonly ILogger<RegisterManagerModel> _logger;
+        private readonly ILogger<RegisterStaffModel> _logger;
         private readonly ApplicationDbContext _db;
 
-        public RegisterManagerModel(
+        public RegisterStaffModel(
             UserManager<AppUsers> userManager,
             SignInManager<AppUsers> signInManager,
-            ILogger<RegisterManagerModel> logger,
+            ILogger<RegisterStaffModel> logger,
             ApplicationDbContext db)
         {
             _userManager = userManager;
@@ -31,6 +32,8 @@ namespace Web.Areas.Identity.Pages.Account
         public InputModel Input { get; set; }
 
         public string ReturnUrl { get; set; }
+
+        public List<Station> Stations { get; set; } = new List<Station>();
 
         public class InputModel
         {
@@ -61,18 +64,14 @@ namespace Web.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
 
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
-            [Display(Name = "Department")]
-            public string Department { get; set; }
-
-            [StringLength(500, ErrorMessage = "The {0} must be at max {1} characters long.")]
-            [Display(Name = "Notes (Optional)")]
-            public string? Notes { get; set; }
+            [Display(Name = "Station")]
+            public string StationId { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
+            Stations = await _db.Stations.ToListAsync();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -91,61 +90,40 @@ namespace Web.Areas.Identity.Pages.Account
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
-                // Debug logging
-                _logger.LogInformation($"Manager registration attempt for email: {Input.Email}");
-                _logger.LogInformation($"User creation result: Succeeded={result.Succeeded}");
-                if (!result.Succeeded)
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        _logger.LogError($"User creation error: {error.Description}");
-                    }
-                }
-
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("Manager created a new account with password.");
+                    _logger.LogInformation("Staff created a new account with password.");
 
-                    // Add Manager role claim
-                    var roleClaim = new Claim(ClaimTypes.Role, "Manager");
+                    // Add user to Staff role
+                    await _userManager.AddToRoleAsync(user, "Staff");
+
+                    // Add role claim
+                    var roleClaim = new Claim(ClaimTypes.Role, "Staff");
                     await _userManager.AddClaimAsync(user, roleClaim);
 
-                    // Add FirstName and LastName claims
-                    var firstNameClaim = new Claim("FirstName", Input.FirstName);
-                    var lastNameClaim = new Claim("LastName", Input.LastName);
-                    await _userManager.AddClaimAsync(user, firstNameClaim);
-                    await _userManager.AddClaimAsync(user, lastNameClaim);
-
-                    // Add user to Manager role
-                    await _userManager.AddToRoleAsync(user, "Manager");
-
-                    // Create ManagerProfile with proper ID generation
-                    var managerProfile = new ManagerProfile
+                    // Create StaffProfile with proper ID generation
+                    var staffProfile = new StaffProfile
                     {
                         Id = Guid.NewGuid().ToString(),
                         UserId = user.Id,
-                        Department = Input.Department,
-                        Notes = Input.Notes
+                        StationId = Input.StationId
                     };
 
-                    _db.Managers.Add(managerProfile);
+                    _db.Staffs.Add(staffProfile);
                     await _db.SaveChangesAsync();
 
-                    // Debug: Try to find the user after creation
-                    var createdUser = await _userManager.FindByEmailAsync(Input.Email);
-                    _logger.LogInformation($"User found after creation: {createdUser != null}, UserName: {createdUser?.UserName}");
-
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("ManagerHome", "Manager");
+                    return RedirectToAction("Index", "Home");
                 }
 
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
-                    _logger.LogError($"Registration error: {error.Description}");
                 }
             }
 
+            // Reload stations for the view
+            Stations = await _db.Stations.ToListAsync();
             return Page();
         }
     }

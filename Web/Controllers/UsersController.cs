@@ -7,7 +7,7 @@ using Web.Models;
 
 namespace Web.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Staff")]
     public class UsersController : Controller
     {
         private readonly UserManager<AppUsers> _userManager;

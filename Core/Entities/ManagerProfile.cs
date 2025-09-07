@@ -6,7 +6,7 @@ namespace Core.Entities
     public class ManagerProfile
     {
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
         [ForeignKey(nameof(User))]

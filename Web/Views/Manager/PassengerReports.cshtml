@@ -1,0 +1,390 @@
+@model IEnumerable<Web.Models.PassengerReportViewModel>
+@{
+    ViewData["Title"] = "Passenger Reports - El7aq";
+}
+
+<div class="container-fluid" style="margin-top: 120px; padding: 2rem 5%; max-width: 1400px; margin-left: auto; margin-right: auto;">
+    
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 style="color: var(--blackish-blue); margin-bottom: 0.5rem;">
+                        <i class="fas fa-users me-2"></i>Passenger Reports
+                    </h2>
+                    <p class="text-muted mb-0">Comprehensive overview of all passengers in the system</p>
+                </div>
+                <div>
+                    <a asp-action="ManagerHome" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 15px; text-align: center;">
+                <i class="fas fa-users fa-2x mb-2"></i>
+                <h3>@ViewBag.TotalPassengers</h3>
+                <p class="mb-0">Total Passengers</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 1.5rem; border-radius: 15px; text-align: center;">
+                <i class="fas fa-user-check fa-2x mb-2"></i>
+                <h3>@ViewBag.ActivePassengers</h3>
+                <p class="mb-0">Active Passengers</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 1.5rem; border-radius: 15px; text-align: center;">
+                <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+                <h3>@ViewBag.TotalRevenue?.ToString("C")</h3>
+                <p class="mb-0">Total Revenue</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card" style="background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); border: none;">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="searchInput" placeholder="Search passengers...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="sortBy">
+                                <option value="spent">Sort by Total Spent</option>
+                                <option value="bookings">Sort by Bookings</option>
+                                <option value="name">Sort by Name</option>
+                                <option value="lastBooking">Sort by Last Booking</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary w-100" onclick="refreshData()">
+                                <i class="fas fa-sync-alt me-2"></i>Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Passengers Grid -->
+    <div class="row" id="passengersGrid">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var passenger in Model)
+            {
+                <div class="col-lg-4 col-md-6 mb-4 passenger-card" data-name="@passenger.FullName.ToLower()" data-status="@(passenger.IsActive ? "active" : "inactive")" data-spent="@passenger.TotalSpent" data-bookings="@passenger.TotalBookings" data-last-booking="@(passenger.LastBookingDate?.ToString("yyyy-MM-dd") ?? "")">
+                    <div class="card h-100" style="border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); border: none; transition: all 0.3s ease;">
+                        <div class="card-body">
+                            <!-- Passenger Header -->
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="passenger-avatar me-3" style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">
+                                    @passenger.FirstName.FirstOrDefault().ToString().ToUpper()
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title mb-1" style="color: var(--blackish-blue);">@passenger.FullName</h5>
+                                    <p class="card-text text-muted mb-0 small">@passenger.Email</p>
+                                </div>
+                                <span class="badge @passenger.StatusClass" style="background: @(passenger.IsActive ? "linear-gradient(135deg, #4facfe, #00f2fe)" : "linear-gradient(135deg, #a8a8a8, #888888)"); color: white;">
+                                    @passenger.StatusText
+                                </span>
+                            </div>
+
+                            <!-- Passenger Stats -->
+                            <div class="row text-center mb-3">
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <h6 class="text-primary mb-1">@passenger.TotalBookings</h6>
+                                        <small class="text-muted">Bookings</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <h6 class="text-success mb-1">@passenger.TotalSpent.ToString("C")</h6>
+                                        <small class="text-muted">Spent</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <h6 class="text-info mb-1">@passenger.TotalPayments</h6>
+                                        <small class="text-muted">Payments</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Passenger Details -->
+                            <div class="passenger-details mb-3">
+                                <div class="detail-item d-flex justify-content-between">
+                                    <span class="text-muted">Phone:</span>
+                                    <span>@(string.IsNullOrEmpty(passenger.PhoneNumber) ? "Not provided" : passenger.PhoneNumber)</span>
+                                </div>
+                                <div class="detail-item d-flex justify-content-between">
+                                    <span class="text-muted">Last Booking:</span>
+                                    <span>@passenger.LastBookingText</span>
+                                </div>
+                                <div class="detail-item d-flex justify-content-between">
+                                    <span class="text-muted">Member Since:</span>
+                                    <span>@passenger.RegistrationText</span>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary btn-sm" onclick="viewPassengerDetails('@passenger.Id')">
+                                    <i class="fas fa-eye me-2"></i>View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Passengers Found</h4>
+                    <p class="text-muted">There are no passengers in the system yet.</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Passenger Details Modal -->
+<div class="modal fade" id="passengerDetailsModal" tabindex="-1" aria-labelledby="passengerDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 15px; border: none;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px 15px 0 0;">
+                <h5 class="modal-title" id="passengerDetailsModalLabel">
+                    <i class="fas fa-user me-2"></i>Passenger Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="passengerDetailsContent">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading passenger details...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .passenger-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    }
+
+    .stat-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .passenger-avatar {
+        transition: transform 0.3s ease;
+    }
+
+    .passenger-card:hover .passenger-avatar {
+        transform: scale(1.1);
+    }
+
+    .detail-item {
+        padding: 0.25rem 0;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+
+    .stat-item {
+        padding: 0.5rem;
+        border-radius: 8px;
+        background: rgba(102, 126, 234, 0.1);
+    }
+
+    /* Dark mode styles */
+    [data-theme="dark"] .card {
+        background: #2D2D2D !important;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    [data-theme="dark"] .detail-item {
+        border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    [data-theme="dark"] .stat-item {
+        background: rgba(102, 126, 234, 0.2);
+    }
+
+    @@media (max-width: 768px) {
+        .container-fluid {
+            padding: 1rem 3%;
+            margin-top: 100px;
+        }
+    }
+</style>
+
+<script>
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function() {
+        filterPassengers();
+    });
+
+    // Filter functionality
+    document.getElementById('statusFilter').addEventListener('change', function() {
+        filterPassengers();
+    });
+
+    // Sort functionality
+    document.getElementById('sortBy').addEventListener('change', function() {
+        sortPassengers();
+    });
+
+    function filterPassengers() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const cards = document.querySelectorAll('.passenger-card');
+
+        cards.forEach(card => {
+            const name = card.dataset.name;
+            const status = card.dataset.status;
+            
+            const matchesSearch = name.includes(searchTerm);
+            const matchesStatus = !statusFilter || status === statusFilter;
+            
+            if (matchesSearch && matchesStatus) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    function sortPassengers() {
+        const sortBy = document.getElementById('sortBy').value;
+        const container = document.getElementById('passengersGrid');
+        const cards = Array.from(container.querySelectorAll('.passenger-card'));
+
+        cards.sort((a, b) => {
+            switch (sortBy) {
+                case 'spent':
+                    return parseFloat(b.dataset.spent) - parseFloat(a.dataset.spent);
+                case 'bookings':
+                    return parseInt(b.dataset.bookings) - parseInt(a.dataset.bookings);
+                case 'name':
+                    return a.dataset.name.localeCompare(b.dataset.name);
+                case 'lastBooking':
+                    return new Date(b.dataset.lastBooking) - new Date(a.dataset.lastBooking);
+                default:
+                    return 0;
+            }
+        });
+
+        cards.forEach(card => container.appendChild(card));
+    }
+
+    function refreshData() {
+        location.reload();
+    }
+
+    function viewPassengerDetails(passengerId) {
+        const modal = new bootstrap.Modal(document.getElementById('passengerDetailsModal'));
+        modal.show();
+
+        // Load passenger details via AJAX
+        fetch(`/Manager/GetPassengerDetails?passengerId=${passengerId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayPassengerDetails(data.data);
+                } else {
+                    document.getElementById('passengerDetailsContent').innerHTML = 
+                        `<div class="alert alert-danger">${data.message}</div>`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('passengerDetailsContent').innerHTML = 
+                    `<div class="alert alert-danger">Error loading passenger details</div>`;
+            });
+    }
+
+    function displayPassengerDetails(data) {
+        const content = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="text-primary mb-3">Personal Information</h6>
+                    <div class="mb-2"><strong>Name:</strong> ${data.name}</div>
+                    <div class="mb-2"><strong>Email:</strong> ${data.email}</div>
+                    <div class="mb-2"><strong>Phone:</strong> ${data.phoneNumber || 'Not provided'}</div>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-primary mb-3">Statistics</h6>
+                    <div class="mb-2"><strong>Total Bookings:</strong> ${data.totalBookings}</div>
+                    <div class="mb-2"><strong>Total Spent:</strong> $${data.totalSpent.toFixed(2)}</div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h6 class="text-primary mb-3">Recent Bookings</h6>
+                    ${data.recentBookings.length > 0 ? 
+                        data.recentBookings.map(booking => 
+                            `<div class="border-bottom pb-2 mb-2">
+                                <div><strong>Date:</strong> ${booking.bookingDate}</div>
+                                <div><strong>Route:</strong> ${booking.tripRoute}</div>
+                                <div><strong>Status:</strong> <span class="badge bg-info">${booking.status}</span></div>
+                            </div>`
+                        ).join('') : 
+                        '<p class="text-muted">No recent bookings</p>'
+                    }
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-primary mb-3">Payment History</h6>
+                    ${data.paymentHistory.length > 0 ? 
+                        data.paymentHistory.map(payment => 
+                            `<div class="border-bottom pb-2 mb-2">
+                                <div><strong>Amount:</strong> $${payment.amount.toFixed(2)}</div>
+                                <div><strong>Method:</strong> ${payment.method}</div>
+                                <div><strong>Status:</strong> <span class="badge bg-success">${payment.status}</span></div>
+                                <div><strong>Date:</strong> ${payment.date}</div>
+                            </div>`
+                        ).join('') : 
+                        '<p class="text-muted">No payment history</p>'
+                    }
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('passengerDetailsContent').innerHTML = content;
+    }
+</script>
