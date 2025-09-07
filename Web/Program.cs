@@ -113,13 +113,7 @@ namespace Web
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
 
-            // Seed roles and staff user
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var roleSeeder = scope.ServiceProvider.GetRequiredService<RoleSeederService>();
-            //    await roleSeeder.SeedRolesAsync();
-            //    await roleSeeder.SeedStaffUserAsync();
-            //}
+            
             app.Run();
         }
     }
