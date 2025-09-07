@@ -24,5 +24,16 @@ namespace Web.Controllers
             
             return View();
         }
+
+        public IActionResult Profile()
+        {
+            // Get the current user's name for display
+            var firstName = User.FindFirst("FirstName")?.Value ?? User.Identity?.Name ?? "Manager";
+            var lastName = User.FindFirst("LastName")?.Value ?? "";
+            
+            ViewBag.ManagerName = $"{firstName} {lastName}".Trim();
+            
+            return View();
+        }
     }
 }

@@ -1,0 +1,219 @@
+@using Microsoft.AspNetCore.Identity
+@using Core.Entities
+@inject UserManager<AppUsers> UserManager
+@inject SignInManager<AppUsers> SignInManager
+
+@{
+    ViewData["Title"] = "Manager Profile - El7aq";
+    var user = await UserManager.GetUserAsync(User);
+}
+
+<div class="profile-container" style="margin-top: 120px; padding: 4rem 5%; max-width: 1200px; margin-left: auto; margin-right: auto;">
+
+    <!-- Profile Header -->
+    <div class="text-center mb-5">
+        <div class="profile-avatar" style="width:140px; height:140px; border-radius:50%; background:linear-gradient(135deg, #667eea, #764ba2); display:flex; align-items:center; justify-content:center; color:white; font-size:3rem; margin:0 auto 1.5rem; box-shadow:0 10px 25px rgba(0,0,0,0.15);">
+            @(user?.FirstName?.FirstOrDefault().ToString().ToUpper() ?? "M")
+        </div>
+        <h2 style="color: var(--blackish-blue); margin-bottom:0.5rem;">
+            @user?.FirstName @user?.LastName
+        </h2>
+        <p style="color: var(--text-light); margin-bottom: 1.5rem;">@user?.Email</p>
+        <span class="badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 0.5rem 1rem; border-radius: 25px; font-size: 0.9rem;">
+            <i class="fas fa-crown me-2"></i>Manager
+        </span>
+    </div>
+
+    <div class="row">
+        <!-- Account Settings -->
+        <div class="col-md-6 mb-4">
+            <div class="profile-card" style="background:white; padding:2rem; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.08); height:100%;">
+                <h4 style="color: var(--primary-blue); margin-bottom:1.5rem;">⚙️ Account Settings</h4>
+                <ul class="list-unstyled" style="margin:0; padding:0;">
+                    <li class="profile-option">
+                        <a asp-controller="Notification" asp-action="Index">🔔 Notifications</a>
+                    </li>
+                    <li class="profile-option d-flex justify-content-between align-items-center">
+                        <span>🌙 Dark Mode</span>
+                        <input type="checkbox" class="form-check-input" id="darkModeToggle" />
+                    </li>
+                    <li class="profile-option">
+                        <a href="#" onclick="alert('Edit Profile functionality coming soon!')">✏️ Edit Profile</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Management Options -->
+        <div class="col-md-6 mb-4">
+            <div class="profile-card" style="background:white; padding:2rem; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.08); height:100%;">
+                <h4 style="color: var(--primary-blue); margin-bottom:1.5rem;">🎛️ Management Options</h4>
+                <ul class="list-unstyled" style="margin:0; padding:0;">
+                    <li class="profile-option"><a asp-controller="Manager" asp-action="ManagerHome">🏠 Dashboard</a></li>
+                    <li class="profile-option"><a href="#" onclick="alert('Reports functionality coming soon!')">📊 System Reports</a></li>
+                    <li class="profile-option"><a href="#" onclick="alert('Staff Management functionality coming soon!')">👥 Staff Management</a></li>
+                    <li class="profile-option"><a asp-controller="Home" asp-action="About">ℹ️ About Us</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manager Statistics -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="profile-card" style="background:white; padding:2rem; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+                <h4 style="color: var(--primary-blue); margin-bottom:1.5rem;">📈 Manager Statistics</h4>
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 15px; text-align: center;">
+                            <i class="fas fa-users fa-2x mb-2"></i>
+                            <h5>0</h5>
+                            <p class="mb-0">Total Passengers</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 1.5rem; border-radius: 15px; text-align: center;">
+                            <i class="fas fa-car fa-2x mb-2"></i>
+                            <h5>0</h5>
+                            <p class="mb-0">Total Drivers</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 1.5rem; border-radius: 15px; text-align: center;">
+                            <i class="fas fa-user-tie fa-2x mb-2"></i>
+                            <h5>0</h5>
+                            <p class="mb-0">Total Staff</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 1.5rem; border-radius: 15px; text-align: center;">
+                            <i class="fas fa-route fa-2x mb-2"></i>
+                            <h5>0</h5>
+                            <p class="mb-0">Total Trips</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+    .stat-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+    .profile-option {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+        .profile-option:last-child {
+            border-bottom: none;
+        }
+
+        .profile-option a {
+            text-decoration: none;
+            color: var(--blackish-blue);
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+    .profile-option a:hover {
+        color: var(--primary-blue);
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4) !important;
+    }
+
+    /* Dark mode styles for profile page */
+    [data-theme="dark"] .profile-card {
+        background: #2D2D2D !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    [data-theme="dark"] .stat-card {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    [data-theme="dark"] .profile-option {
+        border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    [data-theme="dark"] .profile-option a {
+        color: var(--text-dark);
+    }
+
+    [data-theme="dark"] .profile-option a:hover {
+        color: var(--primary-blue);
+    }
+
+    @@media (max-width: 768px) {
+        .profile-container {
+            padding: 2rem 3%;
+            margin-top: 100px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        const headerToggle = document.getElementById('headerDarkModeToggle');
+        const darkModeIcon = document.getElementById('darkModeIcon');
+        
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            darkModeToggle.checked = true;
+            if (darkModeIcon) {
+                darkModeIcon.className = 'fas fa-sun';
+            }
+        }
+        
+        // Toggle dark mode from profile page
+        darkModeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                if (darkModeIcon) {
+                    darkModeIcon.className = 'fas fa-sun';
+                }
+            } else {
+                body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                if (darkModeIcon) {
+                    darkModeIcon.className = 'fas fa-moon';
+                }
+            }
+        });
+        
+        // Sync with header toggle
+        if (headerToggle) {
+            headerToggle.addEventListener('click', function() {
+                setTimeout(() => {
+                    const isDark = body.getAttribute('data-theme') === 'dark';
+                    darkModeToggle.checked = isDark;
+                }, 100);
+            });
+        }
+    });
+</script>
