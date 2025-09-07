@@ -77,6 +77,7 @@ namespace Web
                 options.AddPolicy("DriverOrStaff", policy => policy.RequireRole("Driver", "Staff"));
                 options.AddPolicy("StaffOrManager", policy => policy.RequireRole("Staff", "Manager"));
                 options.AddPolicy("PassengerOrStaff", policy => policy.RequireRole("Passenger", "Staff"));
+                options.AddPolicy("Driver", policy => policy.RequireRole("Driver"));
             });
 
             builder.Services.AddScoped<IEmailSend, EmailSend >();
@@ -109,7 +110,7 @@ namespace Web
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Driver}/{action=Account}/{id?}");
             app.MapRazorPages();
 
             // Seed roles and staff user
