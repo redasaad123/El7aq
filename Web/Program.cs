@@ -1,4 +1,4 @@
-﻿using Core;
+using Core;
 using Core.Entities;
 using Core.Interfaces;
 using Infrastructure;
@@ -14,7 +14,7 @@ namespace Web
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -25,31 +25,9 @@ namespace Web
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services
-                .AddDefaultIdentity<AppUsers>(options => 
-                {
-                    options.SignIn.RequireConfirmedAccount = false;
-                    
-            // Relaxed password requirements for testing
-            options.Password.RequireDigit = false;
-            options.Password.RequireLowercase = false;
-            options.Password.RequireNonAlphanumeric = false;
-            options.Password.RequireUppercase = false;
-            options.Password.RequiredLength = 3;
-            options.Password.RequiredUniqueChars = 0;
-                    
-                    // User settings
-                    options.User.RequireUniqueEmail = true;
-                    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                    
-                    // Lockout settings
-                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-                    options.Lockout.MaxFailedAccessAttempts = 5;
-                    options.Lockout.AllowedForNewUsers = true;
-                })
-                .AddRoles<IdentityRole>()
+                .AddDefaultIdentity<AppUsers>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddLogging();
-            
             // Register custom claims principal factory
             builder.Services.AddScoped<IUserClaimsPrincipalFactory<AppUsers>, Infrastructure.Services.ApplicationClaimsPrincipalFactory>();
 
@@ -59,9 +37,16 @@ namespace Web
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IPassengerHelperService, PassengerHelperService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
-            builder.Services.AddTransient<IEmailSender, EmailSend2>();
-            builder.Services.AddScoped<RoleSeederService>();
 
+            builder.Services.AddTransient<IEmailSender, EmailSend2>();
+
+
+            builder.Services.AddTransient<IGeolocationService, OpenStreetMapAdapter>();
+
+            builder.Services.AddTransient<IGeolocationService,OpenStreetMapAdapter>();
+
+
+            builder.Services.AddTransient<IGeolocationService,OpenStreetMapAdapter>();
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(cfg =>
@@ -69,21 +54,15 @@ namespace Web
                 cfg.AddProfile<MapperConfig>();
             });
 
-            // Add authorization policies
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy("StaffOnly", policy => policy.RequireRole("Staff"));
-                options.AddPolicy("ManagerOrStaff", policy => policy.RequireRole("Manager", "Staff"));
-                options.AddPolicy("DriverOrStaff", policy => policy.RequireRole("Driver", "Staff"));
-                options.AddPolicy("StaffOrManager", policy => policy.RequireRole("Staff", "Manager"));
-                options.AddPolicy("PassengerOrStaff", policy => policy.RequireRole("Passenger", "Staff"));
-            });
+
+
+            builder.Services.AddScoped<IEmailSend, EmailSend>();
+
 
             builder.Services.AddScoped<IEmailSend, EmailSend >();
+
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IPayPalService, PayPalService>();
-            builder.Services.AddRazorPages();
-
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -112,13 +91,6 @@ namespace Web
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
 
-            // Seed roles and staff user
-            using (var scope = app.Services.CreateScope())
-            {
-                var roleSeeder = scope.ServiceProvider.GetRequiredService<RoleSeederService>();
-                await roleSeeder.SeedRolesAsync();
-                await roleSeeder.SeedStaffUserAsync();
-            }
             app.Run();
         }
     }

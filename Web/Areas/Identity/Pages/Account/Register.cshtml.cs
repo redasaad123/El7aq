@@ -181,8 +181,8 @@ namespace Web.Areas.Identity.Pages.Account
                     await _userManager.AddToRoleAsync(user, "Passenger");
                     
                     // Add role claim
-                    var roleClaim = new Claim(ClaimTypes.Role, "Passenger");
-                    await _userManager.AddClaimAsync(user, roleClaim);
+                    //var roleClaim = new Claim(ClaimTypes.Role, "Passenger");
+                    //await _userManager.AddClaimAsync(user, roleClaim);
 
                     // Create passenger profile with proper ID generation
                     var passengerProfile = new PassengerProfile

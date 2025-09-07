@@ -25,7 +25,7 @@ namespace Web.Controllers
             drivernUitOfWork = DrivernUitOfWork;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Order()
         {
             var user = await userManager.GetUserAsync(User);
 
@@ -36,7 +36,7 @@ namespace Web.Controllers
 
             var model = new HomeViewModel
             {
-                Index = index - 1,
+                Index = index ,
             };
 
             return View(model);

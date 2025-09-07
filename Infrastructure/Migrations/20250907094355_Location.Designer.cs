@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250907094355_Location")]
+    partial class Location
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,7 +131,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B1",
-                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1682),
+                            BookingDate = new DateTime(2025, 9, 7, 9, 43, 53, 984, DateTimeKind.Utc).AddTicks(3830),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -136,7 +139,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B3",
-                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1689),
+                            BookingDate = new DateTime(2025, 9, 7, 9, 43, 53, 984, DateTimeKind.Utc).AddTicks(3835),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -144,25 +147,11 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B2",
-                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1706),
+                            BookingDate = new DateTime(2025, 9, 7, 9, 43, 53, 984, DateTimeKind.Utc).AddTicks(3856),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
                         });
-                });
-
-            modelBuilder.Entity("Core.Entities.DriverOrder", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("DriverId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DriverOrders");
                 });
 
             modelBuilder.Entity("Core.Entities.DriverProfile", b =>
@@ -269,32 +258,32 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6ec17115-61cd-4ce1-bb49-8a486ef15cef",
-                            CreatedAt = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1772),
+                            Id = "9acac23e-d282-4477-95e9-7892b27224cc",
+                            CreatedAt = new DateTime(2025, 9, 7, 9, 43, 53, 984, DateTimeKind.Utc).AddTicks(3947),
                             IsRead = true,
                             Message = "Welcome to El7aq! Your account was created successfully.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-                            Id = "9c25c18c-c6d2-44aa-9a08-a044c8ab4223",
-                            CreatedAt = new DateTime(2025, 9, 6, 21, 54, 18, 389, DateTimeKind.Utc).AddTicks(1775),
+                            Id = "af8b5efd-5b06-455f-a324-fc4c5e216f4b",
+                            CreatedAt = new DateTime(2025, 9, 7, 9, 28, 53, 984, DateTimeKind.Utc).AddTicks(3951),
                             IsRead = false,
                             Message = "Your first booking is pending confirmation.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-                            Id = "482edf44-3288-4850-ba72-9b55b14e21f6",
-                            CreatedAt = new DateTime(2025, 9, 6, 22, 29, 18, 389, DateTimeKind.Utc).AddTicks(1781),
+                            Id = "8b7931a6-d7e9-427b-9cf2-b45d43ca6f16",
+                            CreatedAt = new DateTime(2025, 9, 7, 10, 3, 53, 984, DateTimeKind.Utc).AddTicks(3957),
                             IsRead = false,
                             Message = "ay 7aga 1111.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-                            Id = "71616057-539c-4687-b308-979d0261056d",
-                            CreatedAt = new DateTime(2025, 9, 6, 22, 4, 18, 389, DateTimeKind.Utc).AddTicks(1783),
+                            Id = "6e0263df-9dfc-49ac-b0fd-d0360ea52d02",
+                            CreatedAt = new DateTime(2025, 9, 7, 9, 38, 53, 984, DateTimeKind.Utc).AddTicks(3960),
                             IsRead = false,
                             Message = "ay 7aga 22222.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
@@ -325,90 +314,6 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Core.Entities.Payment", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("BookingId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Method")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PassengerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TransactionReference")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookingId");
-
-                    b.HasIndex("PassengerId");
-
-                    b.ToTable("Payments");
-                });
-
-            modelBuilder.Entity("Core.Entities.Payment", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("BookingId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Method")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PassengerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TransactionReference")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookingId");
-
-                    b.HasIndex("PassengerId");
-
-                    b.ToTable("Payments");
-                });
-
             modelBuilder.Entity("Core.Entities.Route", b =>
                 {
                     b.Property<string>("Id")
@@ -432,15 +337,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("StartStationId");
 
                     b.ToTable("Routes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "R1",
-                            EndStationId = "S2",
-                            Price = 150m,
-                            StartStationId = "S1"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.StaffProfile", b =>
@@ -484,26 +380,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Stations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "S1",
-                            City = "Cairo",
-                            Name = "Ramses"
-                        },
-                        new
-                        {
-                            Id = "S2",
-                            City = "Alexandria",
-                            Name = "Sidi Gaber"
-                        },
-                        new
-                        {
-                            Id = "S3",
-                            City = "Alexandria",
-                            Name = "Downtown Hub"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.Trip", b =>
@@ -513,9 +389,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<int>("AvailableSeats")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("DepartureTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("DriverId")
                         .IsRequired()
@@ -532,29 +405,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("RouteId");
 
                     b.ToTable("Trips");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "T1",
-                            AvailableSeats = 5,
-                            DriverId = "D1",
-                            RouteId = "R1"
-                        },
-                        new
-                        {
-                            Id = "T2",
-                            AvailableSeats = 8,
-                            DriverId = "D1",
-                            RouteId = "R1"
-                        },
-                        new
-                        {
-                            Id = "T3",
-                            AvailableSeats = 0,
-                            DriverId = "D1",
-                            RouteId = "R1"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -690,6 +540,48 @@ namespace Infrastructure.Migrations
                     b.ToTable("UserToken", "security");
                 });
 
+            modelBuilder.Entity("Payment", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("BookingId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Method")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PassengerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TransactionReference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
+
+                    b.HasIndex("PassengerId");
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("Core.Entities.Booking", b =>
                 {
                     b.HasOne("Core.Entities.PassengerProfile", "Passenger")
@@ -744,25 +636,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Core.Entities.Payment", b =>
-                {
-                    b.HasOne("Core.Entities.Booking", "Booking")
-                        .WithMany("Payments")
-                        .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Core.Entities.PassengerProfile", "Passenger")
-                        .WithMany("Payments")
-                        .HasForeignKey("PassengerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-
-                    b.Navigation("Passenger");
                 });
 
             modelBuilder.Entity("Core.Entities.Route", b =>
@@ -871,6 +744,25 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Payment", b =>
+                {
+                    b.HasOne("Core.Entities.Booking", "Booking")
+                        .WithMany("Payments")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.PassengerProfile", "Passenger")
+                        .WithMany("Payments")
+                        .HasForeignKey("PassengerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("Passenger");
                 });
 
             modelBuilder.Entity("Core.Entities.Booking", b =>

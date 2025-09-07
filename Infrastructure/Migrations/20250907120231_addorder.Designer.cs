@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250907120231_addorder")]
+    partial class addorder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,6 +89,10 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -123,32 +130,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TripId");
 
                     b.ToTable("Bookings");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "B1",
-                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1682),
-                            PassengerId = "P1",
-                            Status = 0,
-                            TripId = "T1"
-                        },
-                        new
-                        {
-                            Id = "B3",
-                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1689),
-                            PassengerId = "P1",
-                            Status = 0,
-                            TripId = "T1"
-                        },
-                        new
-                        {
-                            Id = "B2",
-                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1706),
-                            PassengerId = "P1",
-                            Status = 0,
-                            TripId = "T1"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.DriverOrder", b =>
@@ -175,16 +156,10 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<double>("Lat")
-                        .HasColumnType("float");
-
                     b.Property<string>("LicenseNumber")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<double>("Long")
-                        .HasColumnType("float");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -196,44 +171,32 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Drivers");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = "D1",
-                            CarNumber = "CAR123",
-                            Lat = 0.0,
-                            LicenseNumber = "LIC123",
-                            Long = 0.0,
-                            UserId = "1d9f8228-d327-4d93-9cfc-02835fd7bbf4"
-                        },
-                        new
-                        {
-                            Id = "D4",
-                            CarNumber = "CAR321",
-                            Lat = 31.039999999999999,
-                            LicenseNumber = "LIC321",
-                            Long = 31.378499999999999,
-                            UserId = "0825e731-d92c-4e82-bd5a-f25d3b4c20b7"
-                        },
-                        new
-                        {
-                            Id = "D5",
-                            CarNumber = "CAR654",
-                            Lat = 31.048500000000001,
-                            LicenseNumber = "LIC654",
-                            Long = 31.376999999999999,
-                            UserId = "045fe3f3-6d2a-411f-8797-148a712adcff"
-                        },
-                        new
-                        {
-                            Id = "D6",
-                            CarNumber = "CAR987",
-                            Lat = 31.033000000000001,
-                            LicenseNumber = "LIC987",
-                            Long = 31.384,
-                            UserId = "6e8f8228-d327-4d93-9cfc-02835fd7bbf9"
-                        });
+            modelBuilder.Entity("Core.Entities.ManagerProfile", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Department")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Managers");
                 });
 
             modelBuilder.Entity("Core.Entities.Notification", b =>
@@ -265,40 +228,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "6ec17115-61cd-4ce1-bb49-8a486ef15cef",
-                            CreatedAt = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1772),
-                            IsRead = true,
-                            Message = "Welcome to El7aq! Your account was created successfully.",
-                            UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
-                        },
-                        new
-                        {
-                            Id = "9c25c18c-c6d2-44aa-9a08-a044c8ab4223",
-                            CreatedAt = new DateTime(2025, 9, 6, 21, 54, 18, 389, DateTimeKind.Utc).AddTicks(1775),
-                            IsRead = false,
-                            Message = "Your first booking is pending confirmation.",
-                            UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
-                        },
-                        new
-                        {
-                            Id = "482edf44-3288-4850-ba72-9b55b14e21f6",
-                            CreatedAt = new DateTime(2025, 9, 6, 22, 29, 18, 389, DateTimeKind.Utc).AddTicks(1781),
-                            IsRead = false,
-                            Message = "ay 7aga 1111.",
-                            UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
-                        },
-                        new
-                        {
-                            Id = "71616057-539c-4687-b308-979d0261056d",
-                            CreatedAt = new DateTime(2025, 9, 6, 22, 4, 18, 389, DateTimeKind.Utc).AddTicks(1783),
-                            IsRead = false,
-                            Message = "ay 7aga 22222.",
-                            UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.PassengerProfile", b =>
@@ -316,55 +245,6 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Passengers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "P1",
-                            UserId = "207a1b24-2482-4c8e-8972-bb587f5d8287"
-                        });
-                });
-
-            modelBuilder.Entity("Core.Entities.Payment", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("BookingId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Method")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PassengerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TransactionReference")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookingId");
-
-                    b.HasIndex("PassengerId");
-
-                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Core.Entities.Payment", b =>
@@ -432,15 +312,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("StartStationId");
 
                     b.ToTable("Routes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "R1",
-                            EndStationId = "S2",
-                            Price = 150m,
-                            StartStationId = "S1"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.StaffProfile", b =>
@@ -484,26 +355,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Stations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "S1",
-                            City = "Cairo",
-                            Name = "Ramses"
-                        },
-                        new
-                        {
-                            Id = "S2",
-                            City = "Alexandria",
-                            Name = "Sidi Gaber"
-                        },
-                        new
-                        {
-                            Id = "S3",
-                            City = "Alexandria",
-                            Name = "Downtown Hub"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.Trip", b =>
@@ -532,29 +383,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("RouteId");
 
                     b.ToTable("Trips");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "T1",
-                            AvailableSeats = 5,
-                            DriverId = "D1",
-                            RouteId = "R1"
-                        },
-                        new
-                        {
-                            Id = "T2",
-                            AvailableSeats = 8,
-                            DriverId = "D1",
-                            RouteId = "R1"
-                        },
-                        new
-                        {
-                            Id = "T3",
-                            AvailableSeats = 0,
-                            DriverId = "D1",
-                            RouteId = "R1"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -637,10 +465,12 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -677,10 +507,12 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -718,6 +550,17 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("appUsers");
+                });
+
+            modelBuilder.Entity("Core.Entities.ManagerProfile", b =>
+                {
+                    b.HasOne("Core.Entities.AppUsers", "User")
+                        .WithOne()
+                        .HasForeignKey("Core.Entities.ManagerProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Core.Entities.Notification", b =>
