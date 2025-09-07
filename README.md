@@ -1,7 +1,8 @@
 # 🚍 El7aq – ERD
 
 #  Project Overview
-      Our platform facilitates seamless connections between drivers offering rides and passengers seeking transportation. The system manages bookings, payments, notifications, and provides real-time trip management capabilities.
+      Our platform facilitates seamless connections between drivers offering rides and passengers seeking transportation.
+      The system manages bookings, payments, notifications, and provides real-time trip management capabilities.
 
 
 # Key Features
