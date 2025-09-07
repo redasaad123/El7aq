@@ -24,13 +24,6 @@ namespace Web
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddIdentity<AppUsers, IdentityRole>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = false;
-            })
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
-
             builder.Services
                 .AddDefaultIdentity<AppUsers>(options => 
                 {
@@ -103,7 +96,6 @@ namespace Web
                 var userManager = services.GetRequiredService<UserManager<AppUsers>>();
                 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-                app.Run();
                 string adminRole = "Admin";
                 string adminEmail = "admin@test.com";
                 string adminPassword = "Admin@123";

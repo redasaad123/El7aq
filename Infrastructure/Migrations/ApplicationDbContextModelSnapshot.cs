@@ -127,8 +127,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TripId");
 
                     b.ToTable("Bookings");
-<<<<<<< HEAD
-=======
 
                     b.HasData(
                         new
@@ -155,7 +153,6 @@ namespace Infrastructure.Migrations
                             Status = 0,
                             TripId = "T1"
                         });
->>>>>>> 1be0eb31167b06e1985c39334b0eb3c4913107ae
                 });
 
             modelBuilder.Entity("Core.Entities.DriverProfile", b =>
@@ -240,8 +237,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
-<<<<<<< HEAD
-=======
+
 
                     b.HasData(
                         new
@@ -276,7 +272,6 @@ namespace Infrastructure.Migrations
                             Message = "ay 7aga 22222.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         });
->>>>>>> 1be0eb31167b06e1985c39334b0eb3c4913107ae
                 });
 
             modelBuilder.Entity("Core.Entities.PassengerProfile", b =>
