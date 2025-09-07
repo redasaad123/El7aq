@@ -171,10 +171,10 @@ namespace Web.Areas.Identity.Pages.Account
                     await _userManager.AddClaimAsync(user, roleClaim);
 
                     // Add FirstName and LastName claims
-                    var firstNameClaim = new Claim("FirstName", Input.FirstName);
-                    var lastNameClaim = new Claim("LastName", Input.LastName);
-                    await _userManager.AddClaimAsync(user, firstNameClaim);
-                    await _userManager.AddClaimAsync(user, lastNameClaim);
+                    //var firstNameClaim = new Claim("FirstName", Input.FirstName);
+                    //var lastNameClaim = new Claim("LastName", Input.LastName);
+                    //await _userManager.AddClaimAsync(user, firstNameClaim);
+                    //await _userManager.AddClaimAsync(user, lastNameClaim);
 
                     var passengerProfile = new PassengerProfile
                     {
