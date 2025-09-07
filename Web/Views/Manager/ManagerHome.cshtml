@@ -75,6 +75,12 @@
                     </h4>
                 </div>
                 <div class="card-body" style="padding: 2rem;">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success" role="alert" style="border-radius: 10px;">
+                            @TempData["Success"]
+                        </div>
+                    }
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="action-card" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); padding: 2rem; border-radius: 15px; text-align: center; transition: all 0.3s ease; cursor: pointer; height: 100%;">
@@ -98,6 +104,18 @@
                                 <button class="btn btn-primary btn-sm mt-3" style="border-radius: 25px; padding: 0.5rem 1.5rem; background: linear-gradient(135deg, #f093fb, #f5576c); border: none;">
                                     <i class="fas fa-edit me-2"></i>Manage Staff
                                 </button>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="action-card" style="background: linear-gradient(135deg, #c2ffd8 0%, #465efb 100%); padding: 2rem; border-radius: 15px; text-align: center; transition: all 0.3s ease; cursor: pointer; height: 100%;">
+                                <div class="action-icon mb-3">
+                                    <i class="fas fa-id-card fa-3x" style="color: #2b66ff;"></i>
+                                </div>
+                                <h5 class="action-title" style="color: var(--blackish-blue);">Create Driver Account</h5>
+                                <p class="action-description" style="color: var(--text-light);">Register a new driver and assign driver role</p>
+                                <a asp-area="Identity" asp-page="/Account/RegisterDriver" class="btn btn-primary btn-sm mt-3" style="border-radius: 25px; padding: 0.5rem 1.5rem; background: linear-gradient(135deg, #2b66ff, #7aa2ff); border: none; text-decoration: none;">
+                                    <i class="fas fa-plus me-2"></i>Create Driver
+                                </a>
                             </div>
                         </div>
                     </div>

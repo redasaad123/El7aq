@@ -114,7 +114,14 @@ namespace Web.Areas.Identity.Pages.Account
 
                     _db.Drivers.Add(driverProfile);
                     await _db.SaveChangesAsync();
+                    // If a Manager is creating the driver, don't sign in as the new user
+                    if (User?.IsInRole("Manager") == true)
+                    {
+                        TempData["Success"] = "Driver account created successfully.";
+                        return RedirectToAction("ManagerHome", "Manager");
+                    }
 
+                    // Default behavior: sign in the newly created driver
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Account", "Driver");
                 }
