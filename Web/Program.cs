@@ -39,20 +39,27 @@ namespace Web
             builder.Services.AddScoped<INotificationService, NotificationService>();
 
             builder.Services.AddTransient<IEmailSender, EmailSend2>();
+<<<<<<< HEAD
 
             builder.Services.AddTransient<IGeolocationService, OpenStreetMapAdapter>();
 
             builder.Services.AddTransient<IGeolocationService,OpenStreetMapAdapter>();
 
+=======
+            builder.Services.AddTransient<IGeolocationService,OpenStreetMapAdapter>();
+>>>>>>> e97da14b6196e05d155fcbe4eb990c39258a0648
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfile<MapperConfig>();
             });
 
+<<<<<<< HEAD
 
             builder.Services.AddScoped<IEmailSend, EmailSend>();
 
+=======
+>>>>>>> e97da14b6196e05d155fcbe4eb990c39258a0648
             builder.Services.AddScoped<IEmailSend, EmailSend >();
 
             builder.Services.AddHttpClient();

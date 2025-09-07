@@ -23,6 +23,8 @@ namespace Core.Entities
         // Navigation
         public AppUsers? appUsers  { get; set; }
         public ICollection<Trip> Trips { get; set; } = new List<Trip>();
+        public double Lat { get; set; }
+        public double Long { get; set; }
     }
 
 
