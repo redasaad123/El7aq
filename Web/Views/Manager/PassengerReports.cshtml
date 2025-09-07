@@ -25,25 +25,25 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="row mb-4">
+    <div class="row mb-4" id="statsRow">
         <div class="col-md-4 mb-3">
             <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 15px; text-align: center;">
                 <i class="fas fa-users fa-2x mb-2"></i>
-                <h3>@ViewBag.TotalPassengers</h3>
+                <h3 id="totalPassengers">@ViewBag.TotalPassengers</h3>
                 <p class="mb-0">Total Passengers</p>
             </div>
         </div>
         <div class="col-md-4 mb-3">
             <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 1.5rem; border-radius: 15px; text-align: center;">
                 <i class="fas fa-user-check fa-2x mb-2"></i>
-                <h3>@ViewBag.ActivePassengers</h3>
+                <h3 id="activePassengers">@ViewBag.ActivePassengers</h3>
                 <p class="mb-0">Active Passengers</p>
             </div>
         </div>
         <div class="col-md-4 mb-3">
             <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 1.5rem; border-radius: 15px; text-align: center;">
                 <i class="fas fa-dollar-sign fa-2x mb-2"></i>
-                <h3>@ViewBag.TotalRevenue?.ToString("C")</h3>
+                <h3 id="totalRevenue">@ViewBag.TotalRevenue?.ToString("C")</h3>
                 <p class="mb-0">Total Revenue</p>
             </div>
         </div>
@@ -96,7 +96,6 @@
                 <div class="col-lg-4 col-md-6 mb-4 passenger-card" data-name="@passenger.FullName.ToLower()" data-status="@(passenger.IsActive ? "active" : "inactive")" data-spent="@passenger.TotalSpent" data-bookings="@passenger.TotalBookings" data-last-booking="@(passenger.LastBookingDate?.ToString("yyyy-MM-dd") ?? "")">
                     <div class="card h-100" style="border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); border: none; transition: all 0.3s ease;">
                         <div class="card-body">
-                            <!-- Passenger Header -->
                             <div class="d-flex align-items-center mb-3">
                                 <div class="passenger-avatar me-3" style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">
                                     @passenger.FirstName.FirstOrDefault().ToString().ToUpper()
@@ -109,8 +108,6 @@
                                     @passenger.StatusText
                                 </span>
                             </div>
-
-                            <!-- Passenger Stats -->
                             <div class="row text-center mb-3">
                                 <div class="col-4">
                                     <div class="stat-item">
@@ -131,8 +128,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Passenger Details -->
                             <div class="passenger-details mb-3">
                                 <div class="detail-item d-flex justify-content-between">
                                     <span class="text-muted">Phone:</span>
@@ -147,12 +142,19 @@
                                     <span>@passenger.RegistrationText</span>
                                 </div>
                             </div>
-
-                            <!-- Action Buttons -->
-                            <div class="d-grid gap-2">
+                            <div class="d-flex gap-2">
                                 <button class="btn btn-outline-primary btn-sm" onclick="viewPassengerDetails('@passenger.Id')">
-                                    <i class="fas fa-eye me-2"></i>View Details
+                                    <i class="fas fa-eye me-2"></i>Details
                                 </button>
+                                <a asp-action="EditPassenger" asp-route-id="@passenger.Id" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </a>
+                                <form asp-action="DeletePassenger" method="post" onsubmit="return confirm('Delete this passenger? This will remove the linked user too.');">
+                                    <input type="hidden" name="id" value="@passenger.Id" />
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash me-1"></i>Delete
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -169,6 +171,13 @@
                 </div>
             </div>
         }
+    </div>
+    <div class="row mt-3" id="loadMoreRow" style="display:none;">
+        <div class="col-12 text-center">
+            <button id="loadMoreBtn" class="btn btn-outline-primary">
+                <i class="fas fa-plus me-2"></i>Load more
+            </button>
+        </div>
     </div>
 </div>
 
@@ -246,6 +255,8 @@
         background: rgba(102, 126, 234, 0.2);
     }
 
+    [data-theme="dark"] .text-muted { color: rgba(255,255,255,0.7) !important; }
+
     @@media (max-width: 768px) {
         .container-fluid {
             padding: 1rem 3%;
@@ -270,52 +281,7 @@
         sortPassengers();
     });
 
-    function filterPassengers() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const statusFilter = document.getElementById('statusFilter').value;
-        const cards = document.querySelectorAll('.passenger-card');
-
-        cards.forEach(card => {
-            const name = card.dataset.name;
-            const status = card.dataset.status;
-            
-            const matchesSearch = name.includes(searchTerm);
-            const matchesStatus = !statusFilter || status === statusFilter;
-            
-            if (matchesSearch && matchesStatus) {
-                card.style.display = 'block';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-    }
-
-    function sortPassengers() {
-        const sortBy = document.getElementById('sortBy').value;
-        const container = document.getElementById('passengersGrid');
-        const cards = Array.from(container.querySelectorAll('.passenger-card'));
-
-        cards.sort((a, b) => {
-            switch (sortBy) {
-                case 'spent':
-                    return parseFloat(b.dataset.spent) - parseFloat(a.dataset.spent);
-                case 'bookings':
-                    return parseInt(b.dataset.bookings) - parseInt(a.dataset.bookings);
-                case 'name':
-                    return a.dataset.name.localeCompare(b.dataset.name);
-                case 'lastBooking':
-                    return new Date(b.dataset.lastBooking) - new Date(a.dataset.lastBooking);
-                default:
-                    return 0;
-            }
-        });
-
-        cards.forEach(card => container.appendChild(card));
-    }
-
-    function refreshData() {
-        location.reload();
-    }
+    function refreshData() { location.reload(); }
 
     function viewPassengerDetails(passengerId) {
         const modal = new bootstrap.Modal(document.getElementById('passengerDetailsModal'));

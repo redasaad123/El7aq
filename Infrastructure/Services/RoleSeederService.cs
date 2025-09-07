@@ -27,7 +27,7 @@ namespace Infrastructure.Services
 
             foreach (var role in roles)
             {
-                if (!await _roleManager.RoleExistsAsync(role))
+                                       if (!await _roleManager.RoleExistsAsync(role))
                 {
                     await _roleManager.CreateAsync(new IdentityRole(role));
                     _logger.LogInformation($"Created role: {role}");

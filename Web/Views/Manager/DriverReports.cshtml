@@ -1,0 +1,176 @@
+@model IEnumerable<Web.Models.DriverReportViewModel>
+@{
+    ViewData["Title"] = "Driver Reports - El7aq";
+}
+
+<div class="container-fluid" style="margin-top: 120px; padding: 2rem 5%; max-width: 1400px; margin-left: auto; margin-right: auto;">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 style="color: var(--blackish-blue); margin-bottom: 0.5rem;"><i class="fas fa-car me-2"></i>Driver Reports</h2>
+                <p class="text-muted mb-0">Overview of drivers, vehicles, and trip activity</p>
+            </div>
+            <div>
+                <a asp-action="ManagerHome" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 1.5rem; border-radius: 15px; text-align: center;">
+                <i class="fas fa-car-side fa-2x mb-2"></i>
+                <h3>@ViewBag.TotalDrivers</h3>
+                <p class="mb-0">Total Drivers</p>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 1.5rem; border-radius: 15px; text-align: center;">
+                <i class="fas fa-route fa-2x mb-2"></i>
+                <h3>@ViewBag.ActiveDrivers</h3>
+                <p class="mb-0">Drivers With Trips</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" class="form-control" id="searchInput" placeholder="Search drivers...">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" id="statusFilter">
+                <option value="">All</option>
+                <option value="active">Active (has trips)</option>
+                <option value="inactive">Inactive (no trips)</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" id="sortBy">
+                <option value="trips">Sort by Trips</option>
+                <option value="name">Sort by Name</option>
+                <option value="car">Sort by Car Number</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row" id="driversGrid">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var d in Model)
+            {
+                <div class="col-lg-4 col-md-6 mb-4 driver-card" data-name="@d.FullName.ToLower()" data-status="@(d.TotalTrips>0?"active":"inactive")" data-trips="@d.TotalTrips" data-car="@d.CarNumber">
+                    <div class="card h-100" style="border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); border: none; transition: all 0.3s ease;">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="passenger-avatar me-3" style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #f093fb, #f5576c); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">
+                                    @d.FirstName.FirstOrDefault().ToString().ToUpper()
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title mb-1" style="color: var(--blackish-blue);">@d.FullName</h5>
+                                    <p class="card-text text-muted mb-0 small">@d.Email</p>
+                                </div>
+                                <span class="badge @(d.TotalTrips>0?"text-success":"text-muted")" style="background: @(d.TotalTrips>0?"linear-gradient(135deg, #4facfe, #00f2fe)":"linear-gradient(135deg, #a8a8a8, #888888)"); color: white;">
+                                    @(d.TotalTrips>0?"Active":"Inactive")
+                                </span>
+                            </div>
+                            <div class="row text-center mb-3">
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <h6 class="text-primary mb-1">@d.TotalTrips</h6>
+                                        <small class="text-muted">Trips</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <h6 class="text-success mb-1">@d.LicenseNumber</h6>
+                                        <small class="text-muted">License</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <h6 class="text-info mb-1">@d.CarNumber</h6>
+                                        <small class="text-muted">Car</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="passenger-details mb-3">
+                                <div class="detail-item d-flex justify-content-between">
+                                    <span class="text-muted">Phone:</span>
+                                    <span>@(string.IsNullOrEmpty(d.PhoneNumber)?"Not provided":d.PhoneNumber)</span>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a asp-action="EditDriver" asp-route-id="@d.Id" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </a>
+                                <form asp-action="DeleteDriver" method="post" onsubmit="return confirm('Delete this driver? This will remove the linked user too.');">
+                                    <input type="hidden" name="id" value="@d.Id" />
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash me-1"></i>Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-car fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Drivers Found</h4>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .driver-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important; }
+    .detail-item { padding: 0.25rem 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+    .detail-item:last-child { border-bottom: none; }
+    [data-theme="dark"] .card { background: #2D2D2D !important; box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important; }
+    [data-theme="dark"] .stat-card { box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    [data-theme="dark"] .detail-item { border-bottom-color: rgba(255,255,255,0.1); }
+    [data-theme="dark"] .card .text-muted { color: rgba(255,255,255,0.7) !important; }
+</style>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const sortBy = document.getElementById('sortBy');
+    const grid = document.getElementById('driversGrid');
+
+    searchInput.addEventListener('input', filter);
+    statusFilter.addEventListener('change', filter);
+    sortBy.addEventListener('change', sort);
+
+    function filter() {
+        const term = searchInput.value.toLowerCase();
+        const status = statusFilter.value;
+        const cards = grid.querySelectorAll('.driver-card');
+        cards.forEach(c => {
+            const matchesName = c.dataset.name.includes(term);
+            const matchesStatus = !status || c.dataset.status === status;
+            c.style.display = (matchesName && matchesStatus) ? 'block' : 'none';
+        });
+    }
+
+    function sort() {
+        const value = sortBy.value;
+        const cards = Array.from(grid.querySelectorAll('.driver-card'));
+        cards.sort((a,b) => {
+            if (value === 'trips') return Number(b.dataset.trips) - Number(a.dataset.trips);
+            if (value === 'car') return a.dataset.car.localeCompare(b.dataset.car);
+            return a.dataset.name.localeCompare(b.dataset.name);
+        });
+        cards.forEach(c => grid.appendChild(c));
+    }
+</script>
+
+

@@ -112,8 +112,8 @@ namespace Web.Areas.Identity.Pages.Account
                     _db.Staffs.Add(staffProfile);
                     await _db.SaveChangesAsync();
 
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
+                    TempData["Success"] = "Staff account created successfully.";
+                    return new RedirectToActionResult("ManagerHome", "Manager", null);
                 }
 
                 foreach (var error in result.Errors)
