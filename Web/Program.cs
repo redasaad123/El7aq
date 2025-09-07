@@ -1,4 +1,4 @@
-using Core;
+﻿using Core;
 using Core.Entities;
 using Core.Interfaces;
 using Infrastructure;
@@ -6,6 +6,7 @@ using Infrastructure.Mapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Web.Services;
 
@@ -13,7 +14,7 @@ namespace Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,13 @@ namespace Web
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+            builder.Services.AddIdentity<AppUsers, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
             builder.Services
                 .AddDefaultIdentity<AppUsers>(options => 
@@ -47,6 +55,8 @@ namespace Web
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IPassengerHelperService, PassengerHelperService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddTransient<IEmailSender, EmailSend2>();
+
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(cfg =>
@@ -57,6 +67,8 @@ namespace Web
             builder.Services.AddScoped<IEmailSend, EmailSend >();
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IPayPalService, PayPalService>();
+            builder.Services.AddRazorPages();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -85,6 +97,43 @@ namespace Web
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var userManager = services.GetRequiredService<UserManager<AppUsers>>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+                app.Run();
+                string adminRole = "Admin";
+                string adminEmail = "admin@test.com";
+                string adminPassword = "Admin@123";
+
+                // 1. Add Role if not exists
+                if (!await roleManager.RoleExistsAsync(adminRole))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(adminRole));
+                }
+
+                // 2. Add Admin User if not exists
+                var adminUser = await userManager.FindByEmailAsync(adminEmail);
+                if (adminUser == null)
+                {
+                    adminUser = new AppUsers
+                    {
+                        UserName = adminEmail,
+                        Email = adminEmail,
+                        EmailConfirmed = true,
+                        FirstName = "Basmala",
+                        LastName = "Mohammed"
+                    };
+
+                    var result = await userManager.CreateAsync(adminUser, adminPassword);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(adminUser, adminRole);
+                    }
+                }
+            }
             app.Run();
         }
     }

@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250906203707_tet")]
+    partial class tet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,10 +89,6 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasFilter("[Email] IS NOT NULL");
-
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -127,14 +126,12 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TripId");
 
                     b.ToTable("Bookings");
-<<<<<<< HEAD
-=======
 
                     b.HasData(
                         new
                         {
                             Id = "B1",
-                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1682),
+                            BookingDate = new DateTime(2025, 9, 6, 20, 37, 6, 262, DateTimeKind.Utc).AddTicks(6148),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -142,7 +139,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B3",
-                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1689),
+                            BookingDate = new DateTime(2025, 9, 6, 20, 37, 6, 262, DateTimeKind.Utc).AddTicks(6154),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -150,12 +147,11 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B2",
-                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1706),
+                            BookingDate = new DateTime(2025, 9, 6, 20, 37, 6, 262, DateTimeKind.Utc).AddTicks(6174),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
                         });
->>>>>>> 1be0eb31167b06e1985c39334b0eb3c4913107ae
                 });
 
             modelBuilder.Entity("Core.Entities.DriverProfile", b =>
@@ -183,32 +179,15 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Drivers");
-                });
 
-            modelBuilder.Entity("Core.Entities.ManagerProfile", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Department")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Managers");
+                    b.HasData(
+                        new
+                        {
+                            Id = "D1",
+                            CarNumber = "CAR123",
+                            LicenseNumber = "LIC123",
+                            UserId = "1d9f8228-d327-4d93-9cfc-02835fd7bbf4"
+                        });
                 });
 
             modelBuilder.Entity("Core.Entities.Notification", b =>
@@ -240,43 +219,40 @@ namespace Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
-<<<<<<< HEAD
-=======
 
                     b.HasData(
                         new
                         {
-                            Id = "6ec17115-61cd-4ce1-bb49-8a486ef15cef",
-                            CreatedAt = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1772),
+                            Id = "c08d7705-cb7c-4486-bb05-2c8c1b7da272",
+                            CreatedAt = new DateTime(2025, 9, 6, 20, 37, 6, 262, DateTimeKind.Utc).AddTicks(6245),
                             IsRead = true,
                             Message = "Welcome to El7aq! Your account was created successfully.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-                            Id = "9c25c18c-c6d2-44aa-9a08-a044c8ab4223",
-                            CreatedAt = new DateTime(2025, 9, 6, 21, 54, 18, 389, DateTimeKind.Utc).AddTicks(1775),
+                            Id = "e59f938a-8da1-4d84-bbe4-d65cce26abe8",
+                            CreatedAt = new DateTime(2025, 9, 6, 20, 22, 6, 262, DateTimeKind.Utc).AddTicks(6250),
                             IsRead = false,
                             Message = "Your first booking is pending confirmation.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-                            Id = "482edf44-3288-4850-ba72-9b55b14e21f6",
-                            CreatedAt = new DateTime(2025, 9, 6, 22, 29, 18, 389, DateTimeKind.Utc).AddTicks(1781),
+                            Id = "094b0d86-c391-47a7-bbdb-97cb79805321",
+                            CreatedAt = new DateTime(2025, 9, 6, 20, 57, 6, 262, DateTimeKind.Utc).AddTicks(6256),
                             IsRead = false,
                             Message = "ay 7aga 1111.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-                            Id = "71616057-539c-4687-b308-979d0261056d",
-                            CreatedAt = new DateTime(2025, 9, 6, 22, 4, 18, 389, DateTimeKind.Utc).AddTicks(1783),
+                            Id = "2f982a8a-5bb6-415d-82b9-fdb1a13dbb00",
+                            CreatedAt = new DateTime(2025, 9, 6, 20, 32, 6, 262, DateTimeKind.Utc).AddTicks(6259),
                             IsRead = false,
                             Message = "ay 7aga 22222.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         });
->>>>>>> 1be0eb31167b06e1985c39334b0eb3c4913107ae
                 });
 
             modelBuilder.Entity("Core.Entities.PassengerProfile", b =>
@@ -294,6 +270,13 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Passengers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "P1",
+                            UserId = "207a1b24-2482-4c8e-8972-bb587f5d8287"
+                        });
                 });
 
             modelBuilder.Entity("Core.Entities.Route", b =>
@@ -596,17 +579,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("appUsers");
-                });
-
-            modelBuilder.Entity("Core.Entities.ManagerProfile", b =>
-                {
-                    b.HasOne("Core.Entities.AppUsers", "User")
-                        .WithOne()
-                        .HasForeignKey("Core.Entities.ManagerProfile", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Core.Entities.Notification", b =>

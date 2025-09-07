@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250906220919_addadmin")]
+    partial class addadmin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,10 +89,6 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasFilter("[Email] IS NOT NULL");
-
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -127,8 +126,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TripId");
 
                     b.ToTable("Bookings");
-<<<<<<< HEAD
-=======
 
                     b.HasData(
                         new
@@ -155,7 +152,6 @@ namespace Infrastructure.Migrations
                             Status = 0,
                             TripId = "T1"
                         });
->>>>>>> 1be0eb31167b06e1985c39334b0eb3c4913107ae
                 });
 
             modelBuilder.Entity("Core.Entities.DriverProfile", b =>
@@ -183,32 +179,15 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Drivers");
-                });
 
-            modelBuilder.Entity("Core.Entities.ManagerProfile", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Department")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Managers");
+                    b.HasData(
+                        new
+                        {
+                            Id = "D1",
+                            CarNumber = "CAR123",
+                            LicenseNumber = "LIC123",
+                            UserId = "1d9f8228-d327-4d93-9cfc-02835fd7bbf4"
+                        });
                 });
 
             modelBuilder.Entity("Core.Entities.Notification", b =>
@@ -240,8 +219,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
-<<<<<<< HEAD
-=======
 
                     b.HasData(
                         new
@@ -276,7 +253,6 @@ namespace Infrastructure.Migrations
                             Message = "ay 7aga 22222.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         });
->>>>>>> 1be0eb31167b06e1985c39334b0eb3c4913107ae
                 });
 
             modelBuilder.Entity("Core.Entities.PassengerProfile", b =>
@@ -294,6 +270,13 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Passengers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "P1",
+                            UserId = "207a1b24-2482-4c8e-8972-bb587f5d8287"
+                        });
                 });
 
             modelBuilder.Entity("Core.Entities.Route", b =>
@@ -596,17 +579,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("appUsers");
-                });
-
-            modelBuilder.Entity("Core.Entities.ManagerProfile", b =>
-                {
-                    b.HasOne("Core.Entities.AppUsers", "User")
-                        .WithOne()
-                        .HasForeignKey("Core.Entities.ManagerProfile", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Core.Entities.Notification", b =>
