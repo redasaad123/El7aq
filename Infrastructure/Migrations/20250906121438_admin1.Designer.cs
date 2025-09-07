@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250906121438_admin1")]
+    partial class admin1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,7 +131,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B1",
-                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1682),
+                            BookingDate = new DateTime(2025, 9, 6, 12, 14, 37, 816, DateTimeKind.Utc).AddTicks(3563),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -136,7 +139,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B3",
-                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1689),
+                            BookingDate = new DateTime(2025, 9, 6, 12, 14, 37, 816, DateTimeKind.Utc).AddTicks(3566),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -144,7 +147,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B2",
-                            BookingDate = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1706),
+                            BookingDate = new DateTime(2025, 9, 6, 12, 14, 37, 816, DateTimeKind.Utc).AddTicks(3584),
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -220,32 +223,32 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6ec17115-61cd-4ce1-bb49-8a486ef15cef",
-                            CreatedAt = new DateTime(2025, 9, 6, 22, 9, 18, 389, DateTimeKind.Utc).AddTicks(1772),
+                            Id = "b33278fd-94d1-461a-aba7-4a275d18fd59",
+                            CreatedAt = new DateTime(2025, 9, 6, 12, 14, 37, 816, DateTimeKind.Utc).AddTicks(3647),
                             IsRead = true,
                             Message = "Welcome to El7aq! Your account was created successfully.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-                            Id = "9c25c18c-c6d2-44aa-9a08-a044c8ab4223",
-                            CreatedAt = new DateTime(2025, 9, 6, 21, 54, 18, 389, DateTimeKind.Utc).AddTicks(1775),
+                            Id = "bfa869cb-9d06-4e4d-819f-6729b9bc7a5a",
+                            CreatedAt = new DateTime(2025, 9, 6, 11, 59, 37, 816, DateTimeKind.Utc).AddTicks(3650),
                             IsRead = false,
                             Message = "Your first booking is pending confirmation.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-                            Id = "482edf44-3288-4850-ba72-9b55b14e21f6",
-                            CreatedAt = new DateTime(2025, 9, 6, 22, 29, 18, 389, DateTimeKind.Utc).AddTicks(1781),
+                            Id = "105d66c8-0d1a-4810-ac98-7b087571be9a",
+                            CreatedAt = new DateTime(2025, 9, 6, 12, 34, 37, 816, DateTimeKind.Utc).AddTicks(3655),
                             IsRead = false,
                             Message = "ay 7aga 1111.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-                            Id = "71616057-539c-4687-b308-979d0261056d",
-                            CreatedAt = new DateTime(2025, 9, 6, 22, 4, 18, 389, DateTimeKind.Utc).AddTicks(1783),
+                            Id = "0ec97a9c-0dac-4507-9c80-4b05a1b8c2db",
+                            CreatedAt = new DateTime(2025, 9, 6, 12, 9, 37, 816, DateTimeKind.Utc).AddTicks(3667),
                             IsRead = false,
                             Message = "ay 7aga 22222.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
