@@ -35,10 +35,7 @@ namespace Web.Controllers
                 {
                     return RedirectToAction("Account", "Driver");
                 }
-                else if (userRole == "Passenger")
-                {
-                    return RedirectToAction("SearchTrips", "Passenger");
-                }
+                // Removed automatic redirect for passengers - let them stay on home page
             }
 
             try

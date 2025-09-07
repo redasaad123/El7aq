@@ -9,7 +9,7 @@ namespace Core.Entities
 {
     public class Notification
     {
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [ForeignKey("User")]
         public string UserId { get; set; }

@@ -6,6 +6,7 @@ using Web.Models;
 
 namespace Web.Controllers
 {
+    [Authorize(Roles = "Staff")]
     public class RolesController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;

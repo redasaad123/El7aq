@@ -56,7 +56,7 @@ namespace Infrastructure.Services
                 Id = Guid.NewGuid().ToString(),
                 DriverId = driverId,
                 RouteId = routeId,
-              
+                DepartureTime = departureTime,
                 AvailableSeats = availableSeats
             };
 
@@ -105,8 +105,7 @@ namespace Infrastructure.Services
             if (newAvailableSeats < confirmedBookings)
                 return false;
 
-
-          
+            trip.DepartureTime = newDepartureTime;
             trip.AvailableSeats = newAvailableSeats;
 
             _tripUow.Entity.Update(trip);
@@ -311,8 +310,7 @@ namespace Infrastructure.Services
                 .Include(t => t.Driver)
                     .ThenInclude(d => d.appUsers)
                 .Include(t => t.Bookings.Where(b => b.Status != BookingStatus.Cancelled))
-               
-               
+                .Where(t => t.DepartureTime >= startDate && t.DepartureTime < endDate)
                 .ToListAsync();
 
             return trips;

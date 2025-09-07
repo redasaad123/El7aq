@@ -28,19 +28,30 @@ namespace Web
                 .AddDefaultIdentity<AppUsers>(options => 
                 {
                     options.SignIn.RequireConfirmedAccount = false;
-                    // Very relaxed password requirements for testing
-                    options.Password.RequireDigit = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequiredLength = 1;
-                    options.Password.RequiredUniqueChars = 1;
+                    
+            // Relaxed password requirements for testing
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequiredLength = 3;
+            options.Password.RequiredUniqueChars = 0;
+                    
+                    // User settings
+                    options.User.RequireUniqueEmail = true;
+                    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                    
+                    // Lockout settings
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                    options.Lockout.MaxFailedAccessAttempts = 5;
+                    options.Lockout.AllowedForNewUsers = true;
                 })
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddLogging();
+            
             // Register custom claims principal factory
-            // builder.Services.AddScoped<IUserClaimsPrincipalFactory<AppUsers>, ApplicationClaimsPrincipalFactory>();
+            builder.Services.AddScoped<IUserClaimsPrincipalFactory<AppUsers>, Infrastructure.Services.ApplicationClaimsPrincipalFactory>();
 
             // Application services and unit of work registrations
             builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
@@ -49,12 +60,23 @@ namespace Web
             builder.Services.AddScoped<IPassengerHelperService, PassengerHelperService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddTransient<IEmailSender, EmailSend2>();
+            builder.Services.AddScoped<RoleSeederService>();
 
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfile<MapperConfig>();
+            });
+
+            // Add authorization policies
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("StaffOnly", policy => policy.RequireRole("Staff"));
+                options.AddPolicy("ManagerOrStaff", policy => policy.RequireRole("Manager", "Staff"));
+                options.AddPolicy("DriverOrStaff", policy => policy.RequireRole("Driver", "Staff"));
+                options.AddPolicy("StaffOrManager", policy => policy.RequireRole("Staff", "Manager"));
+                options.AddPolicy("PassengerOrStaff", policy => policy.RequireRole("Passenger", "Staff"));
             });
 
             builder.Services.AddScoped<IEmailSend, EmailSend >();
@@ -90,41 +112,12 @@ namespace Web
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
 
+            // Seed roles and staff user
             using (var scope = app.Services.CreateScope())
             {
-                var services = scope.ServiceProvider;
-                var userManager = services.GetRequiredService<UserManager<AppUsers>>();
-                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-
-                string adminRole = "Admin";
-                string adminEmail = "admin@test.com";
-                string adminPassword = "Admin@123";
-
-                // 1. Add Role if not exists
-                if (!await roleManager.RoleExistsAsync(adminRole))
-                {
-                    await roleManager.CreateAsync(new IdentityRole(adminRole));
-                }
-
-                // 2. Add Admin User if not exists
-                var adminUser = await userManager.FindByEmailAsync(adminEmail);
-                if (adminUser == null)
-                {
-                    adminUser = new AppUsers
-                    {
-                        UserName = adminEmail,
-                        Email = adminEmail,
-                        EmailConfirmed = true,
-                        FirstName = "Basmala",
-                        LastName = "Mohammed"
-                    };
-
-                    var result = await userManager.CreateAsync(adminUser, adminPassword);
-                    if (result.Succeeded)
-                    {
-                        await userManager.AddToRoleAsync(adminUser, adminRole);
-                    }
-                }
+                var roleSeeder = scope.ServiceProvider.GetRequiredService<RoleSeederService>();
+                await roleSeeder.SeedRolesAsync();
+                await roleSeeder.SeedStaffUserAsync();
             }
             app.Run();
         }

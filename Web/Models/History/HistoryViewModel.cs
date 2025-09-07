@@ -22,6 +22,7 @@ namespace Web.Models.History
     public class TripHistoryViewModel
     {
         public string TripId { get; set; } = string.Empty;
+        public DateTime DepartureTime { get; set; }
         public string OriginStation { get; set; } = string.Empty;
         public string DestinationStation { get; set; } = string.Empty;
         public decimal Price { get; set; }

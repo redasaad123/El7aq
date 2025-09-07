@@ -7,7 +7,7 @@ using Infrastructure.Services;
 
 namespace Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Passenger,Staff")]
     public class PaymentController : Controller
     {
         private readonly IPayPalService _payPalService;
@@ -15,9 +15,7 @@ namespace Web.Controllers
 
         public PaymentController(
             IPayPalService payPalService, 
-            ILogger<PaymentController> logger,
-            IBookingService bookingService,
-            IPassengerHelperService passengerHelperService)
+            ILogger<PaymentController> logger)
         {
             _payPalService = payPalService;
             _logger = logger;

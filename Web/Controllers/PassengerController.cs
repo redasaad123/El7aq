@@ -18,8 +18,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Web.Controllers
 {
-
-    [Authorize]
+    [Authorize(Roles = "Passenger,Staff")]
     public class PassengerController : Controller
     {
 
@@ -59,7 +58,7 @@ namespace Web.Controllers
             {
                 var passengerProfile = new PassengerProfile
                 {
-                    Id = userId,
+                    Id = Guid.NewGuid().ToString(),
                     UserId = userId
                 };
 
@@ -67,7 +66,7 @@ namespace Web.Controllers
                 passengerUow.Entity.Insert(passengerProfile);
                 passengerUow.Save();
                 
-                return userId;
+                return passengerProfile.Id;
             }
 
             return passengerId;
@@ -262,7 +261,7 @@ namespace Web.Controllers
             var model = new TripDetailsViewModel
             {
                 TripId = trip.Id,
-               
+                DepartureTime = trip.DepartureTime,
                 OriginStation = new StationViewModel
                 {
                     Id = trip.Route?.StartStation?.Id ?? "0",
@@ -410,7 +409,7 @@ namespace Web.Controllers
                         StatusText = GetBookingStatusText(booking.Status),
                         Trip = new TripSummaryViewModel
                         {
-                           
+                            DepartureTime = booking.Trip?.DepartureTime ?? DateTime.MinValue,
                             OriginStation = booking.Trip?.Route?.StartStation?.Name!,
                             DestinationStation = booking.Trip?.Route?.EndStation?.Name!,
                             Price = booking.Trip?.Route?.Price ?? 0,
@@ -470,7 +469,7 @@ namespace Web.Controllers
                     Trip = new TripDetailsViewModel
                     {
                         TripId = booking.Trip.Id,
-                      
+                        DepartureTime = booking.Trip.DepartureTime,
                         OriginStation = new StationViewModel
                         {
                             Name = booking.Trip?.Route?.StartStation?.Name,
@@ -778,6 +777,7 @@ namespace Web.Controllers
                         StatusText = GetBookingStatusText(booking.Status),
                         Trip = new TripSummaryViewModel
                         {
+                            DepartureTime = booking.Trip?.DepartureTime ?? DateTime.MinValue,
                             OriginStation = booking.Trip?.Route?.StartStation?.Name,
                             DestinationStation = booking.Trip?.Route?.EndStation?.Name,
                             Price = booking.Trip?.Route?.Price ?? 0,
@@ -789,6 +789,7 @@ namespace Web.Controllers
                     Trips = trips.Select(trip => new TripHistoryViewModel
                     {
                         TripId = trip.Id,
+                        DepartureTime = trip.DepartureTime,
                         OriginStation = trip.Route?.StartStation?.Name,
                         DestinationStation = trip.Route?.EndStation?.Name,
                         Price = trip.Route?.Price ?? 0,
@@ -797,7 +798,7 @@ namespace Web.Controllers
                         TotalSeats = trip.AvailableSeats,
                         BookedSeats = trip.Bookings?.Count(b => b.Status != BookingStatus.Cancelled) ?? 0,
                         PassengerBookingCount = trip.Bookings?.Count(b => b.PassengerId == passengerId && b.Status != BookingStatus.Cancelled) ?? 0
-                    }).OrderByDescending(t => t.TripId).ToList()
+                    }).OrderByDescending(t => t.DepartureTime).ToList()
                 };
 
                 return View(model);

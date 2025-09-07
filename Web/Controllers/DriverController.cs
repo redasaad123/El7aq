@@ -9,7 +9,7 @@ using Web.Models.Driver;
 
 namespace Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Driver,Staff")]
     public class DriverController : Controller
     {
         private readonly UserManager<AppUsers> userManager;
@@ -83,8 +83,19 @@ namespace Web.Controllers
                 driverProfile.CarNumber = model.CarNumber;
                 driverProfile.LicenseNumber = model.LicenseNumber;
                 user.PhoneNumber = model.Phone;
-                user.LastName = model.Name.Split(' ')[0];
-                user.FirstName = model.Name.Split(' ')[1];
+                
+                // Safely split the name
+                var nameParts = model.Name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (nameParts.Length >= 2)
+                {
+                    user.FirstName = nameParts[0];
+                    user.LastName = string.Join(" ", nameParts.Skip(1));
+                }
+                else if (nameParts.Length == 1)
+                {
+                    user.FirstName = nameParts[0];
+                    user.LastName = "";
+                }
                 var result = await userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
