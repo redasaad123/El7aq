@@ -66,7 +66,24 @@
                             </a>
                         </div>
 
-                        <a asp-controller="Passenger" asp-action="Profile" title="My Profile">
+                        @{
+                            var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "Passenger";
+                            var profileController = "Passenger";
+                            var profileAction = "Profile";
+                            
+                            if (userRole == "Manager")
+                            {
+                                profileController = "Manager";
+                                profileAction = "ManagerHome";
+                            }
+                            else if (userRole == "Driver")
+                            {
+                                profileController = "Driver";
+                                profileAction = "Account";
+                            }
+                        }
+                        
+                        <a asp-controller="@profileController" asp-action="@profileAction" title="My Profile">
                             <!-- User Profile -->
                             <div class="user-profile">
                                 <div class="profile-photo">
@@ -74,7 +91,7 @@
                                 </div>
                                 <div class="user-info">
                                     <span class="user-name">@User.FindFirst("FirstName")?.Value @User.FindFirst("LastName")?.Value</span>
-                                    <span class="user-role">Passenger</span>
+                                    <span class="user-role">@userRole</span>
                                 </div>
                                 <div class="profile-dropdown">
                                     <i class="fas fa-chevron-down"></i>
@@ -93,6 +110,8 @@
                     <div class="auth-buttons">
                         <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline">Sign In</a>
                         <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary">Sign Up</a>
+                        <!-- Manager Sign Up button hidden but accessible via direct URL -->
+                        <a asp-area="Identity" asp-page="/Account/RegisterManager" class="btn btn-warning" style="margin-left: 5px; display: none;">Manager Sign Up</a>
                     </div>
                 }
             </div>

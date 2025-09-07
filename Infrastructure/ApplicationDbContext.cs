@@ -28,6 +28,11 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
         builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaim", "security");
         builder.Entity<IdentityUserToken<string>>().ToTable("UserToken", "security");
 
+        // 🔒 Ensure email uniqueness
+        builder.Entity<AppUsers>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+
         // 🟢 Ensure one-to-one profiles per user
         builder.Entity<DriverProfile>()
             .HasIndex(d => d.UserId)
@@ -40,6 +45,11 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
         builder.Entity<StaffProfile>()
             .HasIndex(s => s.UserId)
             .IsUnique();
+
+        builder.Entity<ManagerProfile>()
+            .HasIndex(m => m.UserId)
+            .IsUnique();
+
 
         // DriverProfile ↔ AppUsers (1:1)
         builder.Entity<DriverProfile>()
@@ -61,6 +71,14 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
             .WithOne()
             .HasForeignKey<StaffProfile>(s => s.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // ManagerProfile ↔ AppUsers (1:1)
+        builder.Entity<ManagerProfile>()
+            .HasOne(m => m.User)
+            .WithOne()
+            .HasForeignKey<ManagerProfile>(m => m.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
 
         // StaffProfile ↔ Station
         builder.Entity<StaffProfile>()
@@ -124,71 +142,13 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
             .HasForeignKey(p => p.PassengerId)
             .OnDelete(DeleteBehavior.Restrict);
 
-
-      
-        // 4. DriverProfile
-        builder.Entity<DriverProfile>().HasData(
-            new DriverProfile { Id = "D1", UserId = "1d9f8228-d327-4d93-9cfc-02835fd7bbf4", LicenseNumber = "LIC123", CarNumber = "CAR123" }
-        );
-
-        // 5. PassengerProfile
-        builder.Entity<PassengerProfile>().HasData(
-            new PassengerProfile { Id = "P1", UserId = "207a1b24-2482-4c8e-8972-bb587f5d8287" }
-        );
-
-
-        // 7. Booking
-        builder.Entity<Booking>().HasData(
-            new Booking { Id = "B1", PassengerId = "P1", TripId = "T1", BookingDate = DateTime.UtcNow, Status = BookingStatus.Pending },
-            new Booking { Id = "B3", PassengerId = "P1", TripId = "T1", BookingDate = DateTime.UtcNow, Status = BookingStatus.Pending }
-
-        );
-        builder.Entity<Booking>().HasData(
-            new Booking { Id = "B2", PassengerId = "P1", TripId = "T1", BookingDate = DateTime.UtcNow, Status = BookingStatus.Pending }
-
-        );
-
-        // 8. Notifications 
-        builder.Entity<Notification>().HasData(
-            new Notification
-            {
-                Id = Guid.NewGuid().ToString(),
-                UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc",
-                Message = "Welcome to El7aq! Your account was created successfully.",
-                IsRead = true,
-                CreatedAt = DateTime.UtcNow
-            },
-            new Notification
-            {
-                Id = Guid.NewGuid().ToString(),
-                UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc",
-                Message = "Your first booking is pending confirmation.",
-                IsRead = false,
-                CreatedAt = DateTime.UtcNow.AddMinutes(-15)
-            },
-            new Notification
-            {
-                Id = Guid.NewGuid().ToString(),
-                UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc",
-                Message = "ay 7aga 1111.",
-                IsRead = false,
-                CreatedAt = DateTime.UtcNow.AddMinutes(+20)
-            },
-            new Notification
-            {
-                Id = Guid.NewGuid().ToString(),
-                UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc",
-                Message = "ay 7aga 22222.",
-                IsRead = false,
-                CreatedAt = DateTime.UtcNow.AddMinutes(-5)
-            }
-        );
     }
 
     //  DbSets
     public DbSet<DriverProfile> Drivers { get; set; }
     public DbSet<PassengerProfile> Passengers { get; set; }
     public DbSet<StaffProfile> Staffs { get; set; }
+    public DbSet<ManagerProfile> Managers { get; set; }
     public DbSet<Trip> Trips { get; set; }
     public DbSet<Booking> Bookings { get; set; }
     public DbSet<Station> Stations { get; set; }

@@ -24,11 +24,22 @@ namespace Web
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services
-                .AddDefaultIdentity<AppUsers>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddDefaultIdentity<AppUsers>(options => 
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                    // Very relaxed password requirements for testing
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequiredLength = 1;
+                    options.Password.RequiredUniqueChars = 1;
+                })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddLogging();
             // Register custom claims principal factory
-            builder.Services.AddScoped<IUserClaimsPrincipalFactory<AppUsers>, ApplicationClaimsPrincipalFactory>();
+            // builder.Services.AddScoped<IUserClaimsPrincipalFactory<AppUsers>, ApplicationClaimsPrincipalFactory>();
 
             // Application services and unit of work registrations
             builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));

@@ -1,0 +1,70 @@
+@{
+    ViewData["Title"] = "Manager Dashboard";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">El7aq</a></li>
+                        <li class="breadcrumb-item active">Manager Dashboard</li>
+                    </ol>
+                </div>
+                <h4 class="page-title">Welcome, @ViewBag.ManagerName</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Manager Dashboard</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info" role="alert">
+                        <h4 class="alert-heading">Manager Access Granted!</h4>
+                        <p>You have successfully logged in as a Manager. This dashboard will be expanded with management features in future updates.</p>
+                        <hr>
+                        <p class="mb-0">You have full control over the system and can manage all users, trips, and stations.</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card border-primary">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                                    <h5 class="card-title">User Management</h5>
+                                    <p class="card-text">Manage all system users including passengers, drivers, and staff.</p>
+                                    <button class="btn btn-primary" disabled>Coming Soon</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-success">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-route fa-3x text-success mb-3"></i>
+                                    <h5 class="card-title">Trip Management</h5>
+                                    <p class="card-text">Oversee all trips, routes, and scheduling operations.</p>
+                                    <button class="btn btn-success" disabled>Coming Soon</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-warning">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-chart-bar fa-3x text-warning mb-3"></i>
+                                    <h5 class="card-title">Reports & Analytics</h5>
+                                    <p class="card-text">View comprehensive reports on system usage and performance.</p>
+                                    <button class="btn btn-warning" disabled>Coming Soon</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

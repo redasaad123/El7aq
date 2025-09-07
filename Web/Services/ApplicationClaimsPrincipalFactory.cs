@@ -29,6 +29,13 @@ namespace Web.Services
                 identity.AddClaim(new Claim("LastName", user.LastName));
             }
 
+            // Ensure roles are properly added to claims
+            var roles = await UserManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Role, role));
+            }
+
             return identity;
         }
     }
