@@ -1,0 +1,47 @@
+﻿@model Web.Models.Driver.HomeViewModel
+
+
+@{
+    ViewData["Title"] = "Order";
+}
+
+
+
+<style>
+
+    .main-box {
+        height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .number-box {
+        background: white;
+        padding: 40px 60px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        text-align: center;
+        font-size: 48px;
+        font-weight: bold;
+        color: #007bff;
+        user-select: none;
+        min-width: 200px;
+    }
+
+</style>
+
+
+
+<div class="d-block">
+    <div class="main-box">
+
+        <div class="number-box">
+
+            @Model.Index
+        </div>
+    </div>
+
+</div>
+
+

@@ -155,4 +155,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
     public DbSet<Route> Routes { get; set; }
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+
+
+    public DbSet<DriverOrder> DriverOrders { get; set; }
 }
