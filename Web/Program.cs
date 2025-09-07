@@ -39,14 +39,14 @@ namespace Web
             builder.Services.AddScoped<INotificationService, NotificationService>();
 
             builder.Services.AddTransient<IEmailSender, EmailSend2>();
-            builder.Services.AddTransient<IGeolocationService,OpenStreetMapAdapter>();
+            builder.Services.AddTransient<IGeolocationService, OpenStreetMapAdapter>();
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfile<MapperConfig>();
             });
 
-            builder.Services.AddScoped<IEmailSend, EmailSend >();
+            builder.Services.AddScoped<IEmailSend, EmailSend>();
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IPayPalService, PayPalService>();
             var app = builder.Build();
@@ -76,7 +76,6 @@ namespace Web
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
-
 
             app.Run();
         }
