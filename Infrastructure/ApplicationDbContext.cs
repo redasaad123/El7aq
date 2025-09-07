@@ -148,6 +148,37 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
 
         );
 
+        builder.Entity<DriverProfile>().HasData(
+            new DriverProfile
+            {
+                Id = "D4",
+                UserId = "0825e731-d92c-4e82-bd5a-f25d3b4c20b7",
+                LicenseNumber = "LIC321",
+                CarNumber = "CAR321",
+                Lat = 31.0400, 
+                Long = 31.3785
+            },
+            new DriverProfile
+            {
+                Id = "D5",
+                UserId = "045fe3f3-6d2a-411f-8797-148a712adcff",
+                LicenseNumber = "LIC654",
+                CarNumber = "CAR654",
+                Lat = 31.0485,
+                Long = 31.3770
+            },
+            new DriverProfile
+            {
+                Id = "D6",
+                UserId = "6e8f8228-d327-4d93-9cfc-02835fd7bbf9",
+                LicenseNumber = "LIC987",
+                CarNumber = "CAR987",
+                Lat = 31.0330, 
+                Long = 31.3840
+            }
+);
+
+
         // 8. Notifications 
         builder.Entity<Notification>().HasData(
             new Notification

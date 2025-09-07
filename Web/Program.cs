@@ -36,6 +36,11 @@ namespace Web
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IPassengerHelperService, PassengerHelperService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
+<<<<<<< Updated upstream
+=======
+            builder.Services.AddScoped<IGeolocationService, OpenStreetMapAdapter>();
+            builder.Services.AddTransient<IEmailSender, EmailSend2>();
+>>>>>>> Stashed changes
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(cfg =>

@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250907094355_Location")]
+    partial class Location
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,11 +131,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B1",
-<<<<<<< Updated upstream
-                            BookingDate = new DateTime(2025, 9, 5, 21, 9, 50, 87, DateTimeKind.Utc).AddTicks(7010),
-=======
                             BookingDate = new DateTime(2025, 9, 7, 9, 43, 53, 984, DateTimeKind.Utc).AddTicks(3830),
->>>>>>> Stashed changes
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -140,11 +139,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B3",
-<<<<<<< Updated upstream
-                            BookingDate = new DateTime(2025, 9, 5, 21, 9, 50, 87, DateTimeKind.Utc).AddTicks(7013),
-=======
                             BookingDate = new DateTime(2025, 9, 7, 9, 43, 53, 984, DateTimeKind.Utc).AddTicks(3835),
->>>>>>> Stashed changes
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -152,11 +147,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = "B2",
-<<<<<<< Updated upstream
-                            BookingDate = new DateTime(2025, 9, 5, 21, 9, 50, 87, DateTimeKind.Utc).AddTicks(7024),
-=======
                             BookingDate = new DateTime(2025, 9, 7, 9, 43, 53, 984, DateTimeKind.Utc).AddTicks(3856),
->>>>>>> Stashed changes
                             PassengerId = "P1",
                             Status = 0,
                             TripId = "T1"
@@ -267,52 +258,32 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-<<<<<<< Updated upstream
-                            Id = "9619f20d-6be9-4346-99f6-a0989af73e45",
-                            CreatedAt = new DateTime(2025, 9, 5, 21, 9, 50, 87, DateTimeKind.Utc).AddTicks(7087),
-=======
                             Id = "9acac23e-d282-4477-95e9-7892b27224cc",
                             CreatedAt = new DateTime(2025, 9, 7, 9, 43, 53, 984, DateTimeKind.Utc).AddTicks(3947),
->>>>>>> Stashed changes
                             IsRead = true,
                             Message = "Welcome to El7aq! Your account was created successfully.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-<<<<<<< Updated upstream
-                            Id = "bac07b9e-4cfd-4d7d-8f65-62465be06a84",
-                            CreatedAt = new DateTime(2025, 9, 5, 20, 54, 50, 87, DateTimeKind.Utc).AddTicks(7093),
-=======
                             Id = "af8b5efd-5b06-455f-a324-fc4c5e216f4b",
                             CreatedAt = new DateTime(2025, 9, 7, 9, 28, 53, 984, DateTimeKind.Utc).AddTicks(3951),
->>>>>>> Stashed changes
                             IsRead = false,
                             Message = "Your first booking is pending confirmation.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-<<<<<<< Updated upstream
-                            Id = "4e5aa000-99cd-43db-9cb5-3d078583a281",
-                            CreatedAt = new DateTime(2025, 9, 5, 21, 29, 50, 87, DateTimeKind.Utc).AddTicks(7102),
-=======
                             Id = "8b7931a6-d7e9-427b-9cf2-b45d43ca6f16",
                             CreatedAt = new DateTime(2025, 9, 7, 10, 3, 53, 984, DateTimeKind.Utc).AddTicks(3957),
->>>>>>> Stashed changes
                             IsRead = false,
                             Message = "ay 7aga 1111.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
                         },
                         new
                         {
-<<<<<<< Updated upstream
-                            Id = "a16e5619-72e7-4629-8081-37abc4347cf5",
-                            CreatedAt = new DateTime(2025, 9, 5, 21, 4, 50, 87, DateTimeKind.Utc).AddTicks(7109),
-=======
                             Id = "6e0263df-9dfc-49ac-b0fd-d0360ea52d02",
                             CreatedAt = new DateTime(2025, 9, 7, 9, 38, 53, 984, DateTimeKind.Utc).AddTicks(3960),
->>>>>>> Stashed changes
                             IsRead = false,
                             Message = "ay 7aga 22222.",
                             UserId = "95e8cc4e-2c7d-41eb-a292-0c18c66dd2bc"
@@ -366,15 +337,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("StartStationId");
 
                     b.ToTable("Routes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "R1",
-                            EndStationId = "S2",
-                            Price = 150m,
-                            StartStationId = "S1"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.StaffProfile", b =>
@@ -418,26 +380,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Stations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "S1",
-                            City = "Cairo",
-                            Name = "Ramses"
-                        },
-                        new
-                        {
-                            Id = "S2",
-                            City = "Alexandria",
-                            Name = "Sidi Gaber"
-                        },
-                        new
-                        {
-                            Id = "S3",
-                            City = "Alexandria",
-                            Name = "Downtown Hub"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.Trip", b =>
@@ -463,29 +405,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("RouteId");
 
                     b.ToTable("Trips");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "T1",
-                            AvailableSeats = 5,
-                            DriverId = "D1",
-                            RouteId = "R1"
-                        },
-                        new
-                        {
-                            Id = "T2",
-                            AvailableSeats = 8,
-                            DriverId = "D1",
-                            RouteId = "R1"
-                        },
-                        new
-                        {
-                            Id = "T3",
-                            AvailableSeats = 0,
-                            DriverId = "D1",
-                            RouteId = "R1"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
