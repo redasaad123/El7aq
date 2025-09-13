@@ -10,17 +10,17 @@ namespace Core.Entities
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
     [Required]
-    public string BookingId { get; set; }  // FK → Booking
+    public required string BookingId { get; set; }  // FK → Booking
 
     [Required]
-    public string PassengerId { get; set; } // FK → Passenger
+    public required string PassengerId { get; set; } // FK → Passenger
 
     [Required]
     [Range(0.01, double.MaxValue)]
     public decimal Amount { get; set; }
 
     [Required]
-    public string Currency { get; set; }
+    public required string Currency { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
@@ -28,10 +28,10 @@ namespace Core.Entities
     public PaymentMethod Method { get; set; }
 
     [Required]
-    public string TransactionReference { get; set; }
+    public required string TransactionReference { get; set; }
 
     // Navigation
-    public PassengerProfile Passenger { get; set; }
-    public Booking Booking { get; set; }
+    public PassengerProfile? Passenger { get; set; }
+    public Booking? Booking { get; set; }
 }
 }

@@ -10,11 +10,11 @@ namespace Core.Entities
 
         [Required]
         [ForeignKey(nameof(User))]
-        public string UserId { get; set; }
+        public required string UserId { get; set; }
 
         [Required]
         [MaxLength(100)]
-        public string Department { get; set; }
+        public required string Department { get; set; }
 
         [MaxLength(500)]
         public string? Notes { get; set; }

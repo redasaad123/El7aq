@@ -101,7 +101,7 @@ namespace Infrastructure.Services
             return true;
         }
 
-        public async Task<bool> CancelBookingAsync(string bookingId, string passengerId)
+        public Task<bool> CancelBookingAsync(string bookingId, string passengerId)
         {
             
 
@@ -119,7 +119,7 @@ namespace Infrastructure.Services
             _bookingUow.Entity.Update(booking);
             _bookingUow.Save();
 
-            return true;
+            return Task.FromResult(true);
         
         }
 

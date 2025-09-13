@@ -5,6 +5,7 @@ using Core.Interfaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -23,7 +24,7 @@ namespace Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly UserManager<AppUsers> _userManager;
         private readonly IConfiguration _configuration;
-        private readonly IEmailSend _emailSend;
+        private readonly IEmailSender _emailSender;
         private readonly HttpClient _httpClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly string _clientId;
@@ -35,7 +36,7 @@ namespace Infrastructure.Services
             IMapper mapper,
             UserManager<AppUsers> userManager,
             IConfiguration configuration,
-            IEmailSend emailSend,
+            IEmailSender emailSender,
             HttpClient httpClient,
             IHttpContextAccessor contextAccessor)
         {
@@ -43,7 +44,7 @@ namespace Infrastructure.Services
             _mapper = mapper;
             _userManager = userManager;
             _configuration = configuration;
-            _emailSend = emailSend;
+            _emailSender = emailSender;
             _httpClient = httpClient;
             _contextAccessor = contextAccessor;
 
@@ -83,10 +84,10 @@ namespace Infrastructure.Services
                 var user = await _userManager.FindByIdAsync(payment.PassengerId);
                 if (user != null)
                 {
-                    await _emailSend.SendEmail(
+                    await _emailSender.SendEmailAsync(
                         user.Email,
                         "Payment Confirmation",
-                        $"Hello {user.UserName},\n\nYour order #{orderId} has been successfully paid for booking #{payment.BookingId}."
+                        $"Hello {user.UserName},<br/><br/>Your order #{orderId} has been successfully paid for booking #{payment.BookingId}."
                     );
                 }
             }

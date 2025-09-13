@@ -1,0 +1,176 @@
+@model Web.Models.Staff.ListDriversViewModel
+@{
+    ViewData["Title"] = "List Drivers";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header mb-4">
+                <h1 class="h3 mb-0">Drivers at @Model.StationName</h1>
+                <p class="text-muted">Manage drivers in your station</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">All Drivers (@Model.Drivers.Count)</h5>
+                    <a href="@Url.Action("AddDriver")" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-2"></i>Add New Driver
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.Drivers.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Driver Name</th>
+                                        <th>Email</th>
+                                        <th>License Number</th>
+                                        <th>Car Number</th>
+                                        <th>Total Trips</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var driver in Model.Drivers)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                        @driver.FirstName.Substring(0, 1)@driver.LastName.Substring(0, 1)
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-0">@driver.FirstName @driver.LastName</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@driver.Email</td>
+                                            <td>
+                                                <span class="badge bg-info">@driver.LicenseNumber</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">@driver.CarNumber</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">@driver.TripsCount</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">Active</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="View Details">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Edit Driver">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">No drivers found</h5>
+                            <p class="text-muted">There are no drivers registered for your station yet.</p>
+                            <a href="@Url.Action("AddDriver")" class="btn btn-primary">
+                                <i class="fas fa-user-plus me-2"></i>Add First Driver
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    @if (Model.Drivers.Any())
+    {
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title">@Model.Drivers.Count</h4>
+                                <p class="card-text">Total Drivers</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-users fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title">@Model.Drivers.Sum(d => d.TripsCount)</h4>
+                                <p class="card-text">Total Trips</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-bus fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title">@Model.Drivers.Count(d => d.TripsCount > 0)</h4>
+                                <p class="card-text">Active Drivers</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-user-check fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title">@Model.Drivers.Count(d => d.TripsCount == 0)</h4>
+                                <p class="card-text">New Drivers</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-user-plus fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    </script>
+}

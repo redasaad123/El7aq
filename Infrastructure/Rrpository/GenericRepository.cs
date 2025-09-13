@@ -24,7 +24,7 @@ namespace Infrastructure.Repository
         }
 
         // Synchronous CRUD to align with service usage patterns
-        public T Get(string id)
+        public T? Get(string id)
         {
             return _dbSet.Find(id);
         }
@@ -58,7 +58,7 @@ namespace Infrastructure.Repository
             return _dbSet.AsQueryable();
         }
 
-        public async Task<T> GetAsync(string id)
+        public async Task<T?> GetAsync(string id)
         {
             return await _dbSet.FindAsync(id);
 
@@ -87,7 +87,7 @@ namespace Infrastructure.Repository
             return query;
         }
 
-        public async Task<object> Find(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> Object)
+        public async Task<object?> Find(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> Object)
         {
             var query = await _dbSet.Where(predicate).Select(Object).FirstOrDefaultAsync();
             return query;
@@ -111,7 +111,7 @@ namespace Infrastructure.Repository
             return query;
         }
 
-        public T Find(Expression<Func<T, bool>> predicate)
+        public T? Find(Expression<Func<T, bool>> predicate)
         {
             var query = _dbSet.Where(predicate).FirstOrDefault();
 

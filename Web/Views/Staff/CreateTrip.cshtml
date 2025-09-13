@@ -1,0 +1,232 @@
+@model Web.Models.Staff.CreateTripWithQueueViewModel
+@{
+    ViewData["Title"] = "Create Trip";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header mb-4">
+                <h1 class="h3 mb-0">Create New Trip from @Model.StationName</h1>
+                <p class="text-muted">Schedule a new trip for your station</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Trip Details</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateTrip" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="RouteId" class="form-label"></label>
+                            <select asp-for="RouteId" class="form-select" asp-items="@(new SelectList(Model.Routes, "Id", "Name"))">
+                                <option value="">-- Select a route --</option>
+                            </select>
+                            <span asp-validation-for="RouteId" class="text-danger"></span>
+                            <div class="form-text">Select the route for this trip.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SelectedDriverIds" class="form-label"></label>
+                            <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                @for (int i = 0; i < Model.Drivers.Count; i++)
+                                {
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input driver-checkbox" type="checkbox" 
+                                               name="SelectedDriverIds" 
+                                               value="@Model.Drivers[i].Id" 
+                                               id="driver_@i"
+                                               data-driver-name="@Model.Drivers[i].FullName"
+                                               data-car-number="@Model.Drivers[i].CarNumber">
+                                        <label class="form-check-label" for="driver_@i">
+                                            <strong>@Model.Drivers[i].FullName</strong> - @Model.Drivers[i].CarNumber
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                            <span asp-validation-for="SelectedDriverIds" class="text-danger"></span>
+                            <div class="form-text">Select drivers in order of priority (first selected will be primary driver).</div>
+                        </div>
+
+                        <!-- Driver Queue Preview -->
+                        <div class="mb-3" id="driverQueuePreview" style="display: none;">
+                            <label class="form-label">Driver Queue (in order of priority):</label>
+                            <div class="border rounded p-3 bg-light">
+                                <ol id="driverQueueList" class="mb-0"></ol>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="DepartureTime" class="form-label"></label>
+                                    <input asp-for="DepartureTime" class="form-control" type="datetime-local" />
+                                    <span asp-validation-for="DepartureTime" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="AvailableSeats" class="form-label"></label>
+                                    <input asp-for="AvailableSeats" class="form-control" type="number" min="1" max="50" />
+                                    <span asp-validation-for="AvailableSeats" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="@Url.Action("Home")" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Home
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus-circle me-2"></i>Create Trip
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Available Routes</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Routes.Any())
+                    {
+                        <div class="list-group">
+                            @foreach (var route in Model.Routes.Take(5))
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">@route.Name</h6>
+                                        <small class="text-success">@route.Price.ToString("C")</small>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        @if (Model.Routes.Count > 5)
+                        {
+                            <div class="text-center mt-2">
+                                <small class="text-muted">And @(Model.Routes.Count - 5) more routes...</small>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-3">
+                            <i class="fas fa-route fa-2x text-muted mb-2"></i>
+                            <p class="text-muted">No routes available from your station.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Available Drivers</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Drivers.Any())
+                    {
+                        <div class="list-group">
+                            @foreach (var driver in Model.Drivers.Take(5))
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">@driver.FirstName @driver.LastName</h6>
+                                    </div>
+                                    <p class="mb-1 text-muted">@driver.CarNumber</p>
+                                </div>
+                            }
+                        </div>
+                        @if (Model.Drivers.Count > 5)
+                        {
+                            <div class="text-center mt-2">
+                                <small class="text-muted">And @(Model.Drivers.Count - 5) more drivers...</small>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-3">
+                            <i class="fas fa-users fa-2x text-muted mb-2"></i>
+                            <p class="text-muted">No drivers available.</p>
+                            <a href="@Url.Action("AddDriver")" class="btn btn-sm btn-primary">Add Driver</a>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("Home")" class="btn btn-outline-primary">
+                            <i class="fas fa-home me-2"></i>Dashboard
+                        </a>
+                        <a href="@Url.Action("ViewTrips")" class="btn btn-outline-info">
+                            <i class="fas fa-eye me-2"></i>View Trips
+                        </a>
+                        <a href="@Url.Action("AddDriver")" class="btn btn-outline-success">
+                            <i class="fas fa-user-plus me-2"></i>Add Driver
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Set minimum datetime to current time
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            const minDateTime = now.toISOString().slice(0, 16);
+            document.querySelector('input[type="datetime-local"]').min = minDateTime;
+
+            // Handle driver selection and queue preview
+            const driverCheckboxes = document.querySelectorAll('.driver-checkbox');
+            const queuePreview = document.getElementById('driverQueuePreview');
+            const queueList = document.getElementById('driverQueueList');
+
+            driverCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateDriverQueue);
+            });
+
+            function updateDriverQueue() {
+                const selectedDrivers = Array.from(driverCheckboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => ({
+                        name: cb.dataset.driverName,
+                        carNumber: cb.dataset.carNumber
+                    }));
+
+                if (selectedDrivers.length > 0) {
+                    queuePreview.style.display = 'block';
+                    queueList.innerHTML = '';
+                    
+                    selectedDrivers.forEach((driver, index) => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<strong>${driver.name}</strong> - ${driver.carNumber} ${index === 0 ? '<span class="badge bg-primary ms-2">Primary</span>' : ''}`;
+                        queueList.appendChild(li);
+                    });
+                } else {
+                    queuePreview.style.display = 'none';
+                }
+            }
+        });
+    </script>
+}

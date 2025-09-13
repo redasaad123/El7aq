@@ -9,11 +9,11 @@ namespace Core.Entities
 
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [Required]
         [MaxLength(100)]
-        public string City { get; set; }
+        public required string City { get; set; }
 
         // Navigation
         public ICollection<Route>? RoutesFrom { get; set; } = new List<Route>();

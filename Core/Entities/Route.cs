@@ -10,11 +10,11 @@ namespace Core.Entities
 
         [Required]
         [ForeignKey(nameof(StartStation))]
-        public string StartStationId { get; set; }
+        public required string StartStationId { get; set; }
 
         [Required]
         [ForeignKey(nameof(EndStation))]
-        public string EndStationId { get; set; }
+        public required string EndStationId { get; set; }
         public decimal Price { get; set; }
 
         // Navigation

@@ -33,7 +33,11 @@ namespace Web.Controllers
                 }
                 else if (userRole == "Driver")
                 {
-                    return RedirectToAction("Account", "Driver");
+                    return RedirectToAction("Home", "Driver");
+                }
+                else if (userRole == "Staff")
+                {
+                    return RedirectToAction("Home", "Staff");
                 }
                 // Removed automatic redirect for passengers - let them stay on home page
             }

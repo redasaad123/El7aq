@@ -177,12 +177,9 @@ namespace Web.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
                     
-                    // Add user to Passenger role
-                    await _userManager.AddToRoleAsync(user, "Passenger");
-                    
-                    // Add role claim
-                    //var roleClaim = new Claim(ClaimTypes.Role, "Passenger");
-                    //await _userManager.AddClaimAsync(user, roleClaim);
+                    // Add role claim instead of using roles
+                    var roleClaim = new Claim(ClaimTypes.Role, "Passenger");
+                    await _userManager.AddClaimAsync(user, roleClaim);
 
                     // Create passenger profile with proper ID generation
                     var passengerProfile = new PassengerProfile

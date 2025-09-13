@@ -1,0 +1,147 @@
+@model Web.Models.CreateDriverViewModel
+@{
+    ViewData["Title"] = "Create Driver Account";
+}
+
+<div class="container-fluid" style="margin-top: 120px; padding: 2rem 5%; max-width: 800px; margin-left: auto; margin-right: auto;">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box text-center mb-5">
+                <h2 class="page-title" style="color: var(--blackish-blue); margin-bottom: 0.5rem;">
+                    Create Driver Account
+                </h2>
+                <p class="text-muted">Convert an existing user to a driver role</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card" style="background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: none;">
+                <div class="card-header" style="background: linear-gradient(135deg, #2b66ff 0%, #7aa2ff 100%); color: white; border-radius: 20px 20px 0 0; padding: 1.5rem;">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-id-card me-2"></i>Driver Information
+                    </h4>
+                </div>
+                <div class="card-body" style="padding: 2rem;">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger" role="alert" style="border-radius: 10px;">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    <form asp-action="CreateDriver" method="post" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" style="border-radius: 10px;"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="UserId" class="form-label" style="color: var(--blackish-blue); font-weight: 600;"></label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-users"></i>
+                                </span>
+                                <select asp-for="UserId" class="form-select">
+                                    <option value="">Select a user to make driver</option>
+                                    @foreach (var user in Model.AvailableUsers)
+                                    {
+                                        <option value="@user.Id">@user.FirstName @user.LastName (@user.Email)</option>
+                                    }
+                                </select>
+                            </div>
+                            <span asp-validation-for="UserId" class="text-danger"></span>
+                            @if (Model.AvailableUsers.Count == 0)
+                            {
+                                <div class="alert alert-info mt-2" style="border-radius: 10px;">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    No available users found. All existing users are already drivers or staff members.
+                                </div>
+                            }
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="LicenseNumber" class="form-label" style="color: var(--blackish-blue); font-weight: 600;"></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-id-card"></i>
+                                        </span>
+                                        <input asp-for="LicenseNumber" class="form-control" placeholder="Enter license number" />
+                                    </div>
+                                    <span asp-validation-for="LicenseNumber" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="CarNumber" class="form-label" style="color: var(--blackish-blue); font-weight: 600;"></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-car"></i>
+                                        </span>
+                                        <input asp-for="CarNumber" class="form-control" placeholder="Enter car number" />
+                                    </div>
+                                    <span asp-validation-for="CarNumber" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="ManagerHome" class="btn btn-secondary" style="border-radius: 25px; padding: 0.75rem 2rem; text-decoration: none;">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #2b66ff, #7aa2ff); border: none; border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600;" @(Model.AvailableUsers.Count == 0 ? "disabled" : "")>
+                                <i class="fas fa-id-card me-2"></i>Create Driver
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #2b66ff;
+        box-shadow: 0 0 0 0.2rem rgba(43, 102, 255, 0.25);
+    }
+
+    .input-group-text {
+        background: linear-gradient(135deg, #2b66ff, #7aa2ff);
+        color: white;
+        border: none;
+        border-radius: 10px 0 0 10px;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* Dark mode styles */
+    [data-theme="dark"] .card {
+        background: #2D2D2D !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    [data-theme="dark"] .form-control, [data-theme="dark"] .form-select {
+        background: #3D3D3D !important;
+        border-color: #555 !important;
+        color: white !important;
+    }
+
+    [data-theme="dark"] .text-muted {
+        color: rgba(255,255,255,0.7) !important;
+    }
+</style>

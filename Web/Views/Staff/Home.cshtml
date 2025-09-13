@@ -1,0 +1,181 @@
+@model Web.Models.Staff.StaffHomeViewModel
+@{
+    ViewData["Title"] = "Staff Home";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header mb-4">
+                <h1 class="h3 mb-0">Welcome, @Model.StaffName</h1>
+                <p class="text-muted">Station: @Model.StationName, @Model.StationCity</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">@Model.DriversCount</h4>
+                            <p class="card-text">Total Drivers</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">@Model.UpcomingTrips.Count</h4>
+                            <p class="card-text">Upcoming Trips</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-bus fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">@Model.StationName</h4>
+                            <p class="card-text">Your Station</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-building fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">Staff</h4>
+                            <p class="card-text">Your Role</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-user-tie fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("AddDriver")" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-user-plus me-2"></i>
+                                Add Driver
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("ListDrivers")" class="btn btn-info btn-lg w-100">
+                                <i class="fas fa-list me-2"></i>
+                                List Drivers
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("CreateTrip")" class="btn btn-success btn-lg w-100">
+                                <i class="fas fa-plus-circle me-2"></i>
+                                Create Trip
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("ViewTrips")" class="btn btn-secondary btn-lg w-100">
+                                <i class="fas fa-eye me-2"></i>
+                                View Trips
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Trips -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Upcoming Trips from @Model.StationName</h5>
+                    <a href="@Url.Action("ViewTrips")" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.UpcomingTrips.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Route</th>
+                                        <th>Driver</th>
+                                        <th>Departure Time</th>
+                                        <th>Available Seats</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var trip in Model.UpcomingTrips)
+                                    {
+                                        <tr>
+                                            <td>@trip.RouteName</td>
+                                            <td>@trip.DriverName</td>
+                                            <td>@trip.DepartureTime.ToString("MMM dd, yyyy HH:mm")</td>
+                                            <td>
+                                                <span class="badge bg-@(trip.AvailableSeats > 0 ? "success" : "danger")">
+                                                    @trip.AvailableSeats
+                                                </span>
+                                            </td>
+                                            <td>@trip.Price.ToString("C")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-bus fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No upcoming trips from your station.</p>
+                            <a href="@Url.Action("CreateTrip")" class="btn btn-primary">Create First Trip</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-refresh page every 5 minutes to show updated data
+        setTimeout(function() {
+            location.reload();
+        }, 300000); // 5 minutes
+    </script>
+}

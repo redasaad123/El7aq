@@ -10,7 +10,7 @@ namespace Core.Interfaces
     public interface IGenericRepository<T> where T : class
     {
 
-        T Get(string id);
+        T? Get(string id);
     
         void Insert(T entity);
         void Update(T entity);
@@ -18,7 +18,7 @@ namespace Core.Interfaces
         T Delete(T entity);
 
         Task<IEnumerable<T>> GetAllAsync();
-        Task<T> GetAsync(string id);
+        Task<T?> GetAsync(string id);
         IQueryable<T> GetAllAsyncAsQuery();
         Task<T> AddAsync(T entity);
         Task<T> UpdateAsync(T entity);
@@ -28,10 +28,10 @@ namespace Core.Interfaces
         Task<List<T>> FindAll(Expression<Func<T, bool>> predicate);
         Task<List<string>> FindAll(Expression<Func<T, bool>> predicate, Expression<Func<T, string>> Object);
 
-        T Find(Expression<Func<T, bool>> predicate);
+        T? Find(Expression<Func<T, bool>> predicate);
 
         Task<object> Mapping(Expression<Func<T, object>> Object);
-        Task<object> Find(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> Object);
+        Task<object?> Find(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> Object);
 
         Task<bool> Any(Expression<Func<T, bool>> predicate);
 

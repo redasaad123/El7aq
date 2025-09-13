@@ -3,6 +3,7 @@ using Core.Enums;
 using Core.Interfaces;
 using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace Infrastructure.Services
         private readonly IUnitOfWork<Booking> _bookingUow;
         private readonly IUnitOfWork<Route> _routeUow;
         private readonly IUnitOfWork<DriverProfile> _driverUow;
+        private readonly ILogger<TripService> _logger;
 
 
         // Constructor to inject repositories
@@ -25,16 +27,18 @@ namespace Infrastructure.Services
             IUnitOfWork<Trip> tripUow,
             IUnitOfWork<Booking> bookingUow,
             IUnitOfWork<Route> routeUow,
-            IUnitOfWork<DriverProfile> driverUow)
+            IUnitOfWork<DriverProfile> driverUow,
+            ILogger<TripService> logger)
         {
             _tripUow = tripUow;
             _bookingUow = bookingUow;
             _routeUow = routeUow;
             _driverUow = driverUow;
+            _logger = logger;
         }
 
         #region Driver Operations
-        public async Task<Trip> CreateTripAsync(string driverId, string routeId, DateTime departureTime, int availableSeats)
+        public Task<Trip> CreateTripAsync(string driverId, string routeId, DateTime departureTime, int availableSeats)
         {
             var driver = _driverUow.Entity.Get(driverId);
             if (driver == null)
@@ -63,7 +67,7 @@ namespace Infrastructure.Services
             _tripUow.Entity.Insert(trip);
             _tripUow.Save();
 
-            return trip;
+            return Task.FromResult(trip);
         }
 
         public async Task<IEnumerable<Trip>> GetDriverTripsAsync(string driverId)
@@ -157,7 +161,7 @@ namespace Infrastructure.Services
                  .Where(r => r.StartStationId == originCityId && r.EndStationId == destinationCityId)
                  .ToListAsync();
 
-            Console.WriteLine($"Found {routes.Count} matching routes");
+            _logger.LogInformation("Found {RouteCount} matching routes", routes.Count);
 
 
             var trips = await _tripUow.Entity.GetAllAsyncAsQuery()
@@ -176,7 +180,8 @@ namespace Infrastructure.Services
             foreach (var trip in trips)
             {
                 var bookedSeats = trip.Bookings?.Count(b => b.Status != BookingStatus.Cancelled) ?? 0;
-                Console.WriteLine($"Trip {trip.Id}: Available={trip.AvailableSeats}, Booked={bookedSeats}");
+                _logger.LogDebug("Trip {TripId}: Available={AvailableSeats}, Booked={BookedSeats}", 
+                    trip.Id, trip.AvailableSeats, bookedSeats);
             }
 
 

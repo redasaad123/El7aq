@@ -1,0 +1,247 @@
+@model dynamic
+@{
+    ViewData["Title"] = "Trip Driver Queue";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header mb-4">
+                <h1 class="h3 mb-0">Driver Queue Management</h1>
+                <p class="text-muted">@Model.Trip.RouteName - @Model.Trip.DepartureTime.ToString("MMM dd, yyyy HH:mm")</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trip Information -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Trip Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <strong>Route:</strong> @Model.Trip.RouteName
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Departure:</strong> @Model.Trip.DepartureTime.ToString("MMM dd, yyyy HH:mm")
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Available Seats:</strong> @Model.Trip.AvailableSeats
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Primary Driver:</strong> @Model.Trip.PrimaryDriver
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Driver Queue -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Driver Queue (@Model.DriverQueue.Count drivers)</h5>
+                    <button type="button" class="btn btn-primary" onclick="promoteNextDriver('@Model.Trip.Id')">
+                        <i class="fas fa-arrow-up me-2"></i>Promote Next Driver
+                    </button>
+                </div>
+                <div class="card-body">
+                    @if (Model.DriverQueue.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Queue Order</th>
+                                        <th>Driver Name</th>
+                                        <th>Car Number</th>
+                                        <th>Status</th>
+                                        <th>Assigned At</th>
+                                        <th>Started At</th>
+                                        <th>Completed At</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var driver in Model.DriverQueue)
+                                    {
+                                        <tr class="@(driver.Status == Core.Entities.DriverStatus.Assigned ? "table-primary" : "")">
+                                            <td>
+                                                <span class="badge bg-secondary">@driver.QueueOrder</span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                        @{
+                                                            var nameParts = driver.DriverName.Split(' ');
+                                                            var initials = "";
+                                                            for (int i = 0; i < Math.Min(2, nameParts.Length); i++)
+                                                            {
+                                                                if (nameParts[i].Length > 0)
+                                                                {
+                                                                    initials += nameParts[i][0];
+                                                                }
+                                                            }
+                                                        }
+                                                        @initials
+                                                    </div>
+                                                    <span>@driver.DriverName</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">@driver.CarNumber</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge @driver.StatusBadgeClass">@driver.StatusText</span>
+                                            </td>
+                                            <td>
+                                                @if (driver.AssignedAt.HasValue)
+                                                {
+                                                    <small>@driver.AssignedAt.Value.ToString("MMM dd, HH:mm")</small>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (driver.StartedAt.HasValue)
+                                                {
+                                                    <small>@driver.StartedAt.Value.ToString("MMM dd, HH:mm")</small>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (driver.CompletedAt.HasValue)
+                                                {
+                                                    <small>@driver.CompletedAt.Value.ToString("MMM dd, HH:mm")</small>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    @if (driver.Status == Core.Entities.DriverStatus.Assigned)
+                                                    {
+                                                        <button type="button" class="btn btn-sm btn-success" 
+                                                                onclick="updateDriverStatus('@driver.Id', @((int)Core.Entities.DriverStatus.Started))">
+                                                            <i class="fas fa-play"></i> Start
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-danger" 
+                                                                onclick="updateDriverStatus('@driver.Id', @((int)Core.Entities.DriverStatus.Cancelled))">
+                                                            <i class="fas fa-times"></i> Cancel
+                                                        </button>
+                                                    }
+                                                    @if (driver.Status == Core.Entities.DriverStatus.Started)
+                                                    {
+                                                        <button type="button" class="btn btn-sm btn-info" 
+                                                                onclick="updateDriverStatus('@driver.Id', @((int)Core.Entities.DriverStatus.Completed))">
+                                                            <i class="fas fa-check"></i> Complete
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No drivers assigned to this trip.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex gap-2">
+                        <a href="@Url.Action("ViewTrips")" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Trips
+                        </a>
+                        <a href="@Url.Action("Home")" class="btn btn-outline-secondary">
+                            <i class="fas fa-home me-2"></i>Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function updateDriverStatus(queueId, newStatus) {
+            if (confirm('Are you sure you want to update the driver status?')) {
+                fetch('@Url.Action("UpdateDriverStatus")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: `queueId=${queueId}&newStatus=${newStatus}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating driver status.');
+                });
+            }
+        }
+
+        function promoteNextDriver(tripId) {
+            if (confirm('Are you sure you want to promote the next driver in queue?')) {
+                fetch('@Url.Action("PromoteNextDriver")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: `tripId=${tripId}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while promoting the next driver.');
+                });
+            }
+        }
+    </script>
+}

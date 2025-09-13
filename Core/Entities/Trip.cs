@@ -10,11 +10,11 @@ namespace Core.Entities
 
         [Required]
         [ForeignKey(nameof(Route))]
-        public string RouteId { get; set; }
+        public required string RouteId { get; set; }
 
         [Required]
         [ForeignKey(nameof(Driver))]
-        public string DriverId { get; set; }
+        public required string DriverId { get; set; }
 
         [Required]
         public DateTime DepartureTime { get; set; }
@@ -26,5 +26,6 @@ namespace Core.Entities
         public Route? Route { get; set; }
         public DriverProfile? Driver { get; set; }
         public ICollection<Booking>? Bookings { get; set; } = new List<Booking>();
+        public ICollection<TripDriverQueue>? DriverQueue { get; set; } = new List<TripDriverQueue>();
     }
 }

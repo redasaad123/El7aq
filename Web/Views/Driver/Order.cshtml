@@ -1,47 +1,392 @@
-﻿@model Web.Models.Driver.HomeViewModel
-
+﻿@model Web.Models.Driver.DriverQueueViewModel
 
 @{
-    ViewData["Title"] = "Order";
+    ViewData["Title"] = "Driver Queue";
 }
 
-
-
 <style>
+    .queue-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        margin-top: 100px; /* Add top margin to start after the top bar */
+    }
 
-    .main-box {
-        height: 80vh;
+    .header-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .position-display {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+        border: 3px solid transparent;
+        background-clip: padding-box;
+    }
+
+    .position-display.my-turn {
+        border-color: #28a745;
+        background: linear-gradient(white, white) padding-box,
+                    linear-gradient(45deg, #28a745, #20c997) border-box;
+        animation: pulse-glow 2s infinite;
+    }
+
+    .position-display.waiting {
+        border-color: #ffc107;
+        background: linear-gradient(white, white) padding-box,
+                    linear-gradient(45deg, #ffc107, #fd7e14) border-box;
+    }
+
+    .position-display.idle {
+        border-color: #6c757d;
+        background: linear-gradient(white, white) padding-box,
+                    linear-gradient(45deg, #6c757d, #495057) border-box;
+    }
+
+    @@keyframes pulse-glow {
+        0% { box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3); }
+        50% { box-shadow: 0 12px 35px rgba(40, 167, 69, 0.5); }
+        100% { box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3); }
+    }
+
+    .position-number {
+        font-size: 4rem;
+        font-weight: 900;
+        margin-bottom: 10px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .position-number.my-turn {
+        background: linear-gradient(45deg, #28a745, #20c997);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .position-label {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 5px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .status-ready {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-waiting {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-idle {
+        background: #f8f9fa;
+        color: #6c757d;
+    }
+
+    .queue-section {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+    }
+
+    .section-title i {
+        margin-right: 10px;
+        font-size: 1.3rem;
+    }
+
+    .driver-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        margin-bottom: 10px;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .driver-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .driver-item.current-driver {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-color: #2196f3;
+    }
+
+    .driver-item.ready {
+        background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+        border-color: #4caf50;
+    }
+
+    .driver-item.waiting {
+        background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+        border-color: #ff9800;
+    }
+
+    .driver-position {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-right: 20px;
     }
 
-    .number-box {
-        background: white;
-        padding: 40px 60px;
+    .driver-position.current {
+        background: #2196f3;
+        color: white;
+    }
+
+    .driver-position.ready {
+        background: #4caf50;
+        color: white;
+    }
+
+    .driver-position.waiting {
+        background: #ff9800;
+        color: white;
+    }
+
+    .driver-info {
+        flex: 1;
+    }
+
+    .driver-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .driver-status {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .trip-item {
+        background: #f8f9fa;
         border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-        text-align: center;
-        font-size: 48px;
-        font-weight: bold;
-        color: #007bff;
-        user-select: none;
-        min-width: 200px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-left: 4px solid #007bff;
+        transition: all 0.3s ease;
     }
 
+    .trip-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .trip-route {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .trip-time {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+
+    .trip-queue {
+        color: #007bff;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .back-btn {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
 </style>
 
-
-
-<div class="d-block">
-    <div class="main-box">
-
-        <div class="number-box">
-
-            @Model.Index
+<div class="queue-container">
+    <!-- Header -->
+    <div class="header-card">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="mb-3">Driver Queue</h1>
+                <p class="mb-0">Welcome, @Model.DriverName! Here's your current position in the queue.</p>
+            </div>
+            <a asp-controller="Driver" asp-action="Home" class="back-btn">
+                <i class="fas fa-arrow-left me-2"></i>
+                Back to Home
+            </a>
         </div>
     </div>
 
+    <!-- Position Display -->
+    <div class="position-display @(Model.IsMyTurn ? "my-turn" : (Model.CurrentPosition > 1 ? "waiting" : "idle"))">
+        <div class="position-number @(Model.IsMyTurn ? "my-turn" : "")">
+            @if (Model.CurrentPosition > 0)
+            {
+                @Model.CurrentPosition
+            }
+            else
+            {
+                <i class="fas fa-minus"></i>
+            }
+        </div>
+        <div class="position-label">Your Position</div>
+        <div class="status-badge @(Model.IsMyTurn ? "status-ready" : (Model.CurrentPosition > 1 ? "status-waiting" : "status-idle"))">
+            @if (Model.IsMyTurn)
+            {
+                <i class="fas fa-check-circle me-1">Ready to Start</i>
+            }
+            else if (Model.CurrentPosition > 1)
+            {
+                <i class="fas fa-clock me-1">Waiting in Queue</i>
+            }
+            else
+            {
+                <i class="fas fa-pause-circle me-1">No Active Queue</i>
+            }
+        </div>
+    </div>
+
+    <!-- Drivers in Queue -->
+    <div class="queue-section">
+        <h3 class="section-title">
+            <i class="fas fa-users text-primary"></i>
+            Drivers in Queue (@Model.TotalDrivers)
+        </h3>
+        
+        @if (Model.DriversInQueue.Any())
+        {
+            @foreach (var driver in Model.DriversInQueue)
+            {
+                <div class="driver-item @(driver.IsCurrentDriver ? "current-driver" : (driver.Position == 1 ? "ready" : "waiting"))">
+                    <div class="driver-position @(driver.IsCurrentDriver ? "current" : (driver.Position == 1 ? "ready" : "waiting"))">
+                        @driver.Position
+                    </div>
+                    <div class="driver-info">
+                        <div class="driver-name">
+                            @driver.DriverName
+                            @if (driver.IsCurrentDriver)
+                            {
+                                <span class="badge bg-primary ms-2">You</span>
+                            }
+                        </div>
+                        <div class="driver-status">
+                            Status: @driver.Status
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fas fa-users"></i>
+                <h4>No Drivers in Queue</h4>
+                <p>There are currently no drivers in the queue.</p>
+            </div>
+        }
+    </div>
+
+    <!-- Today's Trips -->
+    <div class="queue-section">
+        <h3 class="section-title">
+            <i class="fas fa-route text-success"></i>
+            Today's Trips
+        </h3>
+        
+        @if (Model.TodayTrips.Any())
+        {
+            @foreach (var trip in Model.TodayTrips)
+            {
+                <div class="trip-item">
+                    <div class="trip-route">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        @trip.Route
+                    </div>
+                    <div class="trip-time">
+                        <i class="fas fa-clock me-2"></i>
+                        Departure: @trip.DepartureTime.ToString("HH:mm")
+                    </div>
+                    <div class="trip-queue">
+                        <i class="fas fa-list-ol me-2"></i>
+                        @trip.QueueCount drivers in queue
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fas fa-calendar-times"></i>
+                <h4>No Trips Today</h4>
+                <p>There are no trips scheduled for today.</p>
+            </div>
+        }
+    </div>
 </div>
 
-
+<script>
+    // Auto-refresh every 30 seconds
+    setTimeout(function() {
+        location.reload();
+    }, 30000);
+</script>

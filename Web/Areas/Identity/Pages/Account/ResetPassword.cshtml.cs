@@ -68,11 +68,11 @@ namespace Web.Areas.Identity.Pages.Account
             public string Code { get; set; }
         }
 
-        public async Task<IActionResult> OnGetAsync(string code = null)
+        public Task<IActionResult> OnGetAsync(string code = null)
         {
             if (code == null)
             {
-                return BadRequest("A code must be supplied for password reset.");
+                return Task.FromResult<IActionResult>(BadRequest("A code must be supplied for password reset."));
             }
             else
             {
@@ -80,7 +80,7 @@ namespace Web.Areas.Identity.Pages.Account
                 {
                     Code = code
                 };
-                return Page();
+                return Task.FromResult<IActionResult>(Page());
             }
         }
 

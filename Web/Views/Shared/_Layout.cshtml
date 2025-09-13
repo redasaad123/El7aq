@@ -30,6 +30,33 @@
                 <li><a asp-controller="Home" asp-action="Index">Home</a></li>
                 <li><a asp-controller="Home" asp-action="About">About</a></li>
                 <li><a href="#contact">Contact</a></li>
+                
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "Passenger";
+                    
+                    @if (userRole == "Staff")
+                    {
+                        <li><a asp-controller="Staff" asp-action="Home">Dashboard</a></li>
+                        <li><a asp-controller="Staff" asp-action="ListDrivers">Drivers</a></li>
+                        <li><a asp-controller="Staff" asp-action="ViewTrips">Trips</a></li>
+                    }
+                    else if (userRole == "Manager")
+                    {
+                        <li><a asp-controller="Manager" asp-action="ManagerHome">Dashboard</a></li>
+                        <li><a asp-controller="Manager" asp-action="StaffReports">Staff</a></li>
+                        <li><a asp-controller="Manager" asp-action="DriverReports">Drivers</a></li>
+                    }
+                    else if (userRole == "Driver")
+                    {
+                        <li><a asp-controller="Driver" asp-action="Home">Dashboard</a></li>
+                    }
+                    else if (userRole == "Passenger")
+                    {
+                        <li><a asp-controller="Passenger" asp-action="SearchTrips">Search Trips</a></li>
+                        <li><a asp-controller="Passenger" asp-action="History">My Trips</a></li>
+                    }
+                }
             </ul>
 
             <!-- Authentication Section -->
@@ -79,7 +106,12 @@
                             else if (userRole == "Driver")
                             {
                                 profileController = "Driver";
-                                profileAction = "Order";
+                                profileAction = "Account";
+                            }
+                            else if (userRole == "Staff")
+                            {
+                                profileController = "Staff";
+                                profileAction = "Profile";
                             }
                         }
                         
@@ -110,8 +142,6 @@
                     <div class="auth-buttons">
                         <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline">Sign In</a>
                         <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary">Sign Up</a>
-                        <!-- Manager Sign Up button hidden but accessible via direct URL -->
-                        <a asp-area="Identity" asp-page="/Account/RegisterManager" class="btn btn-warning" style="margin-left: 5px; display: none;">Manager Sign Up</a>
                     </div>
                 }
             </div>
@@ -119,14 +149,24 @@
     </header>
 
 
-    <div class="homepage-container">
-        <div class="col-12 main">
-            @RenderBody()
+    @if (Context.Request.Path.StartsWithSegments("/Identity"))
+    {
+        @RenderBody()
+    }
+    else
+    {
+        <div class="homepage-container">
+            <div class="col-12 main">
+                @RenderBody()
+            </div>
         </div>
-    </div>
+    }
 
-    <!-- Contact Section - Available on all pages -->
-    @await Html.PartialAsync("_ContactSection")
+    <!-- Contact Section - Available on all pages except authentication -->
+    @if (!Context.Request.Path.StartsWithSegments("/Identity"))
+    {
+        @await Html.PartialAsync("_ContactSection")
+    }
 
     @* <footer class="border-top footer text-muted"> *@
     @*     <div class="container"> *@

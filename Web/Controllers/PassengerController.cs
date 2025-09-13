@@ -282,9 +282,10 @@ namespace Web.Controllers
                 Driver = new DriverViewModel
                 {
                     Id = trip.Driver?.Id ?? "0",
-                    Name = $"{trip.Driver?.appUsers?.FirstName} {trip.Driver?.appUsers?.LastName}",
+                    FirstName = trip.Driver?.appUsers?.FirstName ?? string.Empty,
+                    LastName = trip.Driver?.appUsers?.LastName ?? string.Empty,
                     CarNumber = trip.Driver?.CarNumber ?? string.Empty,
-                    Phone = trip.Driver?.appUsers?.PhoneNumber ?? string.Empty
+                    Email = trip.Driver?.appUsers?.PhoneNumber ?? string.Empty
                 }
             };
 
@@ -483,9 +484,11 @@ namespace Web.Controllers
                         Price = booking.Trip?.Route?.Price ?? 0,
                         Driver = new DriverViewModel
                         {
-                            Name = $"{booking.Trip?.Driver?.appUsers?.FirstName} {booking.Trip?.Driver?.appUsers?.LastName}",
-                            CarNumber = booking.Trip?.Driver?.CarNumber,
-                            Phone = booking.Trip?.Driver?.appUsers?.PhoneNumber
+                            Id = booking.Trip?.Driver?.Id ?? "0",
+                            FirstName = booking.Trip?.Driver?.appUsers?.FirstName ?? string.Empty,
+                            LastName = booking.Trip?.Driver?.appUsers?.LastName ?? string.Empty,
+                            CarNumber = booking.Trip?.Driver?.CarNumber ?? string.Empty,
+                            Email = booking.Trip?.Driver?.appUsers?.PhoneNumber ?? string.Empty
                         }
                     },
                     //Payments = booking.Payments?.Select(p => new PaymentViewModel
@@ -651,6 +654,9 @@ namespace Web.Controllers
         {
             try
             {
+                // Clear any existing TempData messages to prevent stale messages from appearing
+                TempData.Clear();
+
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 {

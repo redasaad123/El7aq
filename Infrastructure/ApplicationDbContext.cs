@@ -142,6 +142,20 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
             .HasForeignKey(p => p.PassengerId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // TripDriverQueue ↔ Trip
+        builder.Entity<TripDriverQueue>()
+            .HasOne(tdq => tdq.Trip)
+            .WithMany(t => t.DriverQueue)
+            .HasForeignKey(tdq => tdq.TripId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // TripDriverQueue ↔ Driver
+        builder.Entity<TripDriverQueue>()
+            .HasOne(tdq => tdq.Driver)
+            .WithMany(d => d.TripQueues)
+            .HasForeignKey(tdq => tdq.DriverId)
+            .OnDelete(DeleteBehavior.Cascade);
+
 
       
         // 4. DriverProfile
@@ -214,7 +228,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUsers>
     public DbSet<Route> Routes { get; set; }
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Notification> Notifications { get; set; }
-
+    public DbSet<TripDriverQueue> TripDriverQueues { get; set; }
 
     public DbSet<DriverOrder> DriverOrders { get; set; }
 }

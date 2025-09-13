@@ -38,28 +38,14 @@ namespace Web
             builder.Services.AddScoped<IPassengerHelperService, PassengerHelperService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
 
-            builder.Services.AddTransient<IEmailSender, EmailSend2>();
-
-
+            builder.Services.AddTransient<IEmailSender, EmailService>();
             builder.Services.AddTransient<IGeolocationService, OpenStreetMapAdapter>();
-
-            builder.Services.AddTransient<IGeolocationService,OpenStreetMapAdapter>();
-
-
-            builder.Services.AddTransient<IGeolocationService,OpenStreetMapAdapter>();
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfile<MapperConfig>();
             });
-
-
-
-            builder.Services.AddScoped<IEmailSend, EmailSend>();
-
-
-            builder.Services.AddScoped<IEmailSend, EmailSend >();
 
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IPayPalService, PayPalService>();

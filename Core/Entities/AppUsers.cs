@@ -7,11 +7,11 @@ namespace Core.Entities
     {
         [Required]
         [MaxLength(100)]
-        public string FirstName { get; set; }
+        public required string FirstName { get; set; }
 
         [Required]
         [MaxLength(100)]
-        public string LastName { get; set; }
+        public required string LastName { get; set; }
 
     } 
 }

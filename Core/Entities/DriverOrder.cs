@@ -10,9 +10,9 @@ namespace Core.Entities
     public class DriverOrder
     {
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
-        public string DriverId { get; set; }
+        public required string DriverId { get; set; }
 
     }
 }

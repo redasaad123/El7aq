@@ -138,22 +138,22 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> PaymentConfirmation(string orderId)
+        public Task<IActionResult> PaymentConfirmation(string orderId)
         {
             if (string.IsNullOrEmpty(orderId))
             {
-                return RedirectToAction("Index", "Home");
+                return Task.FromResult<IActionResult>(RedirectToAction("Index", "Home"));
             }
 
             try
             {
                 ViewBag.OrderId = orderId;
-                return View();
+                return Task.FromResult<IActionResult>(View());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error displaying payment confirmation for order {OrderId}", orderId);
-                return RedirectToAction("Index", "Home");
+                return Task.FromResult<IActionResult>(RedirectToAction("Index", "Home"));
             }
         }
 

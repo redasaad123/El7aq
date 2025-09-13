@@ -10,11 +10,11 @@ namespace Core.Entities
 
         [Required]
         [ForeignKey(nameof(User))]
-        public string UserId { get; set; }
+        public required string UserId { get; set; }
 
         [Required]
         [ForeignKey(nameof(Station))]
-        public string StationId { get; set; }
+        public required string StationId { get; set; }
 
         // Navigation
         public AppUsers? User { get; set; }
