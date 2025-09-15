@@ -42,19 +42,19 @@ The project follows a **Clean Architecture** approach:
 ```
 El7aq.sln
 │
-├── Core/
-│   ├── Models/             # Entity models
-│   ├── Enums/
-│   └── Interfaces/
+├── Core/                   # Contain Data models, Enums for data models, System interfaces
+│   ├── Models/                  # Entity models
+│   ├── Enums/                   # Enumns for models
+│   └── Interfaces/              # System interfaces
 ├── Infrastructure/          # Data access, EF Core, Repositories
 │   ├── repositories/            # Generic Repository
 │   ├── Services/                # Business Layer
 │   ├── Migrations/              # Database migrations
 │   └── Unit Of Work/       
-└── Web/                         # ASP.NET Core MVC (UI, APIs, Controllers)
-    ├── Controllers/                 # MVC Controllers
-    ├── View Models/                 # Models for views
-    └── Views/                       # Razor Views
+└── Web/                      # ASP.NET Core MVC (UI, APIs, Controllers)
+    ├── Controllers/             # MVC Controllers
+    ├── View Models/             # Models for views
+    └── Views/                   # Razor Views
 ```
 
 ### Design Patterns Used
