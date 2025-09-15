@@ -101,20 +101,6 @@ El7aq.sln
 
 ---
 
-## 🛠️ Getting Started
-### Prerequisites
-- .NET 8 SDK  
-- SQL Server 
-- Visual Studio 2022 / VS Code  
-- PayPal developer account (sandbox for testing)  
-
-### Installation
-Clone the repository:
-
-```bash
-git clone https://github.com/redasaad123/El7aq.git
-cd El7aq
-```
 
 ## 👥 Team Members
 
@@ -152,10 +138,13 @@ cd El7aq
   - Created seed data and handled initial database population  
   - Supported schema evolution during development  
 
+----
 ## 📚 Additional Documentation
 - [API Documentation](docs/api.md)  
 - [ERD Diagram](docs/erd.md)  
 - [System Design](docs/system-design.md)  
+
+---
 
 ## 🙏 Acknowledgments
 - **Microsoft** → .NET & ASP.NET Core framework  
