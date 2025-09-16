@@ -117,3 +117,13 @@ El7aq.sln
 
 ---
 
+## 🚀 Future Enhancements  
+
+- **📱 Mobile Application**: Native Android & iOS apps for passengers and drivers to ensure seamless on-the-go access.  
+- **🛰️ Real-time GPS Tracking**: Live tracking of trips on the map for both passengers and drivers.  
+- **🗺️ Advanced Search with Google Maps**: Improved station search and nearby station suggestions powered by Google Maps API.  
+- **⭐ Ratings & Reviews**: Passenger and driver feedback system to improve trust and service quality.  
+- **🔒 Two-Factor Authentication (2FA)**: Enhanced account security with additional verification steps.  
+- **🎨 Enhanced User Interface**: More intuitive and user-friendly design for smoother interactions.  
+- **🌍 Multi-language Support**: Full Arabic localization to improve accessibility for Egyptian users.  
+- **📊 Advanced Data Analytics**: Comprehensive analytics dashboard for administrators to monitor performance, detect trends, and optimize operations.
