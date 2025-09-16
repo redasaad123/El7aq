@@ -11,13 +11,16 @@ namespace Web.Controllers
     public class PaymentController : Controller
     {
         private readonly IPayPalService _payPalService;
+        private readonly IBookingService _bookingService;
         private readonly ILogger<PaymentController> _logger;
 
         public PaymentController(
-            IPayPalService payPalService, 
+            IPayPalService payPalService,
+            IBookingService bookingService, 
             ILogger<PaymentController> logger)
         {
             _payPalService = payPalService;
+            _bookingService = bookingService;
             _logger = logger;
         }
 
@@ -39,7 +42,17 @@ namespace Web.Controllers
                     return RedirectToAction("BookingDetails", "Booking", new { id = bookingId });
                 }
 
+                var booking = await _bookingService.GetBookingDetailsAsync(bookingId);
+                if (booking == null)
+                {
+                    TempData["Error"] = "Booking not found.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                var amount = booking.Trip?.Route?.Price ?? 0m;
+
                 ViewBag.BookingId = bookingId;
+                ViewBag.Amount = amount;
                 return View();
             }
             catch (Exception ex)
@@ -62,7 +75,22 @@ namespace Web.Controllers
 
             try
             {
-                var payment = await _payPalService.CreatePayment(amount, bookingId);
+                // Always compute the amount from server-side booking details to prevent tampering
+                var booking = await _bookingService.GetBookingDetailsAsync(bookingId);
+                if (booking == null)
+                {
+                    TempData["Error"] = "Booking not found.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                var amountToCharge = booking.Trip?.Route?.Price ?? 0m;
+                if (amountToCharge <= 0)
+                {
+                    TempData["Error"] = "Invalid trip price.";
+                    return RedirectToAction("Index", new { bookingId });
+                }
+
+                var payment = await _payPalService.CreatePayment(amountToCharge, bookingId);
 
                 if (!string.IsNullOrEmpty(payment.ApproveUrl))
                 {

@@ -332,7 +332,7 @@
                     </div>
                     <div class="info-item">
                         <span class="info-label">Amount to Pay:</span>
-                        <span class="info-value">$<span id="paymentAmount">100.00</span></span>
+                        <span class="info-value">$<span id="paymentAmount">@((ViewBag.Amount ?? 0m).ToString("0.00"))</span></span>
                     </div>
                 </div>
 
@@ -340,7 +340,7 @@
                 <form asp-action="CreatePayment" method="post" id="paymentForm">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="bookingId" value="@ViewBag.BookingId" />
-                    <input type="hidden" name="amount" value="100.00" id="hiddenAmount" />
+                    <input type="hidden" name="amount" value="@((ViewBag.Amount ?? 0m).ToString("0.00"))" id="hiddenAmount" />
 
                     <!-- Payment Methods -->
                     <div class="payment-methods">
@@ -375,7 +375,7 @@
                                    class="form-control"
                                    id="amount"
                                    name="amount"
-                                   value="100.00"
+                                   value="@((ViewBag.Amount ?? 0m).ToString("0.00"))"
                                    min="1"
                                    step="0.01"
                                    required

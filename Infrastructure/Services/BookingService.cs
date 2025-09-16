@@ -50,12 +50,22 @@ namespace Infrastructure.Services
 
             // Check if passenger already has a booking for this trip
             var existingBooking = await _bookingUow.Entity.GetAllAsyncAsQuery()
+                .Include(b => b.Payments)
                 .FirstOrDefaultAsync(b => b.PassengerId == passengerId &&
                                         b.TripId == tripId &&
                                         b.Status != BookingStatus.Cancelled);
 
             if (existingBooking != null)
-                throw new InvalidOperationException("Passenger already has a booking for this trip");
+            {
+                // If there is a successful payment linked to this booking, block re-booking
+                var hasSuccessfulPayment = existingBooking.Payments != null &&
+                                           existingBooking.Payments.Any(p => p.Status == PaymentStatus.Success);
+                if (hasSuccessfulPayment)
+                    throw new InvalidOperationException("Passenger already completed payment for this trip");
+
+                // Otherwise, reuse the existing unpaid booking so passenger can proceed to payment again
+                return existingBooking;
+            }
 
             var booking = new Booking
             {
