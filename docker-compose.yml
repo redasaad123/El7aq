@@ -1,0 +1,56 @@
+
+
+version: "3.8"
+
+services:
+  app:
+    build: .
+    image: redasaad123/elhaq
+    # volumes:
+    #   - ./uploads:/app/ProjectApi/uploads
+    env_file:
+      - .env
+    ports:
+      - "9090:8080"
+    networks:
+      - webnet
+    restart: unless-stopped
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - webroot:/var/www/html
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+    networks:
+      - webnet
+    command: certonly --webroot --webroot-path=/var/www/html --email support@eslamoffer.com --agree-tos --no-eff-email --non-interactive --keep-until-expiring -d api.eslamoffers.com
+    restart: "no"
+  
+
+  certbot-renew:
+    image: certbot/certbot
+    volumes:
+      - webroot:/var/www/html
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+    entrypoint: >
+      sh -c "trap exit TERM;
+      while :; do
+        certbot renew --quiet && docker exec nginx nginx -s reload;
+        sleep 12h & wait $${!};
+      done;"
+    networks:
+      - webnet
+    restart: unless-stopped
+
+networks:
+  webnet:
+
+volumes:
+  webroot:
+  certbot-etc:
+  certbot-var:
+
+
