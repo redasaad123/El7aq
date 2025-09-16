@@ -1,18 +1,18 @@
-﻿@page
-@model ForgotPasswordModel
+@page
+@model VerifyCodeModel
 
 @{
-    ViewData["Title"] = "Forgot your password?";
+    ViewData["Title"] = "Enter Verification Code";
 }
 
-<section class="form-container col-12" aria-label="Forgot Password Form Section">
+<section class="form-container col-12" aria-label="Verification Code Form Section">
     <div class="form-container-div col-4">
         <!-- Header with Logo -->
         <div class="auth-header">
             <div class="logo-container">
                 <img src="~/images/elhaq.jpg" alt="El7aq Logo" class="auth-logo" />
-                <h2>Forgot Password?</h2>
-                <p class="auth-subtitle">Enter your email address and we'll send you a link to reset your password</p>
+                <h2>Enter Verification Code</h2>
+                <p class="auth-subtitle">We sent a 6-digit code to your email</p>
             </div>
         </div>
 
@@ -22,32 +22,44 @@
             <span id="validation-summary-text"></span>
         </div>
 
-        <form id="forgot-password-form" method="post" novalidate>
-            <!-- Email Field -->
+        <form id="verify-code-form" method="post" novalidate>
+            <!-- Code Input Field -->
             <div class="form-group mb-3">
                 <div class="input-group">
                     <span class="input-group-text">
-                        <i class="fas fa-envelope"></i>
+                        <i class="fas fa-key"></i>
                     </span>
-                    <input asp-for="Input.Email" 
-                           type="email" 
-                           placeholder="Email Address" 
-                           aria-label="Email Address" 
-                           class="form-control" 
-                           autocomplete="email"
+                    <input asp-for="Input.Code" 
+                           type="text" 
+                           placeholder="Enter 6-digit code" 
+                           aria-label="Verification Code" 
+                           class="form-control text-center" 
+                           maxlength="6"
+                           autocomplete="one-time-code"
                            required />
                 </div>
-                <span asp-validation-for="Input.Email" class="text-danger validation-message"></span>
+                <span asp-validation-for="Input.Code" class="text-danger validation-message"></span>
+                <small class="form-text text-muted">Check your email for the verification code</small>
             </div>
 
             <!-- Submit Button -->
             <div class="form-group">
-                <button id="forgot-password-submit" type="submit" class="btn btn-primary btn-lg w-100">
-                    <span class="btn-text">Send Verification Code</span>
+                <button id="verify-code-submit" type="submit" class="btn btn-primary btn-lg w-100">
+                    <span class="btn-text">Verify Code</span>
                     <span class="btn-spinner" style="display: none;">
-                        <i class="fas fa-spinner fa-spin me-2"></i>Sending...
+                        <i class="fas fa-spinner fa-spin me-2"></i>Verifying...
                     </span>
                 </button>
+            </div>
+
+            <!-- Resend Code -->
+            <div class="text-center mt-3">
+                <p class="text-muted">
+                    Didn't receive the code? 
+                    <a asp-page="./ForgotPassword" class="signup-link">
+                        Send Another Code
+                    </a>
+                </p>
             </div>
 
             <!-- Back to Login Link -->
@@ -65,12 +77,38 @@
     <partial name="_ValidationScriptsPartial" />
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Form submission with loading state
-            const form = document.getElementById('forgot-password-form');
-            const submitButton = document.getElementById('forgot-password-submit');
+            const codeInput = document.querySelector('input[name="Input.Code"]');
+            const form = document.getElementById('verify-code-form');
+            const submitButton = document.getElementById('verify-code-submit');
             const btnText = document.querySelector('.btn-text');
             const btnSpinner = document.querySelector('.btn-spinner');
 
+            // Auto-format code input (only numbers, 6 digits)
+            if (codeInput) {
+                codeInput.addEventListener('input', function(e) {
+                    // Remove any non-numeric characters
+                    let value = e.target.value.replace(/\D/g, '');
+                    
+                    // Limit to 6 digits
+                    if (value.length > 6) {
+                        value = value.substring(0, 6);
+                    }
+                    
+                    e.target.value = value;
+                    
+                    // Auto-submit when 6 digits are entered
+                    if (value.length === 6) {
+                        setTimeout(() => {
+                            form.submit();
+                        }, 500);
+                    }
+                });
+
+                // Focus on the input
+                codeInput.focus();
+            }
+
+            // Form submission with loading state
             if (form && submitButton) {
                 form.addEventListener('submit', function() {
                     submitButton.disabled = true;
@@ -93,29 +131,6 @@
                     document.getElementById('validation-summary-text').textContent = errorTexts.join(', ');
                 }
             }
-
-            // Real-time validation feedback
-            const emailInput = form.querySelector('input[name="Input.Email"]');
-            if (emailInput) {
-                emailInput.addEventListener('blur', function() {
-                    validateField(this);
-                });
-            }
-
-            function validateField(field) {
-                const errorSpan = field.parentElement.parentElement.querySelector('.validation-message');
-                if (errorSpan) {
-                    if (field.checkValidity()) {
-                        errorSpan.textContent = '';
-                        field.classList.remove('is-invalid');
-                        field.classList.add('is-valid');
-                    } else {
-                        field.classList.remove('is-valid');
-                        field.classList.add('is-invalid');
-                    }
-                }
-            }
         });
     </script>
 }
-

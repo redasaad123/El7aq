@@ -17,10 +17,16 @@
         </div>
 
         <!-- Validation Summary -->
-        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" style="display: none;">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            <span id="validation-summary-text"></span>
-        </div>
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger" role="alert" id="validation-summary">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div>@error.ErrorMessage</div>
+                }
+            </div>
+        }
 
         <form id="account" method="post" novalidate>
             <!-- Email Field -->
@@ -131,20 +137,7 @@
                 });
             }
 
-            // Show validation summary if there are errors
-            const validationSummary = document.querySelector('.alert-danger');
-            const validationErrors = document.querySelectorAll('.validation-message');
-            
-            if (validationSummary && validationErrors.length > 0) {
-                const hasErrors = Array.from(validationErrors).some(error => error.textContent.trim() !== '');
-                if (hasErrors) {
-                    validationSummary.style.display = 'block';
-                    const errorTexts = Array.from(validationErrors)
-                        .filter(error => error.textContent.trim() !== '')
-                        .map(error => error.textContent.trim());
-                    document.getElementById('validation-summary-text').textContent = errorTexts.join(', ');
-                }
-            }
+            // Validation summary is now handled server-side and will be visible when there are errors
 
             // Real-time validation feedback
             const inputs = form.querySelectorAll('input[required]');

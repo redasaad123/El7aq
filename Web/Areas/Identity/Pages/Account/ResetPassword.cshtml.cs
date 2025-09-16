@@ -4,22 +4,29 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Core.Entities;
+using Infrastructure.Services;
 
 namespace Web.Areas.Identity.Pages.Account
 {
+    [AllowAnonymous]
     public class ResetPasswordModel : PageModel
     {
         private readonly UserManager<AppUsers> _userManager;
+        private readonly ICodeVerificationService _codeVerificationService;
 
-        public ResetPasswordModel(UserManager<AppUsers> userManager)
+        public ResetPasswordModel(UserManager<AppUsers> userManager, ICodeVerificationService codeVerificationService)
         {
             _userManager = userManager;
+            _codeVerificationService = codeVerificationService;
         }
 
         /// <summary>
@@ -68,20 +75,30 @@ namespace Web.Areas.Identity.Pages.Account
             public string Code { get; set; }
         }
 
-        public Task<IActionResult> OnGetAsync(string code = null)
+        public IActionResult OnGet()
         {
-            if (code == null)
+            // Check if user has verified their code
+            if (!TempData.ContainsKey("ResetEmail") || !TempData.ContainsKey("CodeVerified"))
             {
-                return Task.FromResult<IActionResult>(BadRequest("A code must be supplied for password reset."));
+                return RedirectToPage("./ForgotPassword");
             }
-            else
+
+            // Get the email from TempData
+            var email = TempData["ResetEmail"]?.ToString();
+            if (string.IsNullOrEmpty(email))
             {
-                Input = new InputModel
-                {
-                    Code = code
-                };
-                return Task.FromResult<IActionResult>(Page());
+                return RedirectToPage("./ForgotPassword");
             }
+
+            // Store email back in TempData for the POST method
+            TempData["ResetEmail"] = email;
+
+            Input = new InputModel
+            {
+                Email = email
+            };
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -91,16 +108,38 @@ namespace Web.Areas.Identity.Pages.Account
                 return Page();
             }
 
-            var user = await _userManager.FindByEmailAsync(Input.Email);
+            // Verify that user has completed code verification
+            if (!TempData.ContainsKey("ResetEmail") || !TempData.ContainsKey("CodeVerified"))
+            {
+                return RedirectToPage("./ForgotPassword");
+            }
+
+            var email = TempData["ResetEmail"]?.ToString();
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToPage("./ForgotPassword");
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
                 return RedirectToPage("./ResetPasswordConfirmation");
             }
 
-            var result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
+            // Generate a new password reset token (since we're not using the old token system)
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, Input.Password);
+            
             if (result.Succeeded)
             {
+                // Invalidate the verification code after successful password reset
+                await _codeVerificationService.InvalidateCodeAsync(email);
+                
+                // Clear TempData
+                TempData.Remove("ResetEmail");
+                TempData.Remove("CodeVerified");
+                
                 return RedirectToPage("./ResetPasswordConfirmation");
             }
 

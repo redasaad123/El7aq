@@ -122,7 +122,7 @@ namespace Web.Areas.Identity.Pages.Account
                 if (user == null)
                 {
                     _logger.LogWarning($"Login failed: User not found for email {Input.Email}");
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Invalid email or password. Please check your credentials and try again.");
                     return Page();
                 }
 
@@ -133,7 +133,7 @@ namespace Web.Areas.Identity.Pages.Account
                 if (!passwordValid)
                 {
                     _logger.LogWarning($"Login failed: Invalid password for user {user.UserName}");
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Invalid email or password. Please check your credentials and try again.");
                     return Page();
                 }
 
@@ -154,7 +154,7 @@ namespace Web.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Invalid email or password. Please check your credentials and try again.");
                     return Page();
                 }
             }
