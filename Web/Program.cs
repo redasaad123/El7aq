@@ -37,6 +37,7 @@ namespace Web
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IPassengerHelperService, PassengerHelperService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<IRoleRoutingService, RoleRoutingService>();
 
             builder.Services.AddTransient<IEmailSender, EmailService>();
             builder.Services.AddTransient<IGeolocationService, OpenStreetMapAdapter>();

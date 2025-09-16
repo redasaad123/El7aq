@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Web.Models;
 using System.Security.Claims;
+using Infrastructure.Services;
 
 namespace Web.Controllers
 {
@@ -13,11 +14,13 @@ namespace Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork<Station> _stationUow;
+        private readonly IRoleRoutingService _roleRoutingService;
 
-        public HomeController(IUnitOfWork<Station> stationUow, ILogger<HomeController> logger)
+        public HomeController(IUnitOfWork<Station> stationUow, ILogger<HomeController> logger, IRoleRoutingService roleRoutingService)
         {
             _stationUow = stationUow;
             _logger = logger;
+            _roleRoutingService = roleRoutingService;
         }
 
         public async Task<IActionResult> Index()
@@ -26,18 +29,11 @@ namespace Web.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                var redirectResult = _roleRoutingService.GetRedirectForRole(userRole);
                 
-                if (userRole == "Manager")
+                if (redirectResult != null)
                 {
-                    return RedirectToAction("ManagerHome", "Manager");
-                }
-                else if (userRole == "Driver")
-                {
-                    return RedirectToAction("Home", "Driver");
-                }
-                else if (userRole == "Staff")
-                {
-                    return RedirectToAction("Home", "Staff");
+                    return redirectResult;
                 }
                 // Removed automatic redirect for passengers - let them stay on home page
             }
