@@ -1,19 +1,31 @@
-
-
 version: "3.8"
 
 services:
   app:
     build: .
     image: redasaad123/elhaq
-    # volumes:
-    #   - ./uploads:/app/ProjectApi/uploads
     env_file:
       - .env
     ports:
-      - "9090:8080"
+      - "8080"    # داخلي داخل الشبكة، NGINX هيوجهه للـ app
     networks:
       - webnet
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - webroot:/var/www/html
+      - certbot-etc:/etc/letsencrypt
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      - webnet
+    depends_on:
+      - app
     restart: unless-stopped
 
   certbot:
@@ -25,10 +37,9 @@ services:
       - certbot-var:/var/lib/letsencrypt
     networks:
       - webnet
-    command: certonly --webroot --webroot-path=/var/www/html --email support@eslamoffer.com --agree-tos --no-eff-email --non-interactive --keep-until-expiring -d api.eslamoffers.com
+    command: certonly --webroot --webroot-path=/var/www/html --email support@elhaq.duckdns.org --agree-tos --no-eff-email --non-interactive --keep-until-expiring -d elhaq.duckdns.org
     restart: "no"
   
-
   certbot-renew:
     image: certbot/certbot
     volumes:
@@ -52,5 +63,3 @@ volumes:
   webroot:
   certbot-etc:
   certbot-var:
-
-
