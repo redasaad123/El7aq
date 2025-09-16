@@ -30,7 +30,7 @@ namespace Web
             builder.Services.AddLogging();
             // Register custom claims principal factory
             builder.Services.AddScoped<IUserClaimsPrincipalFactory<AppUsers>, Infrastructure.Services.ApplicationClaimsPrincipalFactory>();
-
+            builder.Configuration.AddEnvironmentVariables();
             // Application services and unit of work registrations
             builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
             builder.Services.AddScoped<ITripService, TripService>();
