@@ -81,6 +81,50 @@ namespace Web.Controllers
         }
 
         [HttpGet]
+        //public async Task<IActionResult> Success(string token, string PayerID, string bookingId)
+        //{
+        //    if (string.IsNullOrEmpty(token))
+        //    {
+        //        TempData["Error"] = "Payment token is missing.";
+        //        return RedirectToAction("Index", "Home");
+        //    }
+
+        //    try
+        //    {
+        //        // Get the order status first
+        //        var orderStatus = await _payPalService.GetOrderStatusAsync(token);
+
+        //        if (orderStatus == "APPROVED")
+        //        {
+        //            // Capture the payment
+        //            var captureResult = await _payPalService.CapturePaymentAsync(token);
+
+        //            TempData["Success"] = "Payment completed successfully! Your booking has been confirmed.";
+        //            _logger.LogInformation("Payment captured successfully for order {OrderId}", token);
+
+        //            // Redirect to booking details or confirmation page
+        //            if (!string.IsNullOrEmpty(bookingId))
+        //            {
+        //                return RedirectToAction("BookingDetails", "Passenger", new { id = bookingId });
+        //            }
+
+        //            return RedirectToAction("PaymentConfirmation", new { orderId = token });
+        //        }
+        //        else
+        //        {
+        //            TempData["Warning"] = $"Payment status: {orderStatus}. Please contact support if you think this is an error.";
+        //            return RedirectToAction("Index", new { bookingId });
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error processing payment success for token {Token}", token);
+        //        TempData["Error"] = "An error occurred while confirming your payment. Please contact support.";
+        //        return RedirectToAction("Index", new { bookingId });
+        //    }
+        //}
+
+
         public async Task<IActionResult> Success(string token, string PayerID, string bookingId)
         {
             if (string.IsNullOrEmpty(token))
@@ -105,7 +149,7 @@ namespace Web.Controllers
                     // Redirect to booking details or confirmation page
                     if (!string.IsNullOrEmpty(bookingId))
                     {
-                        return RedirectToAction("BookingDetails", "Passenger", new { id = bookingId });
+                        return RedirectToAction("PaymentConfirmation", new { orderId = token });
                     }
 
                     return RedirectToAction("PaymentConfirmation", new { orderId = token });

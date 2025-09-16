@@ -1,0 +1,191 @@
+﻿@{
+    ViewData["Title"] = "Payment Confirmation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Payment Confirmed
+                    </h4>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                    </div>
+
+                    <h2 class="text-success mb-3">Payment Successful!</h2>
+
+                    <div class="alert alert-success" role="alert">
+                        <strong>Thank you!</strong> Your payment has been processed successfully.
+                    </div>
+
+                    <div class="payment-details mb-4">
+                        <h5 class="text-muted mb-3">Transaction Details</h5>
+                        <div class="row">
+                            <div class="col-sm-6 text-end">
+                                <strong>Order ID:</strong>
+                            </div>
+                            <div class="col-sm-6 text-start">
+                                <code>@ViewBag.OrderId</code>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-6 text-end">
+                                <strong>Status:</strong>
+                            </div>
+                            <div class="col-sm-6 text-start">
+                                <span class="badge bg-success">Completed</span>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-6 text-end">
+                                <strong>Date:</strong>
+                            </div>
+                            <div class="col-sm-6 text-start">
+                                @DateTime.Now.ToString("MMM dd, yyyy HH:mm")
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            A confirmation email has been sent to your registered email address.
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+                            <i class="fas fa-home me-2"></i>
+                            Back to Home
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary" onclick="window.print()">
+                            <i class="fas fa-print me-2"></i>
+                            Print Receipt
+                        </button>
+                        <button type="button" class="btn btn-outline-info" onclick="refreshStatus()">
+                            <i class="fas fa-sync-alt me-2"></i>
+                            Refresh Status
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="mt-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">What's Next?</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-envelope text-primary me-2"></i>
+                                Check your email for the payment receipt and booking confirmation
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-calendar text-primary me-2"></i>
+                                Your booking is now confirmed and active
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-phone text-primary me-2"></i>
+                                Contact support if you have any questions about your booking
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Status Loading Modal -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center" id="statusModalBody">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5>Refreshing Status...</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function refreshStatus() {
+            const orderId = '@ViewBag.OrderId';
+            if (!orderId) {
+                alert('Order ID not found');
+                return;
+            }
+
+            // Show loading modal
+            const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
+            statusModal.show();
+
+            // Create form data for POST request
+            const formData = new FormData();
+            formData.append('orderId', orderId);
+            formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
+
+            fetch('@Url.Action("RefreshPaymentStatus")', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                statusModal.hide();
+
+                if (data.success) {
+                    const alertClass = data.status === 'COMPLETED' ? 'alert-success' : 'alert-info';
+                    const alertHtml = `
+                        <div class="alert ${alertClass} alert-dismissible fade show mt-3" role="alert">
+                            <strong>Status Update:</strong> ${data.status}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `;
+                    document.querySelector('.container').insertAdjacentHTML('beforeend', alertHtml);
+                } else {
+                    showAlert('danger', data.message);
+                }
+            })
+            .catch(error => {
+                statusModal.hide();
+                console.error('Error:', error);
+                showAlert('danger', 'Failed to refresh status.');
+            });
+        }
+
+        function showAlert(type, message) {
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show mt-3" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            document.querySelector('.container').insertAdjacentHTML('beforeend', alertHtml);
+        }
+
+        // Print styles
+        const printStyles = `
+            <style>
+                @@media print {
+                    .btn, .card-header { display: none !important; }
+                    .container { max-width: 100% !important; }
+                    body { background: white !important; }
+                }
+            </style>
+        `;
+        document.head.insertAdjacentHTML('beforeend', printStyles);
+    </script>
+
+    @Html.AntiForgeryToken()
+}
