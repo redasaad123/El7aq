@@ -602,8 +602,19 @@ namespace Web.Controllers
                     return View(model);
                 }
 
-                // Add staff role
-                await _userManager.AddToRoleAsync(user, "Staff");
+                // Add staff role (ensure role exists and handle result)
+                var addRoleResult = await _userManager.AddToRoleAsync(user, "Staff");
+                if (!addRoleResult.Succeeded)
+                {
+                    foreach (var error in addRoleResult.Errors)
+                    {
+                        ModelState.AddModelError("", $"Role assignment failed: {error.Description}");
+                    }
+                    // Clean up created user to avoid orphan records when role assignment fails
+                    await _userManager.DeleteAsync(user);
+                    ViewBag.Stations = await _stationUow.Entity.GetAllAsyncAsQuery().ToListAsync();
+                    return View(model);
+                }
 
                 // Create staff profile
                 var staffProfile = new StaffProfile
@@ -613,8 +624,21 @@ namespace Web.Controllers
                     StationId = model.StationId
                 };
 
-                await _staffUow.Entity.AddAsync(staffProfile);
-                await _staffUow.SaveAsync();
+                try
+                {
+                    await _staffUow.Entity.AddAsync(staffProfile);
+                    await _staffUow.SaveAsync();
+                }
+                catch (Exception ex)
+                {
+                    // Rollback user and role if profile creation fails
+                    _logger.LogError(ex, "Error persisting staff profile; rolling back user creation");
+                    await _userManager.RemoveFromRoleAsync(user, "Staff");
+                    await _userManager.DeleteAsync(user);
+                    ModelState.AddModelError("", "Error creating staff profile. Please try again.");
+                    ViewBag.Stations = await _stationUow.Entity.GetAllAsyncAsQuery().ToListAsync();
+                    return View(model);
+                }
 
                 TempData["Success"] = "Staff member added successfully.";
                 return RedirectToAction(nameof(StaffReports));
@@ -629,43 +653,9 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateDriver()
+        public IActionResult CreateDriver()
         {
-            try
-            {
-                // Get all users who are not already drivers or staff
-                var existingDriverIds = await _driverUow.Entity.GetAllAsyncAsQuery()
-                    .Select(d => d.UserId)
-                    .ToListAsync();
-
-                var existingStaffIds = await _staffUow.Entity.GetAllAsyncAsQuery()
-                    .Select(s => s.UserId)
-                    .ToListAsync();
-
-                var availableUsers = await _userManager.Users
-                    .Where(u => !existingDriverIds.Contains(u.Id) && !existingStaffIds.Contains(u.Id))
-                    .ToListAsync();
-
-                var viewModel = new CreateDriverViewModel
-                {
-                    AvailableUsers = availableUsers.Select(u => new UserViewModel
-                    {
-                        Id = u.Id,
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        Email = u.Email,
-                        UserName = u.UserName
-                    }).ToList()
-                };
-
-                return View(viewModel);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error loading create driver page");
-                TempData["ErrorMessage"] = "Error loading page. Please try again.";
-                return RedirectToAction(nameof(ManagerHome));
-            }
+            return View(new CreateDriverViewModel());
         }
 
         [HttpPost]
@@ -676,62 +666,55 @@ namespace Web.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    // Reload available users
-                    var existingDriverIds = await _driverUow.Entity.GetAllAsyncAsQuery()
-                        .Select(d => d.UserId)
-                        .ToListAsync();
-
-                    var existingStaffIds = await _staffUow.Entity.GetAllAsyncAsQuery()
-                        .Select(s => s.UserId)
-                        .ToListAsync();
-
-                    var availableUsers = await _userManager.Users
-                        .Where(u => !existingDriverIds.Contains(u.Id) && !existingStaffIds.Contains(u.Id))
-                        .ToListAsync();
-
-                    model.AvailableUsers = availableUsers.Select(u => new UserViewModel
-                    {
-                        Id = u.Id,
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        Email = u.Email,
-                        UserName = u.UserName
-                    }).ToList();
-
                     return View(model);
                 }
 
-                // Check if user already has a driver profile
-                var existingDriver = await _driverUow.Entity.GetAllAsyncAsQuery()
-                    .FirstOrDefaultAsync(d => d.UserId == model.UserId);
-
-                if (existingDriver != null)
+                // Ensure email is unique
+                var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUser != null)
                 {
-                    ModelState.AddModelError("UserId", "This user is already a driver.");
+                    ModelState.AddModelError("Email", "A user with this email already exists.");
                     return View(model);
                 }
+
+                // Create new user
+                var newUser = new AppUsers
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    PhoneNumber = model.PhoneNumber,
+                    EmailConfirmed = true
+                };
+
+                var createUserResult = await _userManager.CreateAsync(newUser, model.Password);
+                if (!createUserResult.Succeeded)
+                {
+                    foreach (var error in createUserResult.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                    return View(model);
+                }
+
+                // Add driver role
+                await _userManager.AddToRoleAsync(newUser, "Driver");
 
                 // Create driver profile
                 var driverProfile = new DriverProfile
                 {
                     Id = Guid.NewGuid().ToString(),
-                    UserId = model.UserId,
+                    UserId = newUser.Id,
                     LicenseNumber = model.LicenseNumber,
                     CarNumber = model.CarNumber,
-                    Lat = 0, // Default location
+                    Lat = 0,
                     Long = 0
                 };
 
                 await _driverUow.Entity.AddAsync(driverProfile);
-
-                // Add driver role to user
-                var user = await _userManager.FindByIdAsync(model.UserId);
-                if (user != null)
-                {
-                    await _userManager.AddToRoleAsync(user, "Driver");
-                }
-
                 await _driverUow.SaveAsync();
+
                 TempData["Success"] = "Driver created successfully.";
                 return RedirectToAction(nameof(DriverReports));
             }

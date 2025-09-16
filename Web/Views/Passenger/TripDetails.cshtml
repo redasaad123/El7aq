@@ -5,6 +5,14 @@
 
 <div class="trip-details-container">
     <div class="container">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success" role="alert">@TempData["SuccessMessage"]</div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger" role="alert">@TempData["ErrorMessage"]</div>
+        }
         <!-- Trip Header -->
         <div class="trip-header-card">
             <div class="header-content">

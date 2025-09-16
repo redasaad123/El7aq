@@ -320,7 +320,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while booking seat for TripId: {TripId}", tripId);
-                TempData["ErrorMessage"] = "An error occurred while booking the seat";
+                // Surface the specific reason (e.g., duplicate booking or no seats)
+                TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("TripDetails", new { id = tripId });
             }
 

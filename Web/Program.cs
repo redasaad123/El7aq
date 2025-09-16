@@ -50,6 +50,7 @@ namespace Web
                     // Token settings for password reset
                     options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;
                 })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             
             // Configure Data Protection for token expiration
@@ -66,6 +67,7 @@ namespace Web
             builder.Services.AddScoped<IPassengerHelperService, PassengerHelperService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IRoleRoutingService, RoleRoutingService>();
+            builder.Services.AddScoped<RoleSeederService>();
 
             builder.Services.AddTransient<IEmailSender, EmailService>();
             builder.Services.AddTransient<IGeolocationService, OpenStreetMapAdapter>();
@@ -107,6 +109,20 @@ namespace Web
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
+
+            // Seed roles on startup to ensure required roles exist in real environments
+            using (var scope = app.Services.CreateScope())
+            {
+                try
+                {
+                    var roleSeeder = scope.ServiceProvider.GetRequiredService<RoleSeederService>();
+                    roleSeeder.SeedRolesAsync().GetAwaiter().GetResult();
+                }
+                catch
+                {
+                    // Ignore seeding failures to avoid blocking app startup; errors will be logged inside the seeder
+                }
+            }
 
             app.Run();
         }

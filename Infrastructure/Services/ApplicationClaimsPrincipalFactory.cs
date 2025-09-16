@@ -23,6 +23,13 @@ namespace Infrastructure.Services
             identity.AddClaim(new Claim("LastName", user.LastName ?? ""));
             identity.AddClaim(new Claim("FullName", $"{user.FirstName} {user.LastName}".Trim()));
             
+            // Ensure role claims are present so UI and routing can detect roles
+            var roles = await UserManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Role, role));
+            }
+            
             return identity;
         }
     }
