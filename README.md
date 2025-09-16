@@ -1,42 +1,66 @@
-# 🚍 El7aq  
-A Smart Ride-Sharing & Transportation Management Platform  
+# 🚍 El7aq - Smart Ride-Sharing Platform
 
-**.NET 8 · ASP.NET Core MVC · Entity Framework Core · PayPal API · SQL Server · Bootstrap**
+[![.NET 8](https://img.shields.io/badge/.NET-8.0-purple.svg)](https://dotnet.microsoft.com/download/dotnet/8.0)
+[![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-8.0-blue.svg)](https://docs.microsoft.com/en-us/aspnet/core/)
+[![Entity Framework](https://img.shields.io/badge/Entity%20Framework-8.0-green.svg)](https://docs.microsoft.com/en-us/ef/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
 ## 🎯 Project Overview
-**El7aq** is a multi-layered ride-sharing and trip management system built with ASP.NET Core.  
-It connects **drivers** and **passengers**, manages **trips & bookings**, and supports **payments, notifications, and administration**.  
 
-The solution is structured into **clean layers** (`Core`, `Infrastructure`, `Web`) and demonstrates real-world integration with **PayPal API** and **SMTP email services**.
+**El7aq** is a multi-layered ride-sharing platform that facilitates seamless transportation services across Egypt. The system supports multiple user roles with comprehensive trip management capabilities, secure payment processing, and real-time notifications.
 
----
+### Key Highlights
+- **Clean Architecture** with separation of concerns across Core, Infrastructure, and Web layers
+- **Role-based Authentication** using ASP.NET Core Identity with granular permissions
+- **Secure Payment Processing** via PayPal API integration with automatic refunds
+- **Real-time Notifications** through email and in-app alert systems
+- **Docker Support** for easy deployment and scalability
+- **Responsive UI** built with Bootstrap 5 for optimal user experience
 
-## ✨ Key Features
-### 👤 Passengers
-- Search trips by origin & destination.  
-- Book seats instantly with PayPal payments.  
-- Manage bookings (view, edit, cancel).  
-- Receive email & in-app notifications.  
-- Update personal profile & preferences.  
-
-### 🚗 Drivers
-- Create and manage trips.  
-- Define routes between stations.  
-- Manage passenger bookings.  
-- Maintain driver & vehicle profile.  
-
-### 🧑‍💼 Staff
-- Manage transportation hubs (stations).  
-- Configure routes.  
-
-### ⚙️ Admin
-- Manage all system users (drivers, passengers, staff).  
-- Oversee authentication & roles.  
+### Technology Stack
+- **Backend**: .NET 8, ASP.NET Core MVC, Entity Framework Core
+- **Database**: SQL Server with Entity Framework migrations
+- **Frontend**: Razor Views, Bootstrap 5, JavaScript
+- **Authentication**: ASP.NET Core Identity
+- **Payments**: PayPal API Integration
+- **Deployment**: Docker, Nginx, SSL certificates
 
 ---
 
+## ✨ Features
+
+### 👤 Passenger Features
+- **Trip Search & Booking**: Advanced search by origin, destination, date, and passenger count
+- **Secure Payments**: PayPal-integrated payment processing with automatic refunds
+- **Booking Management**: Complete booking lifecycle with view, edit, and cancel capabilities
+- **Real-time Notifications**: Email and in-app notifications for booking updates
+- **Profile Management**: Comprehensive user profiles with preferences and history
+- **Trip History**: Complete booking history with status tracking
+
+### 🚗 Driver Features
+- **Trip Creation**: Create and manage transportation routes with scheduling
+- **Route Management**: Define routes between stations with distance calculation
+- **Booking Management**: Monitor and manage passenger bookings with real-time updates
+- **Driver Profile**: Maintain vehicle information and driver credentials
+- **Earnings Tracking**: Monitor trip earnings and payment status
+- **Vehicle Management**: Manage vehicle details and amenities
+
+### 🧑‍💼 Staff Features
+- **Station Management**: Manage transportation hubs and pickup points
+- **Route Configuration**: Set up and maintain route networks
+- **System Monitoring**: Oversee platform operations and user activity
+- **Support Tools**: Handle customer inquiries and system issues
+
+### ⚙️ Administrator Features
+- **User Management**: Comprehensive user administration across all roles
+- **Role Management**: Configure user roles and permissions
+- **System Configuration**: Platform-wide settings and configurations
+- **Analytics & Reports**: System usage and performance metrics
+- **Content Management**: Manage system content and configurations
+
+---
 ## 🏗️ Solution Architecture
 The project follows a **Clean Architecture** approach:
 ```
@@ -92,64 +116,4 @@ El7aq.sln
 - Automatic refunds for cancellations.  
 
 ---
-
-## 🚀 Future Enhancements
-- **GPS Integration** → Real-time trip tracking.  
-- **Advanced Filters** → Price, vehicle type, amenities.  
-- **Maps API Integration** → Route optimization.  
-- **Mobile Apps** → Native Android/iOS.  
-
----
-
-
-## 👥 Team Members
-
-- **Ahmed Qassem** – Backend Developer  
-  - Implemented core booking services and business logic  
-  - Worked on integrating the Unit of Work pattern  
-
-- **Reda Saad** – Backend Developer
-  - Worked on authentication and role management  
-  - Developed trip management services (TripService, BookingService)  
-  - Integrated PayPal payment gateway  
-
-- **Ahmed Abdelfattah** – Backend Developer  
-  - Built notification
-  - Profile Services
-  - Built Razor Views with Bootstrap  
-
-- **Basmala Mohamed** – Database Designer  
-  - Developed trip management services (TripService, BookingService)  
-  - Integrated PayPal payment gateway  
-
-- **Khaled Eldawly** – Backend Developer  
-  - Implemented driver-side features (trip creation, route management)  
-  - Developed APIs for passenger-driver interactions  
-
-- **Hassan Atwa** – Database Designer
-  - Managed database migrations with EF Core
-  - Supported data modeling and relationships (users, trips, bookings)
-
-- **Aya Majar** – Frontend Developer  
-  - Built Razor Views with Bootstrap  
-  - Implemented user-friendly booking & trip search UI  
-
-- **Esraa Saad** – Database Designer  
-  - Created seed data and handled initial database population  
-  - Supported schema evolution during development  
-
-----
-## 📚 Additional Documentation
-- [API Documentation](docs/api.md)  
-- [ERD Diagram](docs/erd.md)  
-- [System Design](docs/system-design.md)  
-
----
-
-## 🙏 Acknowledgments
-- **Microsoft** → .NET & ASP.NET Core framework  
-- **PayPal** → Secure payment gateway  
-- **SQL Server** → Reliable database engine  
-- **SMTP (Gmail)** → Email notifications  
-
 
