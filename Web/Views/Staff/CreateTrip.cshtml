@@ -33,34 +33,13 @@
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="SelectedDriverIds" class="form-label"></label>
-                            <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
-                                @for (int i = 0; i < Model.Drivers.Count; i++)
-                                {
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input driver-checkbox" type="checkbox" 
-                                               name="SelectedDriverIds" 
-                                               value="@Model.Drivers[i].Id" 
-                                               id="driver_@i"
-                                               data-driver-name="@Model.Drivers[i].FullName"
-                                               data-car-number="@Model.Drivers[i].CarNumber">
-                                        <label class="form-check-label" for="driver_@i">
-                                            <strong>@Model.Drivers[i].FullName</strong> - @Model.Drivers[i].CarNumber
-                                        </label>
-                                    </div>
-                                }
-                            </div>
-                            <span asp-validation-for="SelectedDriverIds" class="text-danger"></span>
-                            <div class="form-text">Select drivers in order of priority (first selected will be primary driver).</div>
+                            <label asp-for="PrimaryDriverCarNumber" class="form-label"></label>
+                            <input asp-for="PrimaryDriverCarNumber" class="form-control" placeholder="Enter primary driver car number" />
+                            <span asp-validation-for="PrimaryDriverCarNumber" class="text-danger"></span>
+                            <div class="form-text">Enter the car number of the driver currently present at your station.</div>
                         </div>
 
-                        <!-- Driver Queue Preview -->
-                        <div class="mb-3" id="driverQueuePreview" style="display: none;">
-                            <label class="form-label">Driver Queue (in order of priority):</label>
-                            <div class="border rounded p-3 bg-light">
-                                <ol id="driverQueueList" class="mb-0"></ol>
-                            </div>
-                        </div>
+                        
 
                         <div class="row">
                             <div class="col-md-6">
@@ -128,41 +107,7 @@
                 </div>
             </div>
 
-            <div class="card mt-3">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Available Drivers</h5>
-                </div>
-                <div class="card-body">
-                    @if (Model.Drivers.Any())
-                    {
-                        <div class="list-group">
-                            @foreach (var driver in Model.Drivers.Take(5))
-                            {
-                                <div class="list-group-item">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">@driver.FirstName @driver.LastName</h6>
-                                    </div>
-                                    <p class="mb-1 text-muted">@driver.CarNumber</p>
-                                </div>
-                            }
-                        </div>
-                        @if (Model.Drivers.Count > 5)
-                        {
-                            <div class="text-center mt-2">
-                                <small class="text-muted">And @(Model.Drivers.Count - 5) more drivers...</small>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="text-center py-3">
-                            <i class="fas fa-users fa-2x text-muted mb-2"></i>
-                            <p class="text-muted">No drivers available.</p>
-                            <a href="@Url.Action("AddDriver")" class="btn btn-sm btn-primary">Add Driver</a>
-                        </div>
-                    }
-                </div>
-            </div>
+            
 
             <div class="card mt-3">
                 <div class="card-header">
@@ -176,8 +121,8 @@
                         <a href="@Url.Action("ViewTrips")" class="btn btn-outline-info">
                             <i class="fas fa-eye me-2"></i>View Trips
                         </a>
-                        <a href="@Url.Action("AddDriver")" class="btn btn-outline-success">
-                            <i class="fas fa-user-plus me-2"></i>Add Driver
+                        <a href="@Url.Action("AddDriverByCarNumber")" class="btn btn-outline-success">
+                            <i class="fas fa-id-card me-2"></i>Add Driver by Car Number
                         </a>
                     </div>
                 </div>

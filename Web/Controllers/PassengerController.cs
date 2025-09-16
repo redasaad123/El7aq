@@ -167,6 +167,7 @@ namespace Web.Controllers
                     model.SearchResults = trips.Select(trip => new TripResultViewModel
                     {
                         TripId = trip.Id,
+                        DepartureTime = trip.DepartureTime,
                         OriginStation = trip.Route?.StartStation?.Name!,
                         DestinationStation = trip.Route?.EndStation?.Name!,
                         Price = trip.Route?.Price ?? 0,
@@ -219,7 +220,7 @@ namespace Web.Controllers
                 model.SearchResults = trips.Select(trip => new TripResultViewModel
                 {
                     TripId = trip.Id,
-                   
+                    DepartureTime = trip.DepartureTime,
                     OriginStation = trip.Route?.StartStation?.Name!,
                     DestinationStation = trip.Route?.EndStation?.Name!,
                     Price = trip.Route?.Price ?? 0,

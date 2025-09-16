@@ -254,6 +254,79 @@ namespace Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> AddDriverByCarNumber()
+        {
+            try
+            {
+                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var staffProfile = await _staffUow.Entity.GetAllAsyncAsQuery()
+                    .Include(s => s.Station)
+                    .FirstOrDefaultAsync(s => s.UserId == currentUserId);
+
+                if (staffProfile == null)
+                {
+                    TempData["ErrorMessage"] = "Staff profile not found.";
+                    return RedirectToAction("Home");
+                }
+
+                var vm = new AddDriverByCarNumberViewModel
+                {
+                    StationName = staffProfile.Station?.Name ?? "Unknown"
+                };
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading add driver by car number page");
+                TempData["ErrorMessage"] = "Error loading page. Please try again.";
+                return RedirectToAction("Home");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddDriverByCarNumber(AddDriverByCarNumberViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var staffProfile = await _staffUow.Entity.GetAllAsyncAsQuery()
+                    .Include(s => s.Station)
+                    .FirstOrDefaultAsync(s => s.UserId == currentUserId);
+
+                if (staffProfile == null)
+                {
+                    TempData["ErrorMessage"] = "Staff profile not found.";
+                    return RedirectToAction("Home");
+                }
+
+                var driver = await _driverUow.Entity.GetAllAsyncAsQuery()
+                    .FirstOrDefaultAsync(d => d.CarNumber == model.CarNumber);
+
+                if (driver == null)
+                {
+                    ModelState.AddModelError("CarNumber", "No driver found with this car number.");
+                    return View(model);
+                }
+
+                // No station assignment table exists; treat this as presence validation
+                TempData["SuccessMessage"] = "Driver found and can be assigned to trips from your station.";
+                return RedirectToAction("CreateTrip");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding driver by car number");
+                TempData["ErrorMessage"] = "Error adding driver. Please try again.";
+                return View(model);
+            }
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddDriver(AddDriverViewModel model)
@@ -377,14 +450,6 @@ namespace Web.Controllers
                     .Where(r => r.StartStationId == staffProfile.StationId)
                     .ToListAsync();
 
-                // Get available drivers from this station
-                var drivers = await _driverUow.Entity.GetAllAsyncAsQuery()
-                    .Include(d => d.appUsers)
-                    .Include(d => d.Trips)
-                        .ThenInclude(t => t.Route)
-                    .Where(d => d.Trips.Any(t => t.Route.StartStationId == staffProfile.StationId))
-                    .ToListAsync();
-
                 var viewModel = new CreateTripWithQueueViewModel
                 {
                     StationName = staffProfile.Station?.Name ?? "Unknown",
@@ -393,15 +458,6 @@ namespace Web.Controllers
                         Id = r.Id,
                         Name = $"{r.StartStation?.Name} → {r.EndStation?.Name}",
                         Price = r.Price
-                    }).ToList(),
-                    Drivers = drivers.Select(d => new DriverViewModel
-                    {
-                        Id = d.Id,
-                        UserId = d.UserId,
-                        FirstName = d.appUsers?.FirstName ?? "Unknown",
-                        LastName = d.appUsers?.LastName ?? "Unknown",
-                        LicenseNumber = d.LicenseNumber,
-                        CarNumber = d.CarNumber
                     }).ToList()
                 };
 
@@ -421,22 +477,113 @@ namespace Web.Controllers
         {
             try
             {
+                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var staffProfile = await _staffUow.Entity.GetAllAsyncAsQuery()
+                    .Include(s => s.Station)
+                    .FirstOrDefaultAsync(s => s.UserId == currentUserId);
+
+                if (staffProfile == null)
+                {
+                    TempData["ErrorMessage"] = "Staff profile not found.";
+                    return RedirectToAction("Home");
+                }
+
                 if (!ModelState.IsValid)
                 {
+                    // Repopulate lists
+                    var routesAll = await _routeUow.Entity.GetAllAsyncAsQuery()
+                        .Include(r => r.StartStation)
+                        .Include(r => r.EndStation)
+                        .Where(r => r.StartStationId == staffProfile.StationId)
+                        .ToListAsync();
+
+                    model.Routes = routesAll.Select(r => new RouteViewModel
+                    {
+                        Id = r.Id,
+                        Name = $"{r.StartStation?.Name} → {r.EndStation?.Name}",
+                        Price = r.Price
+                    }).ToList();
+
                     return View(model);
                 }
 
-                if (model.SelectedDriverIds == null || !model.SelectedDriverIds.Any())
+                if (string.IsNullOrWhiteSpace(model.PrimaryDriverCarNumber))
                 {
-                    ModelState.AddModelError("SelectedDriverIds", "Please select at least one driver.");
+                    ModelState.AddModelError("PrimaryDriverCarNumber", "Please enter a driver car number.");
                     return View(model);
                 }
 
-                // Create the trip with the first driver as primary
+                // Validate departure time is in the future
+                if (model.DepartureTime <= DateTime.Now)
+                {
+                    ModelState.AddModelError("DepartureTime", "Departure time must be in the future.");
+
+                    // Repopulate lists
+                    var routesAll = await _routeUow.Entity.GetAllAsyncAsQuery()
+                        .Include(r => r.StartStation)
+                        .Include(r => r.EndStation)
+                        .Where(r => r.StartStationId == staffProfile.StationId)
+                        .ToListAsync();
+
+                    model.Routes = routesAll.Select(r => new RouteViewModel
+                    {
+                        Id = r.Id,
+                        Name = $"{r.StartStation?.Name} → {r.EndStation?.Name}",
+                        Price = r.Price
+                    }).ToList();
+
+                    return View(model);
+                }
+
+                // Validate the selected route starts from staff station
+                var selectedRoute = await _routeUow.Entity.GetAllAsyncAsQuery().FirstOrDefaultAsync(r => r.Id == model.RouteId);
+                if (selectedRoute == null || selectedRoute.StartStationId != staffProfile.StationId)
+                {
+                    ModelState.AddModelError("RouteId", "Selected route must start from your station.");
+
+                    // Repopulate lists
+                    var routesAll = await _routeUow.Entity.GetAllAsyncAsQuery()
+                        .Include(r => r.StartStation)
+                        .Include(r => r.EndStation)
+                        .Where(r => r.StartStationId == staffProfile.StationId)
+                        .ToListAsync();
+
+                    model.Routes = routesAll.Select(r => new RouteViewModel
+                    {
+                        Id = r.Id,
+                        Name = $"{r.StartStation?.Name} → {r.EndStation?.Name}",
+                        Price = r.Price
+                    }).ToList();
+
+                    return View(model);
+                }
+
+                // Find primary driver by car number
+                var primaryDriver = await _driverUow.Entity.GetAllAsyncAsQuery()
+                    .FirstOrDefaultAsync(d => d.CarNumber == model.PrimaryDriverCarNumber);
+                if (primaryDriver == null)
+                {
+                    ModelState.AddModelError("PrimaryDriverCarNumber", "No driver found with this car number.");
+
+                    var routesAll = await _routeUow.Entity.GetAllAsyncAsQuery()
+                        .Include(r => r.StartStation)
+                        .Include(r => r.EndStation)
+                        .Where(r => r.StartStationId == staffProfile.StationId)
+                        .ToListAsync();
+                    model.Routes = routesAll.Select(r => new RouteViewModel
+                    {
+                        Id = r.Id,
+                        Name = $"{r.StartStation?.Name} → {r.EndStation?.Name}",
+                        Price = r.Price
+                    }).ToList();
+                    return View(model);
+                }
+
+                // Create the trip with the located driver as primary
                 var trip = new Trip
                 {
                     RouteId = model.RouteId,
-                    DriverId = model.SelectedDriverIds.First(), // Primary driver
+                    DriverId = primaryDriver.Id,
                     DepartureTime = model.DepartureTime,
                     AvailableSeats = model.AvailableSeats
                 };
@@ -444,24 +591,19 @@ namespace Web.Controllers
                 await _tripUow.Entity.AddAsync(trip);
                 await _tripUow.SaveAsync();
 
-                // Create driver queue entries
-                for (int i = 0; i < model.SelectedDriverIds.Count; i++)
+                // Assign only the primary driver in queue as Assigned
+                var driverQueue = new TripDriverQueue
                 {
-                    var driverQueue = new TripDriverQueue
-                    {
-                        TripId = trip.Id,
-                        DriverId = model.SelectedDriverIds[i],
-                        QueueOrder = i + 1,
-                        Status = i == 0 ? DriverStatus.Assigned : DriverStatus.Queued, // First driver is assigned
-                        AssignedAt = i == 0 ? DateTime.Now : null
-                    };
-
-                    await _tripDriverQueueUow.Entity.AddAsync(driverQueue);
-                }
-
+                    TripId = trip.Id,
+                    DriverId = primaryDriver.Id,
+                    QueueOrder = 1,
+                    Status = DriverStatus.Assigned,
+                    AssignedAt = DateTime.Now
+                };
+                await _tripDriverQueueUow.Entity.AddAsync(driverQueue);
                 await _tripDriverQueueUow.SaveAsync();
 
-                TempData["SuccessMessage"] = $"Trip created successfully with {model.SelectedDriverIds.Count} drivers in queue.";
+                TempData["SuccessMessage"] = "Trip created successfully and primary driver assigned.";
                 return RedirectToAction("Home");
             }
             catch (Exception ex)

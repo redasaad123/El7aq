@@ -19,11 +19,10 @@ namespace Web.Models.Staff
         [Display(Name = "Available Seats")]
         public int AvailableSeats { get; set; } = 1;
 
-        [Required(ErrorMessage = "Please select at least one driver")]
-        [Display(Name = "Drivers (in order of priority)")]
-        public List<string> SelectedDriverIds { get; set; } = new List<string>();
+        [Required(ErrorMessage = "Please enter a driver car number")]
+        [Display(Name = "Driver Car Number")]
+        public string PrimaryDriverCarNumber { get; set; } = string.Empty;
 
         public List<RouteViewModel> Routes { get; set; } = new List<RouteViewModel>();
-        public List<DriverViewModel> Drivers { get; set; } = new List<DriverViewModel>();
     }
 }
