@@ -231,7 +231,7 @@ services:
     env_file:
       - .env
     ports:
-      - "8080:8080"    # داخلي داخل الشبكة، NGINX هيوجهه للـ app
+      - "8081:8080"    # داخلي داخل الشبكة، NGINX هيوجهه للـ app
     networks:
       - webnet
     restart: unless-stopped
