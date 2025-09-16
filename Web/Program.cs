@@ -79,6 +79,7 @@ namespace Web
 
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IPayPalService, PayPalService>();
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
