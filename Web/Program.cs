@@ -25,8 +25,36 @@ namespace Web
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services
-                .AddDefaultIdentity<AppUsers>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddDefaultIdentity<AppUsers>(options => 
+                {
+                    // Sign-in settings
+                    options.SignIn.RequireConfirmedAccount = false;
+                    
+                    // Password settings
+                    options.Password.RequireDigit = true;
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequiredUniqueChars = 1;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    
+                    // Lockout settings
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                    options.Lockout.MaxFailedAccessAttempts = 5;
+                    options.Lockout.AllowedForNewUsers = true;
+                    
+                    // User settings
+                    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                    options.User.RequireUniqueEmail = true;
+                    
+                    // Token settings for password reset
+                    options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;
+                })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+            
+            // Configure Data Protection for token expiration
+            builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => 
+                opts.TokenLifespan = TimeSpan.FromHours(24));
             builder.Services.AddLogging();
             // Register custom claims principal factory
             builder.Services.AddScoped<IUserClaimsPrincipalFactory<AppUsers>, Infrastructure.Services.ApplicationClaimsPrincipalFactory>();
@@ -41,6 +69,7 @@ namespace Web
 
             builder.Services.AddTransient<IEmailSender, EmailService>();
             builder.Services.AddTransient<IGeolocationService, OpenStreetMapAdapter>();
+            builder.Services.AddSingleton<ICodeVerificationService, CodeVerificationService>();
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(cfg =>
